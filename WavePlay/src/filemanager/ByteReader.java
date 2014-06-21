@@ -22,7 +22,7 @@ public class ByteReader {
 	
 	/**File Prompt Constructor */
 	public ByteReader() {
-		this(libraryclasses.HTML.fileChooser());
+		this(filemanager.HTML.fileChooser());
 	}
 	
 	

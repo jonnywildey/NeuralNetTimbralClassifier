@@ -6,11 +6,9 @@ import java.util.Collections;
 
 import javax.swing.*;
 
-import libraryclasses.LogWin;
-public class HorizontalChartPanel extends JPanel {
+public class WavGraph extends JPanel {
 	
-	protected String[] names;
-	protected double[] values;
+	protected long[][] values;
 	protected Dimension offsetSize;
 	protected Dimension size;
 	protected String[] axisLabels;
@@ -21,16 +19,14 @@ public class HorizontalChartPanel extends JPanel {
 	protected int widthness;
 	protected double wOffset;
 	protected int heightness;
-	protected int barHeight;
-	protected int[][][] barPos;
 	protected int alpha;
 	protected Color[] rColors;
 	protected double wr;
 	protected double hOffset;
+	protected int half;
 	
-	public HorizontalChartPanel(double[] values, String[] names, Dimension winSize, String[] axisLabels) {
+	public WavGraph(long[][] values, Dimension winSize, String[] axisLabels) {
 		
-		this.names = names;
 		this.values = values;
 		this.axisLabels = axisLabels;
 		size = winSize;
@@ -39,52 +35,54 @@ public class HorizontalChartPanel extends JPanel {
 		widthness = size.width - (offsetSize.width * 2);
 		heightness = size.height - (offsetSize.height * 2);
 		//get bar value - height of chart ratio (so biggest value is at top of chart)
-		maxBar = (heightness / getMax(values)) / 2;
-		System.out.println("max b " + maxBar);
-		barHeight = (int)((heightness - offsetSize.height) / values.length) ;
-		barPos = new int[values.length][2][4];
-		alpha = 60;
-		rColors = ranColorArray(values.length + 1, alpha);
+		maxBar = (((heightness - offsetSize.height) / getMax(values)) * 0.5);
+		//System.out.println("max b " + maxBar);
+		rColors = colorArray(values.length);
 		wOffset = (winSize.getWidth() - widthness) / 2;
 		hOffset = (size.getHeight() - offsetSize.getHeight()) / 2;
-		System.out.println("h offset " + hOffset);
-		wr = ((double)widthness / (double)values.length);
-		System.out.println("wr " + wr);
+		//System.out.println("h offset " + hOffset);
+		wr = ((double)widthness / (double)values[0].length);
+		//System.out.println("wr " + wr);
+		this.half = (int)((size.height - offsetSize.height) * 0.5);
 		
 	}
 	
-	private double getMax(double[] array) {
+	
+	private double getMax(long[][] vals) {
 		double max = 0;
-		for (int i = 0; i < array.length; ++i) {
-			if (Math.abs(array[i]) > max) {
-				max = Math.abs(array[i]);
+		for (long[] l: vals) {
+			for (int i = 0; i < l.length; ++i) {
+				if (Math.abs(l[i]) > max) {
+					max = Math.abs(l[i]);
+				}
 			}
 		}
-		return max / 0.9;
+		return max;
 	}
 	
-	public Color randomColor(int alpha) {
+	public Color getColor() {
 		/*returns a random color with alpha choice */
-		return new Color((int)(Math.random() * 255), (int)(Math.random() * 255), (int)(Math.random() * 255), alpha);
+		Color c = new Color((float)(Math.random()), 0.4f, 0.9f, 0.7f);
+		return c;
 	}
 	
-	public Color randomColor() {
-		return new Color((int)(Math.random() * 255), (int)(Math.random() * 255), (int)(Math.random() * 255), 255);
-	}
-	
-	private Color[] ranColorArray(int a, int alpha) {
-		/*returns an array of random colors */
+
+	private Color[] colorArray(int a) {
+		/*returns an array of colors */
+		float am = 1f / (float)a;
 		Color[] rcol = new Color[a];
+		
 		for (int i = 0; i < a; ++i) {
-			rcol[i] = randomColor(alpha);
+			int x = Color.HSBtoRGB((i) * am, 0.8f, 0.8f);
+			Color c = new Color(x);
+			rcol[i] = new Color(c.getRed(), c.getGreen(), c.getBlue(), 40);
+
+			
 		}
 		return rcol;
 	}
 	
-	
-	
 	private void drawCentredString(String str, int x, int y, Graphics2D g2d) {
-		/* makes a centre aligned string. Useful for graph labels etc. */
 		int widthAlign = (int)((g2d.getFontMetrics().getStringBounds(str, g2d).getWidth()/2)); 
 		int heightAlign = (int)((g2d.getFontMetrics().getStringBounds(str, g2d).getHeight()/2)); 
 		g2d.drawString(str, x - widthAlign, y - heightAlign);
@@ -105,39 +103,40 @@ public class HorizontalChartPanel extends JPanel {
 	
 	/** converts amp value to graph value **/
 	public int ampValue(double c) {
-		 double half = (heightness / 2)  ;
-		 //System.out.println(half - (c * 0.001));
-		 return (int) (half - (c * maxBar));
+		 //System.out.println((int) (half - (c * maxBar)));
+		 return (int) (this.half - (c * maxBar));
 		
 	}
 	
 	public void drawBar(Graphics2D g2d) {
 		
-
-
 		//Y axis
 		g2d.drawLine(offsetSize.width, heightness, offsetSize.width, offsetSize.height);
 		//X axis
 		g2d.drawLine(offsetSize.width, heightness, size.width - offsetSize.width, heightness);
-		g2d.drawLine(offsetSize.width, heightness / 2, size.width - offsetSize.width, heightness / 2);
+		g2d.drawLine(offsetSize.width, this.half, 
+						size.width - offsetSize.width, this.half);
 		//axis labels
 		drawCentredString(axisLabels[0], offsetSize.width, offsetSize.height, g2d);
 		drawCentredString(axisLabels[1], widthness + offsetSize.width, heightness, g2d);
-		
-		//the bars
-		
-		//LibraryClasses.LogWin.messagePrint(Arrays.deepToString(barPos));
-		
-		g2d.setColor(rColors[0]);
+
+		//the wavs
 		System.out.println("widthness" + widthness);
-		System.out.println("values length " + values.length);
-		for (int i = 0; i < values.length -1; ++i) {
-			g2d.drawLine((int)((i * wr) + wOffset), ampValue(values[i]),  
-						 (int)(((i + 1) * wr) + wOffset), ampValue(values[i + 1]));
-			//System.out.println((int)values[i] / 100);
-			//System.out.println((int)values[i + 1] / 100);
+		System.out.println("values length " + values[0].length);
+		int c = 0;
+		for(long[] av: values) {
+			g2d.setColor(rColors[c]);
+			for (int i = 0; i < av.length -1; ++i) {
+				g2d.drawLine((int)((i * wr) + wOffset), 
+							  ampValue(av[i]),  
+							 (int)(((i + 1) * wr) + wOffset), 
+							  ampValue(av[i + 1])
+							  );
+				//System.out.println((i * wr) + wOffset);
+				//System.out.println((int)values[i + 1] / 100);
+			}
+			++c;
 		}
-		
 		
 	}
 	

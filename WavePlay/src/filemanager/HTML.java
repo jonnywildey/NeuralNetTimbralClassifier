@@ -11,7 +11,7 @@
  * 	@author Jonny Wildey
  * 	@version $Date: 2013/10/9 $
  */
-package libraryclasses;
+package filemanager;
 import javax.swing.*;
 
 import java.awt.*;
@@ -40,7 +40,7 @@ public class HTML {
 		//chooser.setVisible(true);
 		chooser.showOpenDialog(null);
 		while (chooser.getSelectedFile() == null) {
-			LogWin.messagePrintNoCancel("No file selected");
+			//LogWin.messagePrintNoCancel("No file selected");
 			chooser.showOpenDialog(null);
 		} 
 		

@@ -5,40 +5,43 @@ import javax.swing.*;
 
 public class Controller {
 	
+	private Dimension size;
+	private long[][] signals;
 	
+	public Controller(long[][] signals) {
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.size = new Dimension(screenSize.width, screenSize.height / 3);
+		this.signals = signals;
+	}
 	
-	public void makeChart(final long[] values) {
-		final double[] val = new double[values.length];
-		//System.out.println("Length " + values.length);
-		for (int i = 0; i < values.length; ++i) {
-			val[i] = (double)values[i];
-			//System.out.println(val[i]);
-		}
-		
+	public Controller(long[][] signals, int width, int height) {
+		this.size = new Dimension(width, height);
+		this.signals = signals;
+	}
+	
+	public void makeChart() {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				createAndShowGUI2(val);
+				createChart(signals, size);
 			}
 		});
 	}
 	
 	
-	
-	
-	private static void createAndShowGUI2(double[] values) {
+	private static void createChart(long[][] values, Dimension winSize) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Dimension winSize = new Dimension(600,300);
 		frame.setBounds(winSize.width, 0, winSize.width, winSize.height);
 		frame.setSize(winSize);
 		//Variables
-		String[] names = new String[5];
-		String[] axisLabels = {"amplitude", "time"};
-		
-		
-		frame.getContentPane().add(new HorizontalChartPanel(values, names, winSize, axisLabels));
+		//String[] names = new String{""}; 
+		String[] axisLabels = {"", ""};
+		frame.getContentPane().add(new WavGraph(values, winSize, axisLabels));
 		//frame.pack();
 		frame.setVisible(true);
 	}
+
+
+
 	
 }
