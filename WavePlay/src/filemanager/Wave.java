@@ -10,12 +10,12 @@ public class Wave {
 	
 	private byte[] bytes;
 	private byte[] data;
-	private long[][] signals;
+	public long[][] signals;
 	private int bit;
 	private long dataSize;
 	private long sampleRate;
 	private int channel;
-	private File filepath;
+	public File filepath;
 	
 	public Wave(File f) {
 		this.filepath = f;

@@ -121,8 +121,8 @@ public class WavGraph extends JPanel {
 		drawCentredString(axisLabels[1], widthness + offsetSize.width, heightness, g2d);
 
 		//the wavs
-		System.out.println("widthness" + widthness);
-		System.out.println("values length " + values[0].length);
+		//System.out.println("widthness" + widthness);
+		//System.out.println("values length " + values[0].length);
 		int c = 0;
 		for(long[] av: values) {
 			g2d.setColor(rColors[c]);
