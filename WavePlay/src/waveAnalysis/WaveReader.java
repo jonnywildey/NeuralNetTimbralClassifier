@@ -1,4 +1,4 @@
-package analysis;
+package waveAnalysis;
 
 import java.io.File;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ public class WaveReader {
 		System.out.println(wr.init());
 		System.out.println(wr.toString());
 		System.out.println(wr.isWav());
-		//System.out.println(wr.getHex(2000));
+		System.out.println(wr.getHex(2000));
 		System.out.println(wr.getHexHeader());
 		wr.makeGraph();
 		WaveFund wf = new WaveFund(wr);

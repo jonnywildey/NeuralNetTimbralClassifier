@@ -1,4 +1,4 @@
-package analysis;
+package waveAnalysis;
 
 import java.util.ArrayList;
 import java.util.Arrays;

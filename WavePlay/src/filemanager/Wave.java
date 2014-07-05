@@ -110,6 +110,7 @@ public class Wave {
 			this.getNumberOfChannels();
 			this.getDataSize();
 			this.getData();
+			this.getSampleRate();
 			this.getSignals();
 			return true;
 		} else {
