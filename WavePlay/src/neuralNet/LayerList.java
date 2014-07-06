@@ -1,9 +1,12 @@
 package neuralNet;
 
+import java.io.Serializable;
 import java.util.Random;
 
 
-public class LayerList {
+public class LayerList implements Serializable {
+
+	private static final long serialVersionUID = 907430324885673987L;
 	private NeuralLayer firstLayer;
 	private int layerCount;
 	

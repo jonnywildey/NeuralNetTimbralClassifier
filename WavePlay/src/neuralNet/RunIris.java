@@ -1,7 +1,16 @@
 package neuralNet;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import filemanager.CSVReader;
 
@@ -14,6 +23,24 @@ public class RunIris {
 	public static void main(String[] args) {
 		//generate random seed
 		long seed = System.currentTimeMillis();
+		FileHandler fh;
+		try {
+			fh = new FileHandler("fileDemo.txt");
+			Logger logger = Logger.getLogger("New Log");
+			logger.addHandler(fh);
+			SimpleFormatter sf = new SimpleFormatter();
+			fh.setFormatter(sf);
+			logger.setLevel(Level.ALL);
+			logger.log(Level.CONFIG, "TESTING");
+			logger.log(Level.FINER, "Ytfgh");
+			logger.log(Level.ALL, "TESTING2");
+			
+		} catch (Exception e) {
+			e.printStackTrace();;
+		} 
+		
+		
+		
 		
 		//check shuffle
 		int n = 100;
@@ -65,6 +92,33 @@ public class RunIris {
 			e.printStackTrace();
 		}
 		//run validation
+		// Serialization code
+        try {
+            FileOutputStream fileOut = new FileOutputStream("testID.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(id);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+		
+     // De-serialization code
+        @SuppressWarnings("unused")
+        MultiLayerNet mln = null;
+        try {
+            FileInputStream fileIn = new FileInputStream("testID.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            mln = (MultiLayerNet) in.readObject();
+            in.close();
+            fileIn.close();
+            System.out.println(mln.toString());
+            
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } catch (ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+        }
 		
 		
 		

@@ -1,9 +1,11 @@
 package neuralNet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Neuron extends NeuralComponent{
+public class Neuron extends NeuralComponent implements Serializable {
 	
+	private static final long serialVersionUID = -1422063420400907090L;
 	protected Double bias; //typically -0.5
 	protected ArrayList<Double> weightList; //0 to 1
 	protected Double output; 

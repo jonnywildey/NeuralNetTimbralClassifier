@@ -1,9 +1,11 @@
 package neuralNet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class NeuralLayer {
+public class NeuralLayer implements Serializable {
 	
+	private static final long serialVersionUID = -8167132484261105715L;
 	public NeuralLayer inputLayer;
 	public NeuralLayer outputLayer;
 	public ArrayList<Neuron> neurons;

@@ -1,12 +1,18 @@
 package neuralNet;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
+
 import exceptions.*;
 
 
-public class MultiLayerNet  {
+public class MultiLayerNet  implements Serializable{
 
+	private static final long serialVersionUID = -5601412683842445747L;
 	private double acceptableErrorRate; //if we achieve this error rate stop
 	private Double bias; // bias weight. Normally around -0.5
 	private boolean debug; //prints even more stuff when running
@@ -47,8 +53,6 @@ public class MultiLayerNet  {
 		return neuronLayers.setInitialWeights(testPatterns.getTrainingPatterns().get(0), bias, seed);
 	}
 
-	
-
 	public  void runEpoch() throws Exception {
 		ready();
 		/* make epoch */
@@ -72,36 +76,13 @@ public class MultiLayerNet  {
 		int size = patterns.size();
 		double er = e.getConfusionMatrix().getErrorRate(size);
 		if (verbose) {
-			System.out.println("Error: " + er +
-								" Total: " + e.getConfusionMatrix().getTotal() + " of " + 
-								size);
+			System.out.println("Error: " + er +" Total: " + 
+								e.getConfusionMatrix().getTotal() + " of " + size);
 		}
 		return er;
 	}
 
-	public  void runEpochWithErrorRate() {
-		/* make epoch */
-		for (int i = 0; i < maxEpoch; ++i) {
-			if (verbose){System.out.println("\n******** EPOCH " + (i + 1) + " ********\n");}
-			Epoch e = new Epoch(testPatterns.getTrainingPatterns(), 
-								null, neuronLayers, trainingRate, verbose, debug);
-			e.runEpoch();
-			if (debug) {System.out.println(e.toString());}
-			//check errors
-			double errors = e.meanError;
-			if (verbose) {System.out.println("mean error: " + errors);}
-			
-			if (errors <= acceptableErrorRate) {
-				if (verbose) {
-					System.out.println("Learnt!");
-					System.out.println(e.toString());
-					System.out.println("System has learnt after " + (i + 1) + " epochs");
-				}
-				break; 
-			}	
-
-		}
-	}
+	
 	
 	public void validate() throws Exception {
 		ready();
@@ -113,6 +94,10 @@ public class MultiLayerNet  {
 		if (er == 0) { //perfect
 			if (verbose) {System.out.println("Perfect Validation Score!");}
 		}
+	}
+	
+	public String toString() {
+		return this.layerStructure.toString() + this.neuronLayers.toString();
 	}
 	
 	public double getAcceptableErrorRate() {
@@ -242,6 +227,30 @@ public class MultiLayerNet  {
 	public boolean areWeightsInitialised() {
 		return (neuronLayers.getFirstLayer().neurons.get(0).weightList.size() > 0);
 	}
+	
+	
+	public  void runEpochWithErrorRate() {
+		/* make epoch */
+		for (int i = 0; i < maxEpoch; ++i) {
+			if (verbose){System.out.println("\n******** EPOCH " + (i + 1) + " ********\n");}
+			Epoch e = new Epoch(testPatterns.getTrainingPatterns(), 
+								null, neuronLayers, trainingRate, verbose, debug);
+			e.runEpoch();
+			if (debug) {System.out.println(e.toString());}
+			//check errors
+			double errors = e.meanError;
+			if (verbose) {System.out.println("mean error: " + errors);}
+			
+			if (errors <= acceptableErrorRate) {
+				if (verbose) {
+					System.out.println("Learnt!");
+					System.out.println(e.toString());
+					System.out.println("System has learnt after " + (i + 1) + " epochs");
+				}
+				break; 
+			}	
 
+		}
+	}
 
 }

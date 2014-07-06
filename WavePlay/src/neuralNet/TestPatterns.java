@@ -1,10 +1,13 @@
 package neuralNet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TestPatterns {
+public class TestPatterns implements Serializable {
 	
+
+	private static final long serialVersionUID = -4219496637757583180L;
 	private ArrayList<Pattern> trainingPatterns;
 	private ArrayList<Pattern> testingPatterns;
 	private ArrayList<Pattern> validationPatterns;

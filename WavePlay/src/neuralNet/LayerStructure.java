@@ -1,9 +1,12 @@
 package neuralNet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /** for representing the somewhat complex structure of layers in Neural Networks.  **/
-public class LayerStructure {
+public class LayerStructure implements Serializable {
+
+	private static final long serialVersionUID = 6014061235694376364L;
 	public int outputCount;
 	private ArrayList<Integer> hiddenLayer;
 	

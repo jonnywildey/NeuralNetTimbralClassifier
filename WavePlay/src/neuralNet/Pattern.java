@@ -1,8 +1,13 @@
 package neuralNet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Pattern {
+public class Pattern implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1620481621127344275L;
 	//protected ArrayList<Double> inputArray;
 	protected ArrayList<InputShell> inputArray;
 	protected ArrayList<Double> targetArray;
