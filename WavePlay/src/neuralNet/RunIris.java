@@ -28,6 +28,7 @@ public class RunIris {
 		//Make Iris data
 		boolean verbose = true;
 		String file = "/Users/Jonny/Documents/Timbre/NN/iris.float.txt";
+		//String file = "/Users/Jonny/Documents/Timbre/NN/2BitOR.txt";
 		CSVReader sr = new CSVReader(file);
 		sr.readFile();
 		double[][] arr = sr.makeDoubleArray();
@@ -35,21 +36,28 @@ public class RunIris {
 		//System.out.println(Arrays.deepToString(arr));
 		NNUtilities.createTargetConversionTable(arr, verbose); //see how bit array relates to original
 		//separate pattern into training, testing and validation into 3 1 1 ratio
-		ArrayList<Pattern> patterns = NNUtilities.createPatterns(arr, verbose);
+		ArrayList<Pattern> patterns = NNUtilities.createPatterns(arr, false);
 		TestPatterns testPatterns = new TestPatterns(patterns, seed);
 		System.out.println("TP" + testPatterns.toString());
-		IrisData id = new IrisData(); //Make a net;
-		id.setHiddenCount(10); //hidden layer neurons
+		// checking multilayer stuff
+		LayerStructure ls = new LayerStructure(testPatterns);
+		ls.addHiddenLayer(10);
+		ls.addHiddenLayer(5);
+		ls.addHiddenLayer(4);
+		if (verbose) {System.out.println(ls.toString());}
+		
+		
+		MLIrisData id = new MLIrisData(); //Make a net;
+		id.setLayerStructure(ls);
 		id.setTrainingPatterns(testPatterns.getTrainingPatterns()); //add training patterns
 		id.setTestingPatterns(testPatterns.getTestingPatterns()); //and testing
-		id.setOutputCount(3);
-		id.initialiseNeurons();
 		id.setDebug(false);
+		id.initialiseNeurons();
+
 		id.setVerbose(verbose);
 		id.setShuffleTrainingPatterns(true);
 		id.setAcceptableErrorRate(0.1d);
 		id.setMaxEpoch(1000);
-		id.checkSigmoid();	
 		id.runEpoch();
 		//run validation
 		id.setTestingPatterns(testPatterns.getValidationPatterns());

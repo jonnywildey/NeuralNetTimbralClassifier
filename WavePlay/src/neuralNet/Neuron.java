@@ -3,12 +3,12 @@ package neuralNet;
 import java.util.ArrayList;
 
 // Couldn't work out an easy way of doing generics
-public class Neuron  {
+public class Neuron extends NeuralComponent{
 	
 	protected ArrayList<NeuralComponent> outputNeurons;
 	protected ArrayList<NeuralComponent> inputNeurons;
 	protected ArrayList<Double> inputArray; //array of inputs where bias input is added
-	protected Double bias; //typically 0.5
+	protected Double bias; //typically -0.5
 	protected ArrayList<Double> weightList; //0 to 1
 	protected Double output; 
 	protected Integer id; //Mainly for iteration
@@ -16,10 +16,10 @@ public class Neuron  {
 	protected boolean learning; //am I learning?
 	protected Integer layer;
 	protected Double target; //Won't necessarily have one (I think...)
-	protected Double targetRate;
+	protected Double trainingRate;
+	protected double delta;
 	
 	public Neuron( Double bias, Integer id, int inputCount, int layer) {
-		
 		this.bias = bias;
 		this.weightList = new ArrayList<Double>(inputCount + 1);
 		this.randomWeight(inputCount);
@@ -41,7 +41,7 @@ public class Neuron  {
 			weightList.add( (Double) (Math.random() * 0.1));		
 		}
 		//add bias
-		weightList.add( this.bias * (-1f));
+		weightList.add( this.bias);
 		
 	}
 	
@@ -57,6 +57,11 @@ public class Neuron  {
 		this.inputArray.add(1d); //add bias firing
 	}
 	
+	@Override
+	public Double getValue() {
+		return this.output;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void setOutputArray(ArrayList<? extends NeuralComponent> outputNeurons) {
 		this.outputNeurons = (ArrayList<NeuralComponent>) outputNeurons;
@@ -64,18 +69,6 @@ public class Neuron  {
 	}
 	
 	
-	
-	
-	public Double sigmoid(Double f) {
-		double x = (double)f;
-		x = 1 / (1 + (Math.pow(Math.E, x * -1)));
-		return (Double)x;
-	}
-	
-	public Double sigmoidDerivative(Double f) {
-		f = sigmoid(f) * (1 - sigmoid(f));
-		return f;
-	}
 	
 	/* Make sure target and targetrate have been set */
 	public boolean learnLastLayer() {
@@ -87,9 +80,9 @@ public class Neuron  {
 
 		/*learning */
 		if (this.learning == true) {
-			Double delta = (this.target - this.output) * sigmoidDerivative(this.activation);
+			delta = (this.target - this.output) * NNFunctions.sigmoidDerivative(this.activation);
 			//System.out.println("last delta" + delta);
-			setWeights(delta);
+			setWeights();
 			//System.out.println("new weights");
 			//printCurrentWeights();
 			return true;
@@ -106,7 +99,7 @@ public class Neuron  {
 			for (NeuralComponent nc: this.outputNeurons) {
 				Neuron n = nc.getNeuron();
 				
-				Double nextDelta = (n.target - n.output) * sigmoidDerivative(n.activation); //last layer output. 
+				Double nextDelta = (n.target - n.output) * NNFunctions.sigmoidDerivative(n.activation); //last layer output. 
 																					//this would change if we wanted > 2 layers
 				//check this isn't stupid
 				//System.out.println("nd: " + nextDelta);
@@ -119,10 +112,10 @@ public class Neuron  {
 				//sum += nextDelta;  //this could be wrong
 			}
 			//System.out.println("sum: " + sum);
-			sum *= sigmoidDerivative(activation); //sum is now current delta
+			delta = sum * NNFunctions.sigmoidDerivative(activation); //sum is now current delta
 			
 			
-			setWeights(sum);
+			setWeights();
 			return true;
 		} else {
 			return false;
@@ -131,16 +124,15 @@ public class Neuron  {
 	}
 	
 	public Double getError() {
-		//System.out.println("error: " + (Double)Math.pow((this.target - this.output), 2));
 		return (Double) Math.pow((this.target - this.output), 2); //I think...
 	}
 	
 	
-	/* Works for both layers */
-	private void setWeights(Double delta) {
+	/* Works for all layers. sets weight according to delta */
+	public void setWeights() {
 		for (int i = 0; i < this.weightList.size(); ++i) {
 			
-			Double weightChange = 1 * this.targetRate 
+			Double weightChange = 1 * this.trainingRate 
 					* this.inputArray.get(i) //only change if it had an input signal
 					* delta; 
 			//System.out.println("weight change: " + weightChange);
@@ -157,35 +149,25 @@ public class Neuron  {
 		}
 	}
 	
-	public Integer stepFunction(Double input) {
-		if (input > 0f) {
-				return 1;
-		} else {
-			return 0;
-		}
-	}
-	
-
-	
 	public void setTarget(Double target) {
 		this.target = target;
 	}
 	
 	public void setTargetRate(Double targetRate) {
-		this.targetRate = targetRate;
+		this.trainingRate = targetRate;
 	}
 	
 	public void process(Double targetRate) {
 		Double sum = 0d;	
 		setTargetRate(targetRate);
-		
+		System.out.println(this.inputArray.toString());
 		for (int i = 0; i < this.inputArray.size(); ++i) {
 			sum += (this.inputArray.get(i) * this.weightList.get(i)); 
 			//System.out.println("input: " + this.inputArray.get(i) + " current weight: " + this.weightList.get(i) + " sum: " + sum);
 		}
 		//System.out.println("sum: " + sum);
 		this.activation = sum;
-		this.output = sigmoid(sum);
+		this.output = NNFunctions.sigmoid(sum);
 		//System.out.println(this.toString());
 		//System.out.println("output: " + this.activation);
 
@@ -202,10 +184,7 @@ public class Neuron  {
 		for (Double f: this.weightList) {
 			str = str.concat(f + "\t");
 		}
-		str = str.concat("\ninput:\n");
-		for (Double f: this.inputArray) {
-			str = str.concat(f + "\t");
-		}
+		
 		str = str.concat("\nactivation: " + this.activation);
 		str = str.concat("\noutput: " + this.output);
 		str = str.concat("\n");

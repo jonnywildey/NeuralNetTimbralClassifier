@@ -50,15 +50,21 @@ public class ConfusionMatrix extends Matrix {
 	/** returns rate of correct classifications to incorrect (i.e. 1 is perfect)**/
 	public double getErrorRate(double total) {
 		double rightCount = 0;
+		double wrongCount = 0;
 		for (int i = 0; i < this.size; ++i) {
 					rightCount += (Integer)this.array[i][i]; //this will work right?
+					for (int j = 0; j < this.size; ++j) {
+						if (j != i) {
+							wrongCount += (Integer)this.array[i][j];
+						}
+					}
 			}
 		//System.out.println(rightCount + " " + wrongCount);
-		int allCount = getCount();
-		if (allCount <= total) {
-			return rightCount / total;
+		
+		if (rightCount + wrongCount < total) {
+			return total / rightCount;
 		} else {
-			return rightCount / allCount;
+			return wrongCount / rightCount;
 		}
 		
 		

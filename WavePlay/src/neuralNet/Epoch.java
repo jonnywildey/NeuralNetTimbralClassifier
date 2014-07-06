@@ -7,8 +7,7 @@ import com.matrix.ConfusionMatrix;
 public class Epoch {
 	protected ArrayList<Pattern> trainingPatterns;
 	protected ArrayList<Pattern> testingPatterns;
-	protected ArrayList<NeuronShell> hiddenNeuronList;
-	protected ArrayList<NeuronShell> lastNeuronList;
+	protected LayerList neurons;
 	protected ArrayList<Double> errorAmount;
 	protected ArrayList<Double> errorList;
 	protected ArrayList<Double>  rmsError;
@@ -16,6 +15,30 @@ public class Epoch {
 	protected ConfusionMatrix confusionMatrix;
 	protected boolean debug;
 	protected boolean verbose;
+	public Double meanError;
+	
+	public Epoch() {
+		this.trainingPatterns = new ArrayList<Pattern>();
+	}
+	
+	public Epoch(ArrayList<Pattern> trainingPatterns,
+			ArrayList<Pattern> testingPatterns, LayerList neurons,
+			Double trainingRate) {
+		this.neurons = neurons;
+		this.trainingPatterns = trainingPatterns;
+		this.testingPatterns = testingPatterns;
+		this.trainingRate = trainingRate;
+		this.errorAmount = new ArrayList<Double>();
+		this.errorList = new ArrayList<Double>();
+		this.rmsError = new ArrayList<Double>();
+		//set up lists. only useful for error based epochs
+		for (int i = 0; i < neurons.getOutputCount(); ++i) { //is only last correct?
+			this.errorAmount.add(0d);
+			this.errorList.add(0d);
+			this.rmsError.add(0d);
+		}
+	}
+	
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
@@ -23,7 +46,6 @@ public class Epoch {
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
-
 
 
 	public ConfusionMatrix getConfusionMatrix() {
@@ -34,34 +56,6 @@ public class Epoch {
 		this.trainingPatterns = NNUtilities.knuthShuffle(this.trainingPatterns);
 	}
 
-
-	public Double meanError;
-	
-	public Epoch(ArrayList<Pattern> trainingPatterns, ArrayList<Pattern> testingPatterns, 
-				 ArrayList<NeuronShell> hiddenNeuronList, 
-				 ArrayList<NeuronShell> lastNeuronList, Double trainingRate) {
-		this.hiddenNeuronList = hiddenNeuronList;
-		this.lastNeuronList = lastNeuronList;
-		this.trainingPatterns = trainingPatterns;
-		this.testingPatterns = testingPatterns;
-		this.trainingRate = trainingRate;
-		this.errorAmount = new ArrayList<Double>();
-		this.errorList = new ArrayList<Double>();
-		this.rmsError = new ArrayList<Double>();
-
-		//set up lists
-		for (int i = 0; i < this.lastNeuronList.size(); ++i) { //is only last correct?
-			this.errorAmount.add(0d);
-			this.errorList.add(0d);
-			this.rmsError.add(0d);
-		}
-		
-	}
-	
-	public Epoch() {
-		this.trainingPatterns = new ArrayList<Pattern>();
-	}
-	
 	public void addTrainingPattern(Pattern trainingPattern) {
 		trainingPatterns.add(trainingPattern);
 	}
@@ -71,35 +65,27 @@ public class Epoch {
 	}
 	
 	public ConfusionMatrix runValidationEpoch() {
-		confusionMatrix = new ConfusionMatrix(this.lastNeuronList.size());
-		//Load Pattern
-		//init
-		for (Pattern p: this.testingPatterns) {
-			for (NeuronShell nc : hiddenNeuronList) {
-				nc.getNeuron().turnOffLearning();
-				//load patterns into hidden layer
-				nc.neuron.setInputArray(p.inputArray);
-				//set outputs (should be outside loop)
-				nc.neuron.setOutputArray(lastNeuronList);
-				//calculate hidden layer node outputs
-				nc.neuron.process(this.trainingRate);
-			}
-			for (NeuronShell nc: lastNeuronList) {
-				nc.getNeuron().turnOffLearning();
-				//set last layer inputs
-				nc.neuron.setInputArray(this.hiddenNeuronList);
-				//calculate last layer node outputs
-				nc.neuron.process(this.trainingRate);
-				
-				int roundedOut = (int)Math.rint(nc.getNeuron().output);
-				if (roundedOut == 1) {
-					confusionMatrix.addToCell(nc.neuron.id, p.getTargetNumber());
-				}
-				
+		confusionMatrix = new ConfusionMatrix(neurons.getOutputCount());
+		neurons.setLearning(false);
+		for (Pattern p: this.trainingPatterns) {
+			//input pattern inputs
+			//forward pass
+			for (int i = 0; i < neurons.getLayerCount(); ++i) {
+				Layer l = neurons.getLayer(i);
+				l.setTrainingRate(trainingRate);
+				l.process(p);
 			}
 			
-
+			for (Neuron n : neurons.getLastLayer().neurons) {
+				
+				int roundedOut = (int)Math.rint(n.output);
+				if (roundedOut == 1) {
+					//System.out.println("***\n" + n.id + "\n" + n.output + "\n" + p.getTargetNumber());
+					confusionMatrix.addToCell(n.id, p.getTargetNumber());
+				}
+			}
 		}
+		
 		if (verbose) {
 			System.out.println(confusionMatrix.toString());
 		}
@@ -112,41 +98,24 @@ public class Epoch {
 		
 		Double patternErrors = 0d;
 		//Load Pattern
+		neurons.setLearning(true);
 		for (Pattern p: this.trainingPatterns) {
-			double patternError = 0f;
-			for (NeuronShell nc : hiddenNeuronList) {
-				nc.getNeuron().turnOnLearning();
-				//load patterns into hidden layer
-				nc.neuron.setInputArray(p.inputArray);
-				//set outputs (should be outside loop)
-				nc.neuron.setOutputArray(lastNeuronList);
-				//calculate hidden layer node outputs
-				nc.neuron.process(this.trainingRate);
+			//forward pass
+			for (int i = 0; i < neurons.getLayerCount(); ++i) {
+				Layer l = neurons.getLayer(i);
+				l.setTrainingRate(trainingRate);
+				l.process(p);
 			}
-			for (NeuronShell nc: lastNeuronList) {
-				nc.getNeuron().turnOnLearning();
-				//set last layer inputs
-				nc.neuron.setInputArray(this.hiddenNeuronList);
-				//calculate last layer node outputs
-				nc.neuron.process(this.trainingRate);
-				//adapt last layer weights
-				nc.neuron.setTarget(p.targetArray.get(nc.neuron.id));
-				nc.neuron.learnLastLayer(); //check the ids sync
-				//might as well get errors while we're here
-				patternError += nc.neuron.getError();
-				
+			//backward pass
+			for (int i = neurons.getLayerCount() - 1; i >= 0; --i) {
+				Layer l = neurons.getLayer(i);
+				l.calculateDelta(p);
+				l.setWeights(p);
 			}
-			for (NeuronShell nc : hiddenNeuronList) {
-				//adapt hidden layer weights
-				nc.neuron.learnNotLastLayer();
-			}
-			//if(debug){System.out.println("Pattern Error: " + patternError);}
-			patternErrors += (patternError);
+			patternErrors += neurons.getLastLayer().getErrors();
 		}
-		
-		//finish calculating mean square error
-		double error = Math.pow((this.trainingPatterns.size() * this.lastNeuronList.size()), -1) *
-						patternErrors;
+		double error = Math.pow((this.trainingPatterns.size() * this.neurons.getOutputCount()), -1) *
+				patternErrors;
 		this.meanError =  Math.pow(error, 0.5);
 		
 	}
@@ -154,16 +123,8 @@ public class Epoch {
 	
 	
 	public String toString() {
-		String str = "\nHidden Neurons:\n";
-		for (NeuronShell n: this.hiddenNeuronList) {
-			str = str.concat(n.toString());
-		}
-		str += "\nLast Neurons:\n";
-		for (NeuronShell n: this.lastNeuronList) {
-			str = str.concat(n.toString());
-		}
-		
-		return str;	 
+		return this.neurons.toString();
+ 
 	}
 	
 	

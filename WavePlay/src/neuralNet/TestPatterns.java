@@ -1,6 +1,7 @@
 package neuralNet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TestPatterns {
 	
@@ -101,9 +102,12 @@ public class TestPatterns {
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("\nTraining Patterns Count: " + this.trainingPatterns.size() + "\n");
-		sb.append("\nTesting Patterns Count: " + this.testingPatterns.size() + "\n");
-		sb.append("\nValidation Patterns Count: " + this.validationPatterns.size() + "\n");
+		sb.append("\nTraining Patterns Count: " + this.trainingPatterns.size() + "\t" +
+				Arrays.deepToString(this.getPatternOuts(this.trainingPatterns)) + "\n");
+		sb.append("\nTesting Patterns Count: " + this.testingPatterns.size() + "\t" +
+				Arrays.deepToString(this.getPatternOuts(this.testingPatterns)) + "\n");
+		sb.append("\nValidation Patterns Count: " + this.validationPatterns.size() + "\t" +
+				Arrays.deepToString(this.getPatternOuts(this.validationPatterns)) + "\n");
 		return sb.toString();
 	}
 	
@@ -139,6 +143,16 @@ public class TestPatterns {
 		}
 		Double[][] counts = NNUtilities.getCount(vals);
 		return counts.length;
+		
+	}
+	
+	public Double[][] getPatternOuts(ArrayList<Pattern> patterns) {
+		double[] vals = new double[patterns.size()];
+		for (int i = 0; i < patterns.size(); ++i) {
+			vals[i] = (double) patterns.get(i).getTargetNumber();
+		}
+		Double[][] counts = NNUtilities.getCount(vals);
+		return counts;
 		
 	}
 	
