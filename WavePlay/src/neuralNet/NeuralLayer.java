@@ -2,15 +2,15 @@ package neuralNet;
 
 import java.util.ArrayList;
 
-public class Layer {
+public class NeuralLayer {
 	
-	public Layer inputLayer;
-	public Layer outputLayer;
+	public NeuralLayer inputLayer;
+	public NeuralLayer outputLayer;
 	public ArrayList<Neuron> neurons;
 	public int neuronCount;
 	public int layerNumber;
 
-	public Layer() {
+	public NeuralLayer() {
 		neurons = new ArrayList<Neuron>();
 		neuronCount = 0;
 		layerNumber = 0;
@@ -34,19 +34,10 @@ public class Layer {
 		}
 	}
 	
-	public void initialiseLayer(Layer prevLayer, Layer nextLayer, double bias, int inputCount) {
+	public void initialiseLayer(double bias, int inputCount) {
 		int ic = (this.isFirst()) ? inputCount : this.inputLayer.neuronCount;
 		for (int i = 0; i < neuronCount; ++i) {
 			Neuron n = new Neuron(bias, i, ic, layerNumber);
-			
-			if (prevLayer != null) {
-				n.setInputArray(prevLayer.neurons);
-			} 
-			if (nextLayer != null) {
-				n.setOutputArray(nextLayer.neurons);
-			}
-			//System.out.println(ic);
-
 			neurons.add(n);
 		}
 	}
@@ -60,41 +51,7 @@ public class Layer {
 		}
 		return sb.toString();
 	}
-	
-	public void processLayer() {
 		
-	}
-	
-	/**correctly sets all the input arrays for the layer. Pattern only necessary 
-	 * for first layer, can be set to null otherwise **/
-	public void setInputArray(Pattern p) {
-		if (this.isFirst()) {
-			insertPattern(p);
-		} else {
-			for (Neuron n : this.neurons) {
-				n.setInputArray(this.inputLayer.neurons);
-			}
-				
-		}
-	}
-	
-	private void insertPattern(Pattern p) {
-		for (Neuron n : this.neurons) {
-			n.setInputArray(p.inputArray);
-		}
-	}
-	
-	public void setOutputArray(Pattern p) {
-		if (this.isLast()) {
-			for (Neuron n : this.neurons) {
-				n.setTarget(p.targetArray.get(n.id)); //set target
-			}
-		} else {
-			for (Neuron n : this.neurons) {
-				n.setOutputArray(this.outputLayer.neurons);
-			}
-		}
-	}
 	
 	/** calculates delta values for entire layer and sets weights. returns pattern error **/
 	public void calculateDelta(Pattern p) {

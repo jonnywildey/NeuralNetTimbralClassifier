@@ -2,7 +2,7 @@ package neuralNet;
 
 
 public class LayerList {
-	private Layer firstLayer;
+	private NeuralLayer firstLayer;
 	private int layerCount;
 	
 
@@ -17,7 +17,7 @@ public class LayerList {
 	}
 
 
-	public void addLayer(Layer layer) {
+	public void addLayer(NeuralLayer layer) {
 		if (this.firstLayer == null) {
 			this.firstLayer = layer;
 		} else {
@@ -27,16 +27,16 @@ public class LayerList {
 		layerCount++;
 	}
 	
-	public Layer getLayer(int layerNo) {
-		Layer holdLayer = firstLayer;
+	public NeuralLayer getLayer(int layerNo) {
+		NeuralLayer holdLayer = firstLayer;
 		for (int i = 0; i < layerNo; ++i) {
 			holdLayer = holdLayer.outputLayer;
 		}
 		return holdLayer;
 	}
 	
-	public Layer getLastLayer() {
-		Layer l = this.firstLayer;
+	public NeuralLayer getLastLayer() {
+		NeuralLayer l = this.firstLayer;
 		if (l == null) {return null;}
 		while (l.outputLayer !=  null) {
 			l = l.outputLayer;
@@ -44,18 +44,17 @@ public class LayerList {
 		return l;
 	}
 	
-	public Layer getFirstLayer() {
+	public NeuralLayer getFirstLayer() {
 		return this.firstLayer;
 	}
 	
 	public void initialiseList(LayerStructure ls, double bias, int inputCount) {
 		for (int i = 0; i < ls.getTotalLayers(); ++i) {
-			Layer l = new Layer();
+			NeuralLayer l = new NeuralLayer();
 			l.neuronCount = ls.getLayerCount(i);
 			l.layerNumber = i;
 			this.addLayer(l);
-			l.initialiseLayer(l.inputLayer, l.outputLayer, bias, inputCount);
-			
+			l.initialiseLayer(bias, inputCount);	
 		}
 	}
 	
@@ -73,7 +72,7 @@ public class LayerList {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Layer List \n");
-		Layer l = this.firstLayer;
+		NeuralLayer l = this.firstLayer;
 		while (l != null) {
 			sb.append(l.toString() + "\n");
 			l = l.outputLayer;
@@ -83,7 +82,7 @@ public class LayerList {
 	
 	/** sets learning to on/off for entire List **/
 	public void setLearning(boolean learn) {
-		Layer l = this.firstLayer;
+		NeuralLayer l = this.firstLayer;
 		if (l != null) {
 			while (l.outputLayer !=  null) {
 				for (Neuron n : l.neurons) {

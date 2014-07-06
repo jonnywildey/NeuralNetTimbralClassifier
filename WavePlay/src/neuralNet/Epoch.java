@@ -67,17 +67,16 @@ public class Epoch {
 	public ConfusionMatrix runValidationEpoch() {
 		confusionMatrix = new ConfusionMatrix(neurons.getOutputCount());
 		neurons.setLearning(false);
-		for (Pattern p: this.trainingPatterns) {
+		for (Pattern p: this.testingPatterns) {
 			//input pattern inputs
 			//forward pass
 			for (int i = 0; i < neurons.getLayerCount(); ++i) {
-				Layer l = neurons.getLayer(i);
+				NeuralLayer l = neurons.getLayer(i);
 				l.setTrainingRate(trainingRate);
 				l.process(p);
 			}
-			
+			//System.out.println(p.toString());
 			for (Neuron n : neurons.getLastLayer().neurons) {
-				
 				int roundedOut = (int)Math.rint(n.output);
 				if (roundedOut == 1) {
 					//System.out.println("***\n" + n.id + "\n" + n.output + "\n" + p.getTargetNumber());
@@ -102,13 +101,13 @@ public class Epoch {
 		for (Pattern p: this.trainingPatterns) {
 			//forward pass
 			for (int i = 0; i < neurons.getLayerCount(); ++i) {
-				Layer l = neurons.getLayer(i);
+				NeuralLayer l = neurons.getLayer(i);
 				l.setTrainingRate(trainingRate);
 				l.process(p);
 			}
 			//backward pass
 			for (int i = neurons.getLayerCount() - 1; i >= 0; --i) {
-				Layer l = neurons.getLayer(i);
+				NeuralLayer l = neurons.getLayer(i);
 				l.calculateDelta(p);
 				l.setWeights(p);
 			}

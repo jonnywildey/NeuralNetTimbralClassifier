@@ -6,7 +6,7 @@ import java.util.Arrays;
 import filemanager.CSVReader;
 
 
-public class MLIrisData  {
+public class MultiLayerNet  {
 
 	private Integer inputCount; //number of input vectors
 	private Integer outputCount; //number of outputs
@@ -22,7 +22,7 @@ public class MLIrisData  {
 	private boolean debug; //prints even more stuff when running
 	private double acceptableErrorRate; //if we achieve this error rate stop
 	
-	public MLIrisData() {
+	public MultiLayerNet() {
 		setDefaultParameters();
 	}
 	
@@ -33,7 +33,7 @@ public class MLIrisData  {
 	}
 
 	/** set up a neural network with default parameters and one hidden neuron per input vector **/
-	public MLIrisData(ArrayList<Pattern> trainingPatterns, LayerStructure ls) {
+	public MultiLayerNet(ArrayList<Pattern> trainingPatterns, LayerStructure ls) {
 		this.setTrainingPatterns(trainingPatterns);
 		this.setLayerStructure(ls);;
 		this.setDefaultParameters();
@@ -207,7 +207,7 @@ public class MLIrisData  {
 		e.setDebug(debug); e.setVerbose(verbose);
 		e.runValidationEpoch();
 		if (verbose){
-			System.out.println("Correct Pattern Rate: " + e.getConfusionMatrix().getErrorRate(this.testingPatterns.size()));
+			System.out.println("Incorrect Pattern Rate: " + e.getConfusionMatrix().getErrorRate(this.testingPatterns.size()));
 		}
 		if (e.getConfusionMatrix().getErrorRate(this.testingPatterns.size()) == 0) { //perfect
 			if (verbose) {System.out.println("Perfect Validation Score!");}

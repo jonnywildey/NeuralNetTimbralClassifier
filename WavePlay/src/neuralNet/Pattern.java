@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Pattern {
 	//protected ArrayList<Double> inputArray;
-	protected ArrayList<NeuralComponent> inputArray;
+	protected ArrayList<InputShell> inputArray;
 	protected ArrayList<Double> targetArray;
 	protected ArrayList<Double> errorList;
 	protected Integer id;
@@ -14,7 +14,7 @@ public class Pattern {
 	}
 	
 	public Pattern(ArrayList<Double> DoubleArray, ArrayList<Double> targetArray, Integer id) {
-		inputArray = new ArrayList<NeuralComponent>();
+		inputArray = new ArrayList<InputShell>();
 		for (Double f: DoubleArray) { //set inputshell array
 			inputArray.add(new InputShell(f));
 		}
@@ -38,6 +38,7 @@ public class Pattern {
 		int answer = 999;
 		for (int i = 0; i < this.inputArray.size(); ++i) {
 			if (targetArray.get(i) == 1) {
+				//System.out.println(i + " " + this.targetArray.toString());
 				answer = i;
 				break;
 			}

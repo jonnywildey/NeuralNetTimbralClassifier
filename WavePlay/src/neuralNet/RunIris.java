@@ -41,13 +41,13 @@ public class RunIris {
 		System.out.println("TP" + testPatterns.toString());
 		// checking multilayer stuff
 		LayerStructure ls = new LayerStructure(testPatterns);
-		ls.addHiddenLayer(10);
+		//ls.addHiddenLayer(10);
 		ls.addHiddenLayer(5);
-		ls.addHiddenLayer(4);
+		//ls.addHiddenLayer(4);
 		if (verbose) {System.out.println(ls.toString());}
 		
 		
-		MLIrisData id = new MLIrisData(); //Make a net;
+		MultiLayerNet id = new MultiLayerNet(); //Make a net;
 		id.setLayerStructure(ls);
 		id.setTrainingPatterns(testPatterns.getTrainingPatterns()); //add training patterns
 		id.setTestingPatterns(testPatterns.getTestingPatterns()); //and testing
@@ -57,7 +57,7 @@ public class RunIris {
 		id.setVerbose(verbose);
 		id.setShuffleTrainingPatterns(true);
 		id.setAcceptableErrorRate(0.1d);
-		id.setMaxEpoch(1000);
+		id.setMaxEpoch(100);
 		id.runEpoch();
 		//run validation
 		id.setTestingPatterns(testPatterns.getValidationPatterns());
