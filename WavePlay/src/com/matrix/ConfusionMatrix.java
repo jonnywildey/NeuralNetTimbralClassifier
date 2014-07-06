@@ -59,11 +59,11 @@ public class ConfusionMatrix extends Matrix {
 						}
 					}
 			}
-		//System.out.println(rightCount + " " + wrongCount);
 		
 		if (rightCount + wrongCount < total) {
-			return total / rightCount;
+			return (total / rightCount) - 1;
 		} else {
+			
 			return wrongCount / rightCount;
 		}
 		

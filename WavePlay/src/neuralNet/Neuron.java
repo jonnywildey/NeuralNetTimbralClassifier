@@ -18,7 +18,6 @@ public class Neuron extends NeuralComponent{
 	public Neuron( Double bias, Integer id, int inputCount, int layer) {
 		this.bias = bias;
 		this.weightList = new ArrayList<Double>(inputCount + 1);
-		this.randomWeight(inputCount);
 		this.id = id;
 		this.learning = true;	
 		this.layer = layer;

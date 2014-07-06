@@ -1,5 +1,7 @@
 package neuralNet;
 
+import java.util.Random;
+
 
 public class LayerList {
 	private NeuralLayer firstLayer;
@@ -92,6 +94,33 @@ public class LayerList {
 			}
 		}
 		
+	}
+	
+	public long setInitialWeights(Pattern p, double bias, long seed) {
+		Random r = new Random(seed);
+		NeuralLayer l = this.firstLayer;
+		double factor = 0.1;
+		while (l != null) {
+			for (Neuron n : l.neurons) {
+				if (l.isFirst()) {
+					for (int i = 0; i < p.inputArray.size(); ++i) {
+						n.weightList.add(r.nextDouble() * factor);
+					}
+				} else {
+					for (int i = 0; i < l.inputLayer.neuronCount; ++i) {
+						n.weightList.add(r.nextDouble() * factor);
+					}
+				}
+				n.weightList.add(bias);
+				//System.out.println(n.toString());
+			}
+			l = l.outputLayer;
+		}
+		return seed;
+	}
+	
+	public long setInitialWeights(Pattern p, double bias) {
+		return setInitialWeights(p, bias, System.currentTimeMillis());
 	}
 
 	

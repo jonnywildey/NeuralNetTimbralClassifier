@@ -87,8 +87,6 @@ public class NeuralLayer {
 				double sum = 0;
 				for (int i = 0; i < p.inputArray.size(); ++i) {
 					sum += (p.inputArray.get(i).getValue() * n.weightList.get(i)); 
-					//System.out.println("input: " + p.inputArray.get(i).getValue() +
-					//" current weight: " + n.weightList.get(i) + " sum: " + sum);
 				} 
 				//and bias
 				sum += n.weightList.get(n.weightList.size() - 1);

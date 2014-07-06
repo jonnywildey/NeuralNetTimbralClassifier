@@ -49,19 +49,23 @@ public class RunIris {
 		
 		MultiLayerNet id = new MultiLayerNet(); //Make a net;
 		id.setLayerStructure(ls);
-		id.setTrainingPatterns(testPatterns.getTrainingPatterns()); //add training patterns
-		id.setTestingPatterns(testPatterns.getTestingPatterns()); //and testing
+		id.setTestPatterns(testPatterns);
 		id.setDebug(false);
 		id.initialiseNeurons();
-
 		id.setVerbose(verbose);
 		id.setShuffleTrainingPatterns(true);
 		id.setAcceptableErrorRate(0.1d);
 		id.setMaxEpoch(100);
-		id.runEpoch();
+		long seed2 = id.initialiseRandomWeights();
+		
+		try {
+			id.runEpoch();
+			id.validate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		//run validation
-		id.setTestingPatterns(testPatterns.getValidationPatterns());
-		id.validate();
+		
 		
 		
 

@@ -23,7 +23,7 @@ public class Epoch {
 	
 	public Epoch(ArrayList<Pattern> trainingPatterns,
 			ArrayList<Pattern> testingPatterns, LayerList neurons,
-			Double trainingRate) {
+			Double trainingRate, boolean verbose, boolean debug) {
 		this.neurons = neurons;
 		this.trainingPatterns = trainingPatterns;
 		this.testingPatterns = testingPatterns;
@@ -31,6 +31,8 @@ public class Epoch {
 		this.errorAmount = new ArrayList<Double>();
 		this.errorList = new ArrayList<Double>();
 		this.rmsError = new ArrayList<Double>();
+		this.verbose = verbose;
+		this.debug = debug;
 		//set up lists. only useful for error based epochs
 		for (int i = 0; i < neurons.getOutputCount(); ++i) { //is only last correct?
 			this.errorAmount.add(0d);
