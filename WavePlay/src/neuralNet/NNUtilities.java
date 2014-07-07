@@ -333,6 +333,11 @@ public  class NNUtilities {
 	/** must be arraylist because generics suck **/
 	public static <T> ArrayList<T>  knuthShuffle(ArrayList<T> set, long seed) {
 		Random r = new Random(seed);
+		return knuthShuffle(set, r);
+	}
+	
+	/** must be arraylist because generics suck **/
+	public static <T> ArrayList<T>  knuthShuffle(ArrayList<T> set, Random r) {
 		ArrayList<T> holder = new ArrayList<T>(1); //ugh
 		int j = 0;
 		for (int i = set.size() - 1; i > 0; --i) {
@@ -344,6 +349,8 @@ public  class NNUtilities {
 		}
 		return set;
 	}
+
+
 
 
 	

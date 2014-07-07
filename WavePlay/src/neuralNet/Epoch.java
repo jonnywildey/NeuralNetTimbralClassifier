@@ -1,6 +1,7 @@
 package neuralNet;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.matrix.ConfusionMatrix;
 
@@ -15,24 +16,32 @@ public class Epoch {
 	protected ConfusionMatrix confusionMatrix;
 	protected boolean debug;
 	protected boolean verbose;
+	protected Random shuffleRandom;
+	private boolean addMaxOutputNeuron;
 	public Double meanError;
 	
 	public Epoch() {
 		this.trainingPatterns = new ArrayList<Pattern>();
+		this.testingPatterns = new ArrayList<Pattern>();
+		this.errorAmount = new ArrayList<Double>();
+		this.errorList = new ArrayList<Double>();
+		this.rmsError = new ArrayList<Double>();
+		this.shuffleRandom = new Random();
 	}
+	
 	
 	public Epoch(ArrayList<Pattern> trainingPatterns,
 			ArrayList<Pattern> testingPatterns, LayerList neurons,
 			Double trainingRate, boolean verbose, boolean debug) {
+		this();
 		this.neurons = neurons;
 		this.trainingPatterns = trainingPatterns;
 		this.testingPatterns = testingPatterns;
 		this.trainingRate = trainingRate;
-		this.errorAmount = new ArrayList<Double>();
-		this.errorList = new ArrayList<Double>();
-		this.rmsError = new ArrayList<Double>();
 		this.verbose = verbose;
 		this.debug = debug;
+		this.addMaxOutputNeuron = true;
+		
 		//set up lists. only useful for error based epochs
 		for (int i = 0; i < neurons.getOutputCount(); ++i) { //is only last correct?
 			this.errorAmount.add(0d);
@@ -48,15 +57,27 @@ public class Epoch {
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
-
+	
+	public void setShuffleSeed(long seed) {
+		shuffleRandom.setSeed(seed);
+	}
 
 	public ConfusionMatrix getConfusionMatrix() {
 		return confusionMatrix;
 	}
 
 	public void shuffleTrainingPatterns() {
-		this.trainingPatterns = NNUtilities.knuthShuffle(this.trainingPatterns);
+		Pattern holder = null;//ugh
+		int j = 0;
+		for (int i = trainingPatterns.size() - 1; i > 0; --i) {
+			j = (int) Math.rint(shuffleRandom.nextDouble() * i); //random number
+			holder = (trainingPatterns.get(j));
+			trainingPatterns.set(j, trainingPatterns.get(i));
+			trainingPatterns.set(i, holder);
+		}
+		
 	}
+	
 
 	public void addTrainingPattern(Pattern trainingPattern) {
 		trainingPatterns.add(trainingPattern);
@@ -77,21 +98,43 @@ public class Epoch {
 				l.setTrainingRate(trainingRate);
 				l.process(p);
 			}
-			//System.out.println(p.toString());
-			for (Neuron n : neurons.getLastLayer().neurons) {
-				int roundedOut = (int)Math.rint(n.output);
-				if (roundedOut == 1) {
-					//System.out.println("***\n" + n.id + "\n" + n.output + "\n" + p.getTargetNumber());
-					confusionMatrix.addToCell(n.id, p.getTargetNumber());
-				}
+			if (addMaxOutputNeuron) {
+				addMax(p);
+			} else {
+				addRounded(p);
 			}
 		}
-		
 		if (verbose) {
 			System.out.println(confusionMatrix.toString());
 		}
 		return confusionMatrix;	
 	}
+	
+	/** add neuron outputs > 0.5 **/
+	public void addRounded(Pattern p) {
+		for (Neuron n : neurons.getLastLayer().neurons) {
+			int roundedOut = (int)Math.rint(n.output);
+			if (roundedOut == 1) {
+				confusionMatrix.addToCell(n.id, p.getTargetNumber()); 
+				//Neuron Row, Class Column
+			}
+		}
+	}
+	
+	public void addMax(Pattern p) {
+		double max = 0;
+		int nid = 0;
+		for (Neuron n : neurons.getLastLayer().neurons) {
+			if (n.output > max) {
+					max = n.output;
+					nid = n.id;
+			}
+		}
+		confusionMatrix.addToCell(nid, p.getTargetNumber());
+		//Neuron Row, Class Column
+	}
+	
+	
 	
 	
 	

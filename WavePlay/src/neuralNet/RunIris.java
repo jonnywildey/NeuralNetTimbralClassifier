@@ -21,8 +21,6 @@ public class RunIris {
 	}
 	
 	public static void main(String[] args) {
-		//generate random seed
-		long seed = System.currentTimeMillis();
 		FileHandler fh;
 		try {
 			fh = new FileHandler("fileDemo.txt");
@@ -34,14 +32,10 @@ public class RunIris {
 			logger.log(Level.CONFIG, "TESTING");
 			logger.log(Level.FINER, "Ytfgh");
 			logger.log(Level.ALL, "TESTING2");
-			
 		} catch (Exception e) {
 			e.printStackTrace();;
 		} 
-		
-		
-		
-		
+		/**
 		//check shuffle
 		int n = 100;
 		ArrayList<Integer> ints = new ArrayList<Integer>(100);
@@ -50,48 +44,16 @@ public class RunIris {
 		}
 		ints = NNUtilities.knuthShuffle(ints);
 		System.out.println(ints.toString());
-		
-		
+		**/
 		//Make Iris data
 		boolean verbose = true;
-		String file = "/Users/Jonny/Documents/Timbre/NN/iris.float.txt";
-		//String file = "/Users/Jonny/Documents/Timbre/NN/2BitOR.txt";
-		CSVReader sr = new CSVReader(file);
-		sr.readFile();
-		double[][] arr = sr.makeDoubleArray();
-		arr = NNUtilities.removeNulls(arr, verbose); //remove null rows
-		//System.out.println(Arrays.deepToString(arr));
-		NNUtilities.createTargetConversionTable(arr, verbose); //see how bit array relates to original
-		//separate pattern into training, testing and validation into 3 1 1 ratio
-		ArrayList<Pattern> patterns = NNUtilities.createPatterns(arr, false);
-		TestPatterns testPatterns = new TestPatterns(patterns, seed);
-		System.out.println("TP" + testPatterns.toString());
-		// checking multilayer stuff
-		LayerStructure ls = new LayerStructure(testPatterns);
-		//ls.addHiddenLayer(10);
-		ls.addHiddenLayer(5);
-		//ls.addHiddenLayer(4);
-		if (verbose) {System.out.println(ls.toString());}
+		long seed = System.currentTimeMillis();
+		TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
+		int runCount = 30;
+		MultiLayerNet bestNN = runNets(runCount, testPatterns,verbose);
+		System.out.println(bestNN.toString());
 		
-		
-		MultiLayerNet id = new MultiLayerNet(); //Make a net;
-		id.setLayerStructure(ls);
-		id.setTestPatterns(testPatterns);
-		id.setDebug(false);
-		id.initialiseNeurons();
-		id.setVerbose(verbose);
-		id.setShuffleTrainingPatterns(true);
-		id.setAcceptableErrorRate(0.1d);
-		id.setMaxEpoch(100);
-		long seed2 = id.initialiseRandomWeights();
-		
-		try {
-			id.runEpoch();
-			id.validate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		//run validation
+		/**
 		// Serialization code
         try {
             FileOutputStream fileOut = new FileOutputStream("testID.ser");
@@ -102,7 +64,6 @@ public class RunIris {
         } catch (IOException i) {
             i.printStackTrace();
         }
-		
      // De-serialization code
         @SuppressWarnings("unused")
         MultiLayerNet mln = null;
@@ -118,15 +79,73 @@ public class RunIris {
             ioe.printStackTrace();
         } catch (ClassNotFoundException cnfe) {
             cnfe.printStackTrace();
-        }
-		
-		
-		
-
-			
-			
-			
-		
+        } **/
 	}
+	
+	public static MultiLayerNet config(MultiLayerNet nn, TestPatterns testPatterns, 
+										boolean verbose, long seed2, long seed3) {
+		LayerStructure ls = new LayerStructure(testPatterns);
+		ls.addHiddenLayer(2);
+		nn.setLayerStructure(ls);
+		nn.setTestPatterns(testPatterns);
+		nn.setDebug(false);
+		nn.initialiseNeurons();
+		nn.setVerbose(verbose);
+		nn.setAcceptableErrorRate(0.1d);
+		nn.setMaxEpoch(10000);
+		nn.initialiseRandomWeights(seed2);
+		nn.setShuffleTrainingPatterns(true, seed3);
+		return nn;
+	}
+	
+	public static TestPatterns getTestPatterns(String file, boolean verbose, long seed) {
+		CSVReader sr = new CSVReader(file);
+		sr.readFile();
+		double[][] arr = sr.makeDoubleArray();
+		arr = NNUtilities.removeNulls(arr, verbose); //remove null rows
+		//System.out.println(Arrays.deepToString(arr));
+		NNUtilities.createTargetConversionTable(arr, verbose); //see how bit array relates to original
+		//separate pattern into training, testing and validation into 3 1 1 ratio
+		ArrayList<Pattern> patterns = NNUtilities.createPatterns(arr, false);
+		TestPatterns testPatterns = new TestPatterns(patterns, seed);
+		System.out.println("TP" + testPatterns.toString());
+		return testPatterns;
+	}
+	
+	public static MultiLayerNet runNets(int runCount, TestPatterns testPatterns, 
+											boolean verbose) {
+		
+		MultiLayerNet[] nns = new MultiLayerNet[runCount];
+		
+		for (int i = 0; i < runCount; ++i) {
+			long seed = System.currentTimeMillis();
+			long seed2 = System.currentTimeMillis();
+			nns[i] = config(new MultiLayerNet(), testPatterns, verbose, seed, seed2); //Make a net;
+			try {
+				nns[i].runEpoch();
+				nns[i].validate();
+				System.out.println("NN: " + i + " Error: " + nns[i].getErrorRate());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return pickBestNet(nns);		
+	}
+	
+	public static MultiLayerNet pickBestNet(MultiLayerNet[] nns) {
+		MultiLayerNet nn = null;
+		double er = Double.MAX_VALUE;
+		for (MultiLayerNet mln : nns) {
+			if (mln.getErrorRate() < er) {
+				er = mln.getErrorRate();
+				nn = mln;
+			}
+			if (er == 0) {
+				break;
+			}
+		}
+		return nn;
+	}
+	
 
 }

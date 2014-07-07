@@ -1,11 +1,9 @@
 package neuralNet;
 
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+
 
 import exceptions.*;
 
@@ -25,7 +23,11 @@ public class MultiLayerNet  implements Serializable{
 	private TestPatterns testPatterns;
 	private Double trainingRate; // how much to push neurons by. Typically around 0.1
 	private boolean verbose; //prints a lot of stuff when running
+	private double errorRate;
+	private long shuffleSeed;
+	private boolean matthews;
 	
+
 	public MultiLayerNet() {
 		setDefaultParameters();
 	}
@@ -55,29 +57,48 @@ public class MultiLayerNet  implements Serializable{
 
 	public  void runEpoch() throws Exception {
 		ready();
-		/* make epoch */
 		Epoch e = new Epoch(testPatterns.getTrainingPatterns(), testPatterns.getTestingPatterns(), 
 								neuronLayers, trainingRate, verbose, debug);
+		e.setShuffleSeed(shuffleSeed);
+		//run epochs
 		for (int i = 0; i < maxEpoch; ++i) {
-			if (this.shuffleTrainingPatterns) {e.shuffleTrainingPatterns();}
+			if (this.shuffleTrainingPatterns) {
+				e.shuffleTrainingPatterns();
+				}
 			if (verbose){System.out.println("\n******** EPOCH " + (i + 1) + " ********\n");}
 			e.runEpoch();
 			if (debug) {System.out.println(e.toString());}
 			e.runValidationEpoch();
-			double er = getErrorRate(this.testPatterns.getTestingPatterns(), e);
+			double er = 1;
+			if (matthews) {
+				er = calculateMatthews(this.testPatterns.getTestingPatterns(), e);
+			} else {
+				er = calculateErrorRate(this.testPatterns.getTestingPatterns(), e);
+			}
 			if (er == 0) { //perfect
-				if (verbose) {System.out.println("Perfect Test Score!");}
+				if (verbose) {System.out.println("Perfect Test Score!");}		
 				break;
 			}
+			this.errorRate = er;
 		}
 	}
 	
-	public double getErrorRate(ArrayList<Pattern> patterns, Epoch e) {
+	/** Kind of a home-brewed error rate **/
+	public double calculateErrorRate(ArrayList<Pattern> patterns, Epoch e) {
 		int size = patterns.size();
 		double er = e.getConfusionMatrix().getErrorRate(size);
 		if (verbose) {
 			System.out.println("Error: " + er +" Total: " + 
 								e.getConfusionMatrix().getTotal() + " of " + size);
+		}
+		return er;
+	}
+	
+	/** get Matthews Coefficient **/
+	public double calculateMatthews(ArrayList<Pattern> patterns, Epoch e) {
+		double er = e.getConfusionMatrix().matthewsCoefficient();
+		if (verbose) {
+			System.out.println("Error: " + er);
 		}
 		return er;
 	}
@@ -90,14 +111,23 @@ public class MultiLayerNet  implements Serializable{
 		Epoch e = new Epoch(null, testPatterns.getValidationPatterns(), neuronLayers, trainingRate, verbose, debug);
 		e.setDebug(debug); e.setVerbose(verbose);
 		e.runValidationEpoch();
-		double er = getErrorRate(this.testPatterns.getTestingPatterns(), e);
+		double er = 1;
+		if (matthews) {
+			er = calculateMatthews(this.testPatterns.getTestingPatterns(), e);
+		} else {
+			er = calculateErrorRate(this.testPatterns.getTestingPatterns(), e);
+		}
+		
 		if (er == 0) { //perfect
 			if (verbose) {System.out.println("Perfect Validation Score!");}
 		}
+		this.errorRate = er;
 	}
 	
 	public String toString() {
-		return this.layerStructure.toString() + this.neuronLayers.toString();
+		return this.layerStructure.toString() + "\n" + 
+				this.neuronLayers.toString() + "\nError Rate: " +
+				this.errorRate;
 	}
 	
 	public double getAcceptableErrorRate() {
@@ -128,6 +158,14 @@ public class MultiLayerNet  implements Serializable{
 		return trainingRate;
 	}
 
+	public TestPatterns getTestPatterns() {
+		return testPatterns;
+	}
+
+	public double getErrorRate() {
+		return errorRate;
+	}
+
 	public void setAcceptableErrorRate(double acceptableErrorRate) {
 		this.acceptableErrorRate = acceptableErrorRate;
 	}
@@ -149,6 +187,7 @@ public class MultiLayerNet  implements Serializable{
 		shuffleTrainingPatterns = false;
 		this.verbose = false;
 		this.debug = false;
+		this.matthews = true;
 	}
 	
 	public  void setInputCount(Integer inputCount) {
@@ -164,12 +203,28 @@ public class MultiLayerNet  implements Serializable{
 		this.maxEpoch = maxEpoch;
 	}
 	
+	public boolean isMatthews() {
+		return matthews;
+	}
+
+	public void setMatthews(boolean matthews) {
+		this.matthews = matthews;
+	}
+
 	public  void setOutputCount(Integer outputCount) {
 		this.outputCount = outputCount;
 	}
 
-	public void setShuffleTrainingPatterns(boolean shuffleTrainingPatterns) {
+	public long setShuffleTrainingPatterns(boolean shuffleTrainingPatterns) {
+		long seed = System.currentTimeMillis();
 		this.shuffleTrainingPatterns = shuffleTrainingPatterns;
+		this.shuffleSeed = seed;
+		return seed;
+	}
+	
+	public void setShuffleTrainingPatterns(boolean shuffleTrainingPatterns, long seed) {
+		this.shuffleTrainingPatterns = shuffleTrainingPatterns;
+		this.shuffleSeed = seed;
 	}
 	
 	/** sets and initialises training patterns **/
@@ -184,6 +239,14 @@ public class MultiLayerNet  implements Serializable{
 	
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+	}
+	
+	public long getShuffleSeed() {
+		return shuffleSeed;
+	}
+
+	public void setShuffleSeed(long shuffleSeed) {
+		this.shuffleSeed = shuffleSeed;
 	}
 	
 	public boolean isDebug() {
