@@ -24,8 +24,9 @@ public class MultiLayerNet  implements Serializable{
 	private Double trainingRate; // how much to push neurons by. Typically around 0.1
 	private boolean verbose; //prints a lot of stuff when running
 	private double errorRate;
+	private double validationErrorRate; 
 	private long shuffleSeed;
-	private boolean matthews;
+	private boolean matthews; //whether to use the matthews coefficient for testing
 	
 
 	public MultiLayerNet() {
@@ -61,6 +62,7 @@ public class MultiLayerNet  implements Serializable{
 								neuronLayers, trainingRate, verbose, debug);
 		e.setShuffleSeed(shuffleSeed);
 		//run epochs
+		double er = 1;
 		for (int i = 0; i < maxEpoch; ++i) {
 			if (this.shuffleTrainingPatterns) {
 				e.shuffleTrainingPatterns();
@@ -69,7 +71,6 @@ public class MultiLayerNet  implements Serializable{
 			e.runEpoch();
 			if (debug) {System.out.println(e.toString());}
 			e.runValidationEpoch();
-			double er = 1;
 			if (matthews) {
 				er = calculateMatthews(this.testPatterns.getTestingPatterns(), e);
 			} else {
@@ -79,8 +80,8 @@ public class MultiLayerNet  implements Serializable{
 				if (verbose) {System.out.println("Perfect Test Score!");}		
 				break;
 			}
-			this.errorRate = er;
 		}
+		this.errorRate = er;
 	}
 	
 	/** Kind of a home-brewed error rate **/
@@ -121,13 +122,14 @@ public class MultiLayerNet  implements Serializable{
 		if (er == 0) { //perfect
 			if (verbose) {System.out.println("Perfect Validation Score!");}
 		}
-		this.errorRate = er;
+		this.validationErrorRate = er;
 	}
 	
 	public String toString() {
 		return this.layerStructure.toString() + "\n" + 
 				this.neuronLayers.toString() + "\nError Rate: " +
-				this.errorRate;
+				this.errorRate + "\nValidation Error Rate: " +
+				this.validationErrorRate;
 	}
 	
 	public double getAcceptableErrorRate() {
@@ -164,6 +166,10 @@ public class MultiLayerNet  implements Serializable{
 
 	public double getErrorRate() {
 		return errorRate;
+	}
+
+	public double getValidationErrorRate() {
+		return validationErrorRate;
 	}
 
 	public void setAcceptableErrorRate(double acceptableErrorRate) {

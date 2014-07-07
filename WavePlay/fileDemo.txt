@@ -1,6 +1,6 @@
-Jul 7, 2014 9:06:45 PM neuralNet.RunIris main
+Jul 7, 2014 9:23:53 PM neuralNet.RunIris main
 CONFIG: TESTING
-Jul 7, 2014 9:06:45 PM neuralNet.RunIris main
+Jul 7, 2014 9:23:53 PM neuralNet.RunIris main
 FINER: Ytfgh
-Jul 7, 2014 9:06:45 PM neuralNet.RunIris main
+Jul 7, 2014 9:23:53 PM neuralNet.RunIris main
 ALL: TESTING2

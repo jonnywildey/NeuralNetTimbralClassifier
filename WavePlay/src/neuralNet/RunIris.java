@@ -136,7 +136,7 @@ public class RunIris {
 		MultiLayerNet nn = null;
 		double er = Double.MAX_VALUE;
 		for (MultiLayerNet mln : nns) {
-			if (mln.getErrorRate() < er) {
+			if ((mln.getErrorRate() + mln.getValidationErrorRate()) < er) {
 				er = mln.getErrorRate();
 				nn = mln;
 			}
