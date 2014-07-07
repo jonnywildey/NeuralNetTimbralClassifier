@@ -51,20 +51,18 @@ public class ConfusionMatrix extends Matrix {
 	
 	public double matthewsCoefficient(int col) {
 		double truePos = (Integer)array[col][col];
-		double trueNeg = getTrueNeg();
+		double trueNeg = getCount() - truePos;
 		double falsePos = getFalsePositives(col);
 		double falseNeg = getFalseNegatives(col);
 		Double mat = 0d;
 		//System.out.println("tp " + truePos + " tn " + trueNeg + 
 		//					" fp " + falsePos + " fn " + falseNeg);
-		mat = (truePos * trueNeg) / ((truePos + falseNeg) * (truePos + falsePos) *
-									(trueNeg + falseNeg) * (trueNeg + falsePos));
-		if (mat.isNaN()) {
-			return 0; // 0 error seems to cause NaN...
-		} else {
-			return mat;
-		}
-		
+		double th = (truePos * trueNeg) - (falsePos * falseNeg);
+		double bh = ((truePos + falseNeg) * (truePos + falsePos) *
+				(trueNeg + falseNeg) * (trueNeg + falsePos));
+		bh = (bh == 0) ? 1 : bh;
+		mat = th / Math.pow(bh, 0.5);
+		return mat;
 	}
 	
 	public double matthewsCoefficient() {
@@ -95,19 +93,8 @@ public class ConfusionMatrix extends Matrix {
 		return total;
 	}
 	
-	private int getTrueNeg() {
-		int total = 0;
-		for (int i = 0; i < array.length; ++i) {
-			for (int j = 0; j < array.length; ++j) {
-				if (j != i) {
-					total += (Integer)array[i][j];
-				}
-			}
-		}
-		return total;
-	}
 	
-	/** returns rate of correct classifications to incorrect (i.e. 1 is perfect)**/
+	/** returns rate of incorrect classifications to correct (i.e. 0 is perfect)**/
 	public double getErrorRate(double total) {
 		double rightCount = 0;
 		double wrongCount = 0;

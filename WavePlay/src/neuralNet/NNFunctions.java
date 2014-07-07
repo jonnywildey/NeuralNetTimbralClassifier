@@ -28,7 +28,12 @@ public class NNFunctions {
 		for (double d : values) {
 			total += d;
 		}
-		return total / values.length;
+		if (total == 0) {
+			return 0;
+		} else {
+			return total / values.length;
+		}
+		
 	}
 	
 	public static double average(double[][] values) {

@@ -76,7 +76,7 @@ public class MultiLayerNet  implements Serializable{
 			} else {
 				er = calculateErrorRate(this.testPatterns.getTestingPatterns(), e);
 			}
-			if (er == 0) { //perfect
+			if ((matthews & er == 1) | (!matthews & er == 0)) { //perfect
 				if (verbose) {System.out.println("Perfect Test Score!");}		
 				break;
 			}
@@ -119,7 +119,7 @@ public class MultiLayerNet  implements Serializable{
 			er = calculateErrorRate(this.testPatterns.getTestingPatterns(), e);
 		}
 		
-		if (er == 0) { //perfect
+		if ((matthews & er == 1) | (!matthews & er == 0)) { //perfect
 			if (verbose) {System.out.println("Perfect Validation Score!");}
 		}
 		this.validationErrorRate = er;

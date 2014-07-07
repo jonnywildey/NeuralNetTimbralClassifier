@@ -48,7 +48,7 @@ public class RunIris {
 		//Make Iris data
 		boolean verbose = true;
 		long seed = System.currentTimeMillis();
-		TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
+		TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
 		int runCount = 30;
 		MultiLayerNet bestNN = runNets(runCount, testPatterns,verbose);
 		System.out.println(bestNN.toString());
@@ -85,14 +85,14 @@ public class RunIris {
 	public static MultiLayerNet config(MultiLayerNet nn, TestPatterns testPatterns, 
 										boolean verbose, long seed2, long seed3) {
 		LayerStructure ls = new LayerStructure(testPatterns);
-		ls.addHiddenLayer(2);
+		ls.addHiddenLayer(10);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
 		nn.setDebug(false);
 		nn.initialiseNeurons();
 		nn.setVerbose(verbose);
 		nn.setAcceptableErrorRate(0.1d);
-		nn.setMaxEpoch(10000);
+		nn.setMaxEpoch(1000);
 		nn.initialiseRandomWeights(seed2);
 		nn.setShuffleTrainingPatterns(true, seed3);
 		return nn;
@@ -134,10 +134,11 @@ public class RunIris {
 	
 	public static MultiLayerNet pickBestNet(MultiLayerNet[] nns) {
 		MultiLayerNet nn = null;
-		double er = Double.MAX_VALUE;
+		double er = 0;
 		for (MultiLayerNet mln : nns) {
-			if ((mln.getErrorRate() + mln.getValidationErrorRate()) < er) {
-				er = mln.getErrorRate();
+			double val = Math.abs(mln.getErrorRate() + mln.getValidationErrorRate());
+			if (val > er) {
+				er = mln.getErrorRate() + mln.getValidationErrorRate();
 				nn = mln;
 			}
 			if (er == 0) {
