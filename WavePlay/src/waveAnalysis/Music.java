@@ -24,7 +24,7 @@ public class Music {
 
 	public static String hzToPitch(double hz) {
 		int n = hzToMidiInt(hz);
-		String str = notes[n % 12] + String.valueOf((n / 12) - 1) ;
+		String str = notes[n % 12] + String.valueOf((n / 12) - 2) ;
 		return str;
 	}
 

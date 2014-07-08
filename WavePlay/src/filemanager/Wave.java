@@ -86,6 +86,16 @@ public class Wave {
 		}
 	}
 	
+	public byte[] getListChunk() {
+		//assume overall chunk size (0x4) is accurate?
+		System.out.println(this.bytes.length);
+		System.out.println(this.dataSize);
+		System.out.println(this.bytes.length - this.dataSize);
+		byte[] listChunk = (HexByte.getOffsetSubset(this.bytes, 44 + (int)this.dataSize, 
+							(long)(this.bytes.length - this.dataSize - 44)));
+		return listChunk;
+	}
+	
 	public String toString() {
 		if (!isEmpty()) {
 			StringBuffer sb = new StringBuffer(100);
@@ -166,6 +176,7 @@ public class Wave {
 		this.dataSize = HexByte.hexToDecimalUnsigned(dataChunk);
 		return this.dataSize;
 	}
+	
 	
 	public byte[] getData() {
 		byte[] data = HexByte.getOffsetSubset(this.bytes, 44, this.getDataSize());
