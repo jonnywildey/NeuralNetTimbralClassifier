@@ -3,7 +3,7 @@ package waveAnalysis;
 import java.io.File;
 import java.util.Arrays;
 
-import wavePlot.Controller;
+import plotting.WavController;
 import filemanager.ArrayStuff;
 import filemanager.ByteReader;
 import filemanager.HexByte;

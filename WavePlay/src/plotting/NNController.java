@@ -1,20 +1,20 @@
-package wavePlot;
+package plotting;
 import java.awt.*;
 import javax.swing.*;
 
 
-public class Controller {
+public class NNController {
 	
 	private Dimension size;
 	private long[][] signals;
 	
-	public Controller(long[][] signals) {
+	public NNController(long[][] signals) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.size = new Dimension(screenSize.width, screenSize.height / 3);
 		this.signals = signals;
 	}
 	
-	public Controller(long[][] signals, int width, int height) {
+	public NNController(long[][] signals, int width, int height) {
 		this.size = new Dimension(width, height);
 		this.signals = signals;
 	}
@@ -36,7 +36,7 @@ public class Controller {
 		//Variables
 		//String[] names = new String{""}; 
 		String[] axisLabels = {"", ""};
-		frame.getContentPane().add(new WavGraph(values, winSize, axisLabels));
+		frame.getContentPane().add(new PlotGraph(values, winSize, axisLabels));
 		//frame.pack();
 		frame.setVisible(true);
 	}

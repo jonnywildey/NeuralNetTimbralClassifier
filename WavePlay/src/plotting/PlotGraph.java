@@ -1,21 +1,23 @@
-package wavePlot;
-import java.awt.*;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collections;
+package plotting;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.LayoutManager;
 
-public class WavGraph extends JPanel {
-	
+import javax.swing.JPanel;
+
+import filemanager.ArrayStuff;
+
+public class PlotGraph extends JPanel {
+
 	protected long[][] values;
 	protected Dimension offsetSize;
 	protected Dimension size;
 	protected String[] axisLabels;
-	//Offset the size dimension so there's a margin
 	protected double marginOffset = 0.08;
 	protected double maxBar;
-	//Get dims of actual chart. Kind of redundant but my statement get messy otherwise
 	protected int widthness;
 	protected double wOffset;
 	protected int heightness;
@@ -24,9 +26,9 @@ public class WavGraph extends JPanel {
 	protected double wr;
 	protected double hOffset;
 	protected int half;
-	
-	public WavGraph(long[][] values, Dimension winSize, String[] axisLabels) {
-		
+
+	public PlotGraph(long[][] values, Dimension winSize, String[] axisLabels)  {
+		super();
 		this.values = values;
 		this.axisLabels = axisLabels;
 		size = winSize;
@@ -35,39 +37,23 @@ public class WavGraph extends JPanel {
 		widthness = size.width - (offsetSize.width * 2);
 		heightness = size.height - (offsetSize.height * 2);
 		//get bar value - height of chart ratio (so biggest value is at top of chart)
-		maxBar = (((heightness - offsetSize.height) / getMax(values)) * 0.5);
+		maxBar = (((heightness - offsetSize.height) / ArrayStuff.getMax(values)));
 		//System.out.println("max b " + maxBar);
 		rColors = colorArray(values.length);
 		wOffset = (winSize.getWidth() - widthness) / 2;
 		hOffset = (size.getHeight() - offsetSize.getHeight()) / 2;
-		//System.out.println("h offset " + hOffset);
 		wr = ((double)widthness / (double)values[0].length);
-		//System.out.println("wr " + wr);
 		this.half = (int)((size.height - offsetSize.height) * 0.5);
-		
-	}
-	
-	
-	private double getMax(long[][] vals) {
-		double max = 0;
-		for (long[] l: vals) {
-			for (int i = 0; i < l.length; ++i) {
-				if (Math.abs(l[i]) > max) {
-					max = Math.abs(l[i]);
-				}
-			}
 		}
-		return max;
-	}
-	
+
+
 	public Color getColor() {
 		/*returns a random color with alpha choice */
 		Color c = new Color((float)(Math.random()), 0.4f, 0.9f, 0.7f);
 		return c;
 	}
-	
 
-	private Color[] colorArray(int a) {
+	protected Color[] colorArray(int a) {
 		/*returns an array of colors */
 		float am = 1f / (float)a;
 		Color[] rcol = new Color[a];
@@ -76,21 +62,18 @@ public class WavGraph extends JPanel {
 			int x = Color.HSBtoRGB((i) * am, 0.8f, 0.8f);
 			Color c = new Color(x);
 			rcol[i] = new Color(c.getRed(), c.getGreen(), c.getBlue(), 40);
-
+	
 			
 		}
 		return rcol;
 	}
-	
-	private void drawCentredString(String str, int x, int y, Graphics2D g2d) {
-		int widthAlign = (int)((g2d.getFontMetrics().getStringBounds(str, g2d).getWidth()/2)); 
-		int heightAlign = (int)((g2d.getFontMetrics().getStringBounds(str, g2d).getHeight()/2)); 
-		g2d.drawString(str, x - widthAlign, y - heightAlign);
-	}
-	
-	
 
-
+	protected void drawCentredString(String str, int x, int y,
+			Graphics2D g2d) {
+				int widthAlign = (int)((g2d.getFontMetrics().getStringBounds(str, g2d).getWidth()/2)); 
+				int heightAlign = (int)((g2d.getFontMetrics().getStringBounds(str, g2d).getHeight()/2)); 
+				g2d.drawString(str, x - widthAlign, y - heightAlign);
+			}
 
 	public void paintComponent(Graphics g) {
 			super.paintComponent(g);
@@ -98,46 +81,29 @@ public class WavGraph extends JPanel {
 			super.paintComponent(g);
 			Graphics2D g2d = (Graphics2D) g;
 			drawBar(g2d);
-			
 	}
 	
-	/** converts amp value to graph value **/
-	public int ampValue(double c) {
-		 //System.out.println((int) (half - (c * maxBar)));
-		 return (int) (this.half - (c * maxBar));
-		
-	}
-	
-	public void drawBar(Graphics2D g2d) {
-		
+	private void drawLines(Graphics2D g2d) {
 		//Y axis
 		g2d.drawLine(offsetSize.width, heightness, offsetSize.width, offsetSize.height);
 		//X axis
 		g2d.drawLine(offsetSize.width, heightness, size.width - offsetSize.width, heightness);
-		g2d.drawLine(offsetSize.width, this.half, 
-						size.width - offsetSize.width, this.half);
 		//axis labels
 		drawCentredString(axisLabels[0], offsetSize.width, offsetSize.height, g2d);
 		drawCentredString(axisLabels[1], widthness + offsetSize.width, heightness, g2d);
+	}
 
-		//the wavs
-		//System.out.println("widthness" + widthness);
-		//System.out.println("values length " + values[0].length);
+	public void drawBar(Graphics2D g2d) {
+		drawLines(g2d);
 		int c = 0;
 		for(long[] av: values) {
 			g2d.setColor(rColors[c]);
 			for (int i = 0; i < av.length -1; ++i) {
-				g2d.drawLine((int)((i * wr) + wOffset), 
-							  ampValue(av[i]),  
-							 (int)(((i + 1) * wr) + wOffset), 
-							  ampValue(av[i + 1])
-							  );
-				//System.out.println((i * wr) + wOffset);
-				//System.out.println((int)values[i + 1] / 100);
+				g2d.drawLine((int)((i * wr) + wOffset), heightness - (int)(av[i]*maxBar),  
+							 (int)(((i + 1) * wr) + wOffset), heightness -  (int) (av[i + 1]*maxBar));
 			}
 			++c;
 		}
-		
 	}
-	
+
 }

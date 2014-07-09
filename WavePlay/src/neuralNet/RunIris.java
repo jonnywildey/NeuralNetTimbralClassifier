@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import plotting.NNController;
+import filemanager.ArrayStuff;
 import filemanager.CSVReader;
 
 public class RunIris {
@@ -21,80 +23,41 @@ public class RunIris {
 	}
 	
 	public static void main(String[] args) {
-		/** FileHandler fh;
-		try {
-			fh = new FileHandler("fileDemo.txt");
-			Logger logger = Logger.getLogger("New Log");
-			logger.addHandler(fh);
-			SimpleFormatter sf = new SimpleFormatter();
-			fh.setFormatter(sf);
-			logger.setLevel(Level.ALL);
-			logger.log(Level.CONFIG, "TESTING");
-			logger.log(Level.FINER, "Ytfgh");
-			logger.log(Level.ALL, "TESTING2");
-		} catch (Exception e) {
-			e.printStackTrace();;
-		} **/
-		/**
-		//check shuffle
-		int n = 100;
-		ArrayList<Integer> ints = new ArrayList<Integer>(100);
-		for (int i = 0; i < n; ++i) {
-			ints.add(i + 1);
-		}
-		ints = NNUtilities.knuthShuffle(ints);
-		System.out.println(ints.toString());
-		**/
+		
+
 		//Make Iris data
 		boolean verbose = true;
 		long seed = System.currentTimeMillis();
 		TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
-		int runCount = 5;
-		MultiLayerNet bestNN = runNets(runCount, testPatterns,verbose);
-		System.out.println(bestNN.toString());
+		int runCount = 1;
+		//MultiLayerNet bestNN = ManyNets.runNets(runCount, testPatterns,verbose);
+		//System.out.println(bestNN.toString());
 		
-		/**
-		// Serialization code
-        try {
-            FileOutputStream fileOut = new FileOutputStream("testID.ser");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(id);
-            out.close();
-            fileOut.close();
-        } catch (IOException i) {
-            i.printStackTrace();
-        }
-     // De-serialization code
-        @SuppressWarnings("unused")
-        MultiLayerNet mln = null;
-        try {
-            FileInputStream fileIn = new FileInputStream("testID.ser");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            mln = (MultiLayerNet) in.readObject();
-            in.close();
-            fileIn.close();
-            System.out.println(mln.toString());
-            
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } catch (ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
-        } **/
+		//crappy graph test
+		double[] dds = {0.1, 0.5, 0, 0.3, 0.4, 0.5};
+		
+		dds = ArrayStuff.normalizeDouble(dds, 400);
+		long[] la = ArrayStuff.doubleToLong(dds);
+		long[][] las = {la};
+		NNController nc = new NNController(las);
+		nc.makeChart();
+		
+
 	}
 	
 	public static MultiLayerNet config(MultiLayerNet nn, TestPatterns testPatterns, 
 										boolean verbose, long seed2, long seed3) {
 		LayerStructure ls = new LayerStructure(testPatterns);
 		//ls.addHiddenLayer(10);
-		ls.addHiddenLayer(10);
+		ls.addHiddenLayer(4);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
 		nn.setDebug(false);
 		nn.initialiseNeurons();
 		nn.setVerbose(verbose);
 		nn.setAcceptableErrorRate(0.1d);
-		nn.setMaxEpoch(10000);
+		nn.setMaxEpoch(1000);
 		nn.initialiseRandomWeights(seed2);
 		nn.setShuffleTrainingPatterns(true, seed3);
 		return nn;
@@ -114,40 +77,53 @@ public class RunIris {
 		return testPatterns;
 	}
 	
-	public static MultiLayerNet runNets(int runCount, TestPatterns testPatterns, 
-											boolean verbose) {
-		
-		MultiLayerNet[] nns = new MultiLayerNet[runCount];
-		
-		for (int i = 0; i < runCount; ++i) {
-			long seed = System.currentTimeMillis();
-			long seed2 = System.currentTimeMillis();
-			nns[i] = config(new MultiLayerNet(), testPatterns, verbose, seed, seed2); //Make a net;
-			try {
-				nns[i].runEpoch();
-				nns[i].validate();
-				System.out.println("NN: " + i + " Error: " + nns[i].getErrorRate());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return pickBestNet(nns);		
+	/** make sure output is .ser **/
+	public static void serialize(MultiLayerNet mln, String output) {
+		// Serialization code
+        try {
+            FileOutputStream fileOut = new FileOutputStream(output);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(mln);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
 	}
 	
-	public static MultiLayerNet pickBestNet(MultiLayerNet[] nns) {
-		MultiLayerNet nn = null;
-		double er = 0;
-		for (MultiLayerNet mln : nns) {
-			double val = Math.abs(mln.getErrorRate() + mln.getValidationErrorRate());
-			if (val > er) {
-				er = mln.getErrorRate() + mln.getValidationErrorRate();
-				nn = mln;
-			}
-			if (er == 0) {
-				break;
-			}
-		}
-		return nn;
+	public MultiLayerNet getFromSerial(String file) {
+		MultiLayerNet mln = null;
+        try {
+            FileInputStream fileIn = new FileInputStream(file);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            mln = (MultiLayerNet) in.readObject();
+            in.close();
+            fileIn.close();
+           // System.out.println(mln.toString());
+            
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } catch (ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+        } 
+        return mln;
+	}
+	
+	public static void logTesting() {
+		FileHandler fh;
+		try {
+			fh = new FileHandler("fileDemo.txt");
+			Logger logger = Logger.getLogger("New Log");
+			logger.addHandler(fh);
+			SimpleFormatter sf = new SimpleFormatter();
+			fh.setFormatter(sf);
+			logger.setLevel(Level.ALL);
+			logger.log(Level.CONFIG, "TESTING");
+			logger.log(Level.FINER, "Ytfgh");
+			logger.log(Level.ALL, "TESTING2");
+		} catch (Exception e) {
+			e.printStackTrace();;
+		} 
 	}
 	
 

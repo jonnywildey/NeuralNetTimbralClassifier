@@ -12,7 +12,6 @@ public class MultiLayerNet  implements Serializable{
 
 	private static final long serialVersionUID = -5601412683842445747L;
 	private double acceptableErrorRate; //if we achieve this error rate stop
-	private Double bias; // bias weight. Normally around -0.5
 	private boolean debug; //prints even more stuff when running
 	private Integer inputCount; //number of input vectors
 	private LayerStructure layerStructure; //constructor for the LayerList
@@ -23,8 +22,7 @@ public class MultiLayerNet  implements Serializable{
 	private TestPatterns testPatterns;
 	private Double trainingRate; // how much to push neurons by. Typically around 0.1
 	private boolean verbose; //prints a lot of stuff when running
-	private double errorRate;
-	private double validationErrorRate; 
+	private double matthewsCo;
 	private long shuffleSeed;
 	private boolean matthews; //whether to use the matthews coefficient for testing
 	
@@ -42,18 +40,18 @@ public class MultiLayerNet  implements Serializable{
 
 
 	public void initialiseNeurons() {
-		this.neuronLayers = new LayerList(this.layerStructure, bias, this.inputCount);
+		this.neuronLayers = new LayerList(this.layerStructure, this.inputCount);
 		if (debug) {
 			System.out.println(this.neuronLayers.toString());
 		}
 	}
 
 	public long initialiseRandomWeights() {
-		return neuronLayers.setInitialWeights(testPatterns.getTrainingPatterns().get(0), bias);
+		return neuronLayers.setInitialWeights(testPatterns.getTrainingPatterns().get(0));
 	}
 	
 	public long initialiseRandomWeights(long seed) {
-		return neuronLayers.setInitialWeights(testPatterns.getTrainingPatterns().get(0), bias, seed);
+		return neuronLayers.setInitialWeights(testPatterns.getTrainingPatterns().get(0), seed);
 	}
 
 	public  void runEpoch() throws Exception {
@@ -62,7 +60,9 @@ public class MultiLayerNet  implements Serializable{
 								neuronLayers, trainingRate, verbose, debug);
 		e.setShuffleSeed(shuffleSeed);
 		//run epochs
-		double er = 1;
+		double er = 0;
+		LayerList tally = null;
+		double currentMaxMC = 0;
 		for (int i = 0; i < maxEpoch; ++i) {
 			if (this.shuffleTrainingPatterns) {
 				e.shuffleTrainingPatterns();
@@ -71,17 +71,20 @@ public class MultiLayerNet  implements Serializable{
 			e.runEpoch();
 			if (debug) {System.out.println(e.toString());}
 			e.runValidationEpoch();
-			if (matthews) {
-				er = calculateMatthews(this.testPatterns.getTestingPatterns(), e);
-			} else {
-				er = calculateErrorRate(this.testPatterns.getTestingPatterns(), e);
+			er = calculateMatthews(this.testPatterns.getTestingPatterns(), e);
+			if(er > currentMaxMC) { //Should maybe be >
+				System.out.println(er + "  " + currentMaxMC);
+				System.out.println("Tally up: e: " + (i + 1));
+				currentMaxMC = er;
+				tally = new LayerList(this.neuronLayers);
+				tally.setEpoch(i + 1);
 			}
-			if ((matthews & er == 1) | (!matthews & er == 0)) { //perfect
-				if (verbose) {System.out.println("Perfect Test Score!");}		
-				break;
-			}
+			this.matthewsCo = er;
 		}
-		this.errorRate = er;
+		if (verbose) {
+			System.out.println("Best Result at Epoch: " + tally.getEpoch());
+			}		
+		this.neuronLayers = tally;
 	}
 	
 	/** Kind of a home-brewed error rate **/
@@ -99,18 +102,18 @@ public class MultiLayerNet  implements Serializable{
 	public double calculateMatthews(ArrayList<Pattern> patterns, Epoch e) {
 		double er = e.getConfusionMatrix().matthewsCoefficient();
 		if (verbose) {
-			System.out.println("Error: " + er);
+			System.out.println("Matthews: " + er);
 		}
 		return er;
 	}
 
 	
 	
-	public void validate() throws Exception {
+	public void runTestPatterns() throws Exception {
 		ready();
-		if (verbose) {System.out.println("\nValidating Network with validation patterns\n");}
+		if (verbose) {System.out.println("\n****RUNNING TEST PATTERNS****\n"
+				+ "Testing Network with test patterns\n");}
 		Epoch e = new Epoch(null, testPatterns.getValidationPatterns(), neuronLayers, trainingRate, verbose, debug);
-		e.setDebug(debug); e.setVerbose(verbose);
 		e.runValidationEpoch();
 		double er = 1;
 		if (matthews) {
@@ -122,23 +125,19 @@ public class MultiLayerNet  implements Serializable{
 		if ((matthews & er == 1) | (!matthews & er == 0)) { //perfect
 			if (verbose) {System.out.println("Perfect Validation Score!");}
 		}
-		this.validationErrorRate = er;
+		this.matthewsCo = er;
 	}
 	
 	public String toString() {
 		return this.layerStructure.toString() + "\n" + 
 				this.neuronLayers.toString() + "\nMatthews Coefficient: " +
-				this.errorRate + "\nValidation MC: " +
-				this.validationErrorRate;
+				this.matthewsCo;
 	}
 	
 	public double getAcceptableErrorRate() {
 		return acceptableErrorRate;
 	}
 
-	public  Double getBias() {
-		return bias;
-	}
 
 	public  Integer getInputCount() {
 		return inputCount;
@@ -165,20 +164,14 @@ public class MultiLayerNet  implements Serializable{
 	}
 
 	public double getErrorRate() {
-		return errorRate;
+		return matthewsCo;
 	}
 
-	public double getValidationErrorRate() {
-		return validationErrorRate;
-	}
 
 	public void setAcceptableErrorRate(double acceptableErrorRate) {
 		this.acceptableErrorRate = acceptableErrorRate;
 	}
 
-	public  void setBias(Double bias) {
-		this.bias = bias;
-	}
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
@@ -186,7 +179,6 @@ public class MultiLayerNet  implements Serializable{
 	}
 	
 	public void setDefaultParameters() {
-		bias = -0.5d;
 		maxEpoch = 1000;
 		trainingRate = 0.1d;
 		acceptableErrorRate = 0.1d;
@@ -298,28 +290,5 @@ public class MultiLayerNet  implements Serializable{
 	}
 	
 	
-	public  void runEpochWithErrorRate() {
-		/* make epoch */
-		for (int i = 0; i < maxEpoch; ++i) {
-			if (verbose){System.out.println("\n******** EPOCH " + (i + 1) + " ********\n");}
-			Epoch e = new Epoch(testPatterns.getTrainingPatterns(), 
-								null, neuronLayers, trainingRate, verbose, debug);
-			e.runEpoch();
-			if (debug) {System.out.println(e.toString());}
-			//check errors
-			double errors = e.meanError;
-			if (verbose) {System.out.println("mean error: " + errors);}
-			
-			if (errors <= acceptableErrorRate) {
-				if (verbose) {
-					System.out.println("Learnt!");
-					System.out.println(e.toString());
-					System.out.println("System has learnt after " + (i + 1) + " epochs");
-				}
-				break; 
-			}	
-
-		}
-	}
 
 }

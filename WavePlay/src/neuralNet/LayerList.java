@@ -9,6 +9,7 @@ public class LayerList implements Serializable {
 	private static final long serialVersionUID = 907430324885673987L;
 	private NeuralLayer firstLayer;
 	private int layerCount;
+	private int epoch;
 	
 
 	public LayerList() {
@@ -16,9 +17,15 @@ public class LayerList implements Serializable {
 	}
 	
 
-	public LayerList(LayerStructure layerStructure, Double bias, int inputCount) {
+	public LayerList(LayerStructure layerStructure, int inputCount) {
 		this();
-		this.initialiseList(layerStructure, bias, inputCount);
+		this.initialiseList(layerStructure, inputCount);
+	}
+	
+	/**Copy constructor **/
+	public LayerList(LayerList layerList) {
+		this.layerCount = layerList.layerCount;
+		this.firstLayer = new NeuralLayer(layerList.getFirstLayer());
 	}
 
 
@@ -53,13 +60,13 @@ public class LayerList implements Serializable {
 		return this.firstLayer;
 	}
 	
-	public void initialiseList(LayerStructure ls, double bias, int inputCount) {
+	public void initialiseList(LayerStructure ls, int inputCount) {
 		for (int i = 0; i < ls.getTotalLayers(); ++i) {
 			NeuralLayer l = new NeuralLayer();
 			l.neuronCount = ls.getLayerCount(i);
 			l.layerNumber = i;
 			this.addLayer(l);
-			l.initialiseLayer(bias, inputCount);	
+			l.initialiseLayer(inputCount);	
 		}
 	}
 	
@@ -79,7 +86,7 @@ public class LayerList implements Serializable {
 		sb.append("Layer List \n");
 		NeuralLayer l = this.firstLayer;
 		while (l != null) {
-			sb.append(l.toString() + "\n");
+			sb.append(l.toStringVerbose() + "\n");
 			l = l.outputLayer;
 		}
 		return sb.toString();
@@ -99,22 +106,22 @@ public class LayerList implements Serializable {
 		
 	}
 	
-	public long setInitialWeights(Pattern p, double bias, long seed) {
+	public long setInitialWeights(Pattern p, long seed) {
 		Random r = new Random(seed);
 		NeuralLayer l = this.firstLayer;
-		double factor = 0.1;
+		double factor = 0.2;
 		while (l != null) {
 			for (Neuron n : l.neurons) {
 				if (l.isFirst()) {
-					for (int i = 0; i < p.inputArray.size(); ++i) {
-						n.weightList.add(r.nextDouble() * factor);
+					for (int i = 0; i < p.inputArray.size() + 1; ++i) { //+ 1 for bias
+						n.weightList.add((r.nextDouble() * factor) - factor / 2);
 					}
 				} else {
-					for (int i = 0; i < l.inputLayer.neuronCount; ++i) {
-						n.weightList.add(r.nextDouble() * factor);
+					for (int i = 0; i < l.inputLayer.neuronCount + 1; ++i) {
+						n.weightList.add((r.nextDouble() * factor) - factor / 2);
 					}
 				}
-				n.weightList.add(bias);
+
 				//System.out.println(n.toString());
 			}
 			l = l.outputLayer;
@@ -122,8 +129,17 @@ public class LayerList implements Serializable {
 		return seed;
 	}
 	
-	public long setInitialWeights(Pattern p, double bias) {
-		return setInitialWeights(p, bias, System.currentTimeMillis());
+	public long setInitialWeights(Pattern p) {
+		return setInitialWeights(p, System.currentTimeMillis());
+	}
+
+
+	public void setEpoch(int epoch) {
+		this.epoch = epoch;
+	}
+	
+	public int getEpoch() {
+		return this.epoch;
 	}
 
 	

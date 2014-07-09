@@ -18,7 +18,24 @@ public class NeuralLayer implements Serializable {
 		layerNumber = 0;
 	}
 	
-	
+	/** Copy Constructor **/
+	public NeuralLayer(NeuralLayer neuralLayer) {
+		
+		this.neurons = new ArrayList<Neuron>();
+		for (Neuron n : neuralLayer.neurons) {
+			this.neurons.add(new Neuron(n));
+		}
+		this.neuronCount = this.neurons.size();
+		this.layerNumber = neuralLayer.layerNumber;
+		
+		if (neuralLayer.outputLayer != null) {
+			this.outputLayer = new NeuralLayer(neuralLayer.outputLayer);
+			this.outputLayer.inputLayer = this;
+		} 
+
+	}
+
+
 	/** returns true if this layer is last of network **/
 	public boolean isLast() {
 		if (this.outputLayer == null) {
@@ -36,15 +53,22 @@ public class NeuralLayer implements Serializable {
 		}
 	}
 	
-	public void initialiseLayer(double bias, int inputCount) {
+	public void initialiseLayer(int inputCount) {
 		int ic = (this.isFirst()) ? inputCount : this.inputLayer.neuronCount;
 		for (int i = 0; i < neuronCount; ++i) {
-			Neuron n = new Neuron(bias, i, ic, layerNumber);
+			Neuron n = new Neuron(i, ic, layerNumber);
 			neurons.add(n);
 		}
 	}
 	
 	public String toString() {
+		StringBuilder sb = new StringBuilder(); 
+		sb.append("Layer number: " + this.layerNumber);
+		sb.append(" Count " + this.neuronCount);
+		return sb.toString();
+	}
+	
+	public String toStringVerbose() {
 		StringBuilder sb = new StringBuilder(); 
 		sb.append("Layer number: " + this.layerNumber);
 		sb.append(" Count " + this.neuronCount);

@@ -2,7 +2,7 @@ package filemanager;
 
 import java.io.File;
 
-import wavePlot.Controller;
+import plotting.WavController;
 
 
 
@@ -64,14 +64,14 @@ public class Wave {
 	/** Makes a waveform graph **/
 	public void makeGraph() {
 		if (!isEmpty()) {
-			Controller c = new Controller(this.signals);
+			WavController c = new WavController(this.signals);
 			c.makeChart();
 		}
 	}
 	/** Makes a waveform graph of size specified **/
 	public void makeGraph(int width, int height) {
 		if (!isEmpty()) {
-			Controller c = new Controller(this.signals, width, height);
+			WavController c = new WavController(this.signals, width, height);
 			c.makeChart();
 		}
 	}
@@ -81,7 +81,7 @@ public class Wave {
 		long[][] sig = new long[1][];
 		sig[0] = this.signals[0];
 		if (!isEmpty() & channel < this.channel) {
-			Controller c = new Controller(sig);
+			WavController c = new WavController(sig);
 			c.makeChart();
 		}
 	}
