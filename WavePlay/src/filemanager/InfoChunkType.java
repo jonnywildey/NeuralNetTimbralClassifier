@@ -70,9 +70,16 @@ public class InfoChunkType {
 	public byte[] getData() {
 		return data;
 	}
-
+	
+	
+	/** this should be a multiple of 4. **/
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+	
+	public void setData(String str) {
+		this.data = HexByte.stringToBytes(str, 4);
+		this.dataLength = this.data.length;
 	}
 	
 	

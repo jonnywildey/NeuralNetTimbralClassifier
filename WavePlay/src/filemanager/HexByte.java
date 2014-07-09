@@ -219,33 +219,22 @@ public class HexByte {
 		return bytes;
 	}
 	
-	/**bits must be divisible by 8 **/
-	public static String hexStringToLittleEndianHexString(String str, int bit) {
-		int bc = bit / 8;
-		//flip bits first
-		char[] ca = str.toCharArray();
-		String sa = "";
-		for (int i = 0; i < ca.length; i += bc) {
-			char[] nc = new char[bc];
-			str.getChars(i, i + bc, nc, 0);
-			nc = reverseChars(nc);
-			sa = sa.concat(new String(nc));
+	public static byte[] stringToBytes(String str, int byteRound) {
+		byte[] bytes = str.getBytes(); //check charset is UTF-16
+		if (bytes.length % byteRound == 0) {
+			return bytes;
+		} else {
+			byte[] nBytes = new byte[bytes.length + (bytes.length % byteRound)];
+			for (int i = 0; i < nBytes.length; ++i) {
+				if (i < bytes.length) {
+					nBytes[i] = bytes[i]; //copy
+				} else {
+					nBytes[i] = 0; //add 0
+				}
+			}
+			return nBytes;
 		}
-		return sa;
 	}
-	
-	private static char[] reverseChars(char[] ca) {
-		char ch = '0';
-		int lim = (int) Math.rint((double)ca.length / 2); //only need to travel halfway
-		for (int i = 0; i < lim; ++i) {
-			//reverse
-			ch = ca[i];
-			ca[i] = ca[ca.length - 1 - i];
-			ca[ca.length - 1 - i] = ch;
-		}
-		return ca;
-	}
-	
 	
 
 }

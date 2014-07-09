@@ -21,7 +21,7 @@ public class RunIris {
 	}
 	
 	public static void main(String[] args) {
-		FileHandler fh;
+		/** FileHandler fh;
 		try {
 			fh = new FileHandler("fileDemo.txt");
 			Logger logger = Logger.getLogger("New Log");
@@ -34,7 +34,7 @@ public class RunIris {
 			logger.log(Level.ALL, "TESTING2");
 		} catch (Exception e) {
 			e.printStackTrace();;
-		} 
+		} **/
 		/**
 		//check shuffle
 		int n = 100;
@@ -49,7 +49,8 @@ public class RunIris {
 		boolean verbose = true;
 		long seed = System.currentTimeMillis();
 		TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
-		int runCount = 30;
+		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
+		int runCount = 5;
 		MultiLayerNet bestNN = runNets(runCount, testPatterns,verbose);
 		System.out.println(bestNN.toString());
 		
@@ -85,6 +86,7 @@ public class RunIris {
 	public static MultiLayerNet config(MultiLayerNet nn, TestPatterns testPatterns, 
 										boolean verbose, long seed2, long seed3) {
 		LayerStructure ls = new LayerStructure(testPatterns);
+		//ls.addHiddenLayer(10);
 		ls.addHiddenLayer(10);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
@@ -92,7 +94,7 @@ public class RunIris {
 		nn.initialiseNeurons();
 		nn.setVerbose(verbose);
 		nn.setAcceptableErrorRate(0.1d);
-		nn.setMaxEpoch(1000);
+		nn.setMaxEpoch(10000);
 		nn.initialiseRandomWeights(seed2);
 		nn.setShuffleTrainingPatterns(true, seed3);
 		return nn;

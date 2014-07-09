@@ -127,8 +127,8 @@ public class MultiLayerNet  implements Serializable{
 	
 	public String toString() {
 		return this.layerStructure.toString() + "\n" + 
-				this.neuronLayers.toString() + "\nError Rate: " +
-				this.errorRate + "\nValidation Error Rate: " +
+				this.neuronLayers.toString() + "\nMatthews Coefficient: " +
+				this.errorRate + "\nValidation MC: " +
 				this.validationErrorRate;
 	}
 	

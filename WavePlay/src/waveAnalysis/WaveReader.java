@@ -31,12 +31,16 @@ public class WaveReader {
 		String f2 = "/Users/Jonny/Documents/Timbre/PracticeBassMeta.wav";
 		Wave wr2 = new Wave(f2);
 		wr2.init();
+		wr2.makeGraph();
 		ListChunk lc = new ListChunk(wr2.getListChunk());
 		System.out.println(HexByte.byteToHexString(lc.getChunk()));
 		//System.out.println(HexByte.byteToLetterString(lc.getChunk()));
 		lc.initChunkTypes();
 		System.out.println(lc.hasLittleChunk("IART"));
 		InfoChunkType ic = lc.getLittleChunk("IART");
+		System.out.println(ic.toString());
+		System.out.println(HexByte.byteToHexString(ArrayStuff.bigByteTobyte(ic.toByteChunk())));
+		//just need to make a method that rounds up to nearest 4 bytes.
 		System.out.println(HexByte.byteToHexString(ArrayStuff.bigByteTobyte(ic.toByteChunk())));
 		
 		/** WaveFund wf = new WaveFund(wr);
