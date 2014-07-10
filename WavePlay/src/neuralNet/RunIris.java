@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import plotting.NNController;
+import plotting.MatthewsChart;
 import filemanager.ArrayStuff;
 import filemanager.CSVReader;
 
@@ -31,17 +31,17 @@ public class RunIris {
 		TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
 		int runCount = 1;
-		//MultiLayerNet bestNN = ManyNets.runNets(runCount, testPatterns,verbose);
+		MultiLayerNet bestNN = ManyNets.runNets(runCount, testPatterns,verbose);
 		//System.out.println(bestNN.toString());
-		
+		bestNN.getErrorBox().makeGraph();
 		//crappy graph test
 		double[] dds = {0.1, 0.5, 0, 0.3, 0.4, 0.5};
 		
 		dds = ArrayStuff.normalizeDouble(dds, 400);
 		long[] la = ArrayStuff.doubleToLong(dds);
 		long[][] las = {la};
-		NNController nc = new NNController(las);
-		nc.makeChart();
+		MatthewsChart nc = new MatthewsChart(las);
+		//nc.makeChart();
 		
 
 	}

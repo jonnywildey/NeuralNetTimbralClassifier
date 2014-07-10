@@ -45,6 +45,8 @@ public class Wave {
 	
 	public void readFile() {
 		ByteReader br = new ByteReader(this.filepath.toString());
+		
+		
 		this.bytes = br.readFile();
 	}
 	
@@ -86,14 +88,14 @@ public class Wave {
 		}
 	}
 	
-	public byte[] getListChunk() {
+	public InfoChunk getListChunk() {
 		//assume overall chunk size (0x4) is accurate?
 		System.out.println(this.bytes.length);
 		System.out.println(this.dataSize);
 		System.out.println(this.bytes.length - this.dataSize);
 		byte[] listChunk = (HexByte.getOffsetSubset(this.bytes, 44 + (int)this.dataSize, 
 							(long)(this.bytes.length - this.dataSize - 44)));
-		return listChunk;
+		return new InfoChunk(listChunk);
 	}
 	
 	public String toString() {
@@ -114,7 +116,9 @@ public class Wave {
 	
 	/**reads and initialises file. returns true if successful **/
 	public boolean init() {
-		this.readFile();
+		if (this.bytes == null) {
+			this.readFile();
+		}
 		if (this.isWav()) {
 			this.getBitSize();
 			this.getNumberOfChannels();
@@ -138,12 +142,12 @@ public class Wave {
 	
 	/** Return a semireadable header **/
 	public String getHexHeader() {
-		return HexByte.byteToHexString(HexByte.getSubset(this.bytes, 0, 44));
+		return HexByte.byteToHexString(ArrayStuff.getSubset(this.bytes, 0, 44));
 	}
 	
 	/** Return the first x of the file in a semireadable format **/
 	public String getHex(int x) {
-		return HexByte.byteToHexString(HexByte.getSubset(this.bytes, 0, x));
+		return HexByte.byteToHexString(ArrayStuff.getSubset(this.bytes, 0, x));
 	}
 	
 	
@@ -217,6 +221,10 @@ public class Wave {
 	
 	public Wave() {
 		super();
+	}
+
+	public Wave(byte[] bytes) {
+		this.bytes = bytes;
 	}
 	
 	

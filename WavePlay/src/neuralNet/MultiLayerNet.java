@@ -25,6 +25,7 @@ public class MultiLayerNet  implements Serializable{
 	private double matthewsCo;
 	private long shuffleSeed;
 	private boolean matthews; //whether to use the matthews coefficient for testing
+	private CoefficientLogger errorBox; //where you put errors;
 	
 
 	public MultiLayerNet() {
@@ -72,6 +73,7 @@ public class MultiLayerNet  implements Serializable{
 			if (debug) {System.out.println(e.toString());}
 			e.runValidationEpoch();
 			er = calculateMatthews(this.testPatterns.getTestingPatterns(), e);
+			this.errorBox.add(er);
 			if(er > currentMaxMC) { //Should maybe be >
 				System.out.println(er + "  " + currentMaxMC);
 				System.out.println("Tally up: e: " + (i + 1));
@@ -186,6 +188,7 @@ public class MultiLayerNet  implements Serializable{
 		this.verbose = false;
 		this.debug = false;
 		this.matthews = true;
+		this.errorBox = new CoefficientLogger(maxEpoch);
 	}
 	
 	public  void setInputCount(Integer inputCount) {
@@ -242,6 +245,11 @@ public class MultiLayerNet  implements Serializable{
 	public long getShuffleSeed() {
 		return shuffleSeed;
 	}
+
+	public CoefficientLogger getErrorBox() {
+		return errorBox;
+	}
+
 
 	public void setShuffleSeed(long shuffleSeed) {
 		this.shuffleSeed = shuffleSeed;

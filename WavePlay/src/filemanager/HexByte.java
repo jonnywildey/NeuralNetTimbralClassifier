@@ -119,35 +119,26 @@ public class HexByte {
 		
 	}
 	
+	
+	/** Converts bytes to fairly unreadable char string **/
 	public static String byteToLetterString(byte[] bytes) {
 		StringBuilder buf = new StringBuilder(bytes.length * 5);
-		int c4 = 1;
-		int c16 = 1;
 		for (byte bt: bytes) {
 			String s = String.valueOf((char)bt);
 			s += " ";
-			//if (c4 % 1 == 0) {s += "\n";}
-			//if (c16 % 4 == 0) {s += "\n";}
-			
 			buf.append(s);
-			c4++;
-			c16++;
 			
 		}
 		return buf.toString();
 	}
 	
-
+	
 	public static byte[] getSubset(byte[] bytes, int start, int end) {
-		byte[] newBytes = new byte[(end + 1) - start];
-		for (int i = 0; i <= (end - start); ++i) {
-			newBytes[i] = bytes[start + i];
-		}
-		return newBytes;
+		return ArrayStuff.getSubset(bytes, start, end);
 	}
-
-	/** returns Little Endian subset of the wav bytes **/
-	static byte[] getLittleEndianSubset(byte[] bytes, int start, int end) {
+	
+	/** returns Little Endian (reversed) subset of bytes **/
+	public static byte[] getLittleEndianSubset(byte[] bytes, int start, int end) {
 		byte[] newBytes = new byte[(end + 1) - start];
 		for (int i = 0; i <= (end - start); ++i) {
 			newBytes[newBytes.length - i - 1] = bytes[start + i];
@@ -161,11 +152,11 @@ public class HexByte {
 	}
 
 	public static byte[] getOffsetSubset(byte[] bytes, int offset, long count) {
-		return getSubset(bytes, offset, (int) (offset + count - 1));
+		return ArrayStuff.getSubset(bytes, offset, (int) (offset + count - 1));
 	}
 
 	public static byte[] getSubset(byte[] bytes, long offset, long length) {
-		return getSubset(bytes, (int)offset, (int)length);
+		return ArrayStuff.getSubset(bytes, (int)offset, (int)length);
 	}
 	
 	/** returns the position of bytes if within, null if not found **/
@@ -221,6 +212,14 @@ public class HexByte {
 	
 	public static byte[] stringToBytes(String str, int byteRound) {
 		byte[] bytes = str.getBytes(); //check charset is UTF-16
+		return roundUpBytes(bytes,byteRound);
+		
+	}
+	
+	
+	/** Adds empty bytes to a byte array to allow it to be a multiple 
+	 * e.g. roundUpBytes([1, 5], 4) => [1,5,0,0]**/
+	public static byte[] roundUpBytes(byte[] bytes, int byteRound) {
 		if (bytes.length % byteRound == 0) {
 			return bytes;
 		} else {

@@ -83,4 +83,70 @@ public class ArrayStuff {
 		return max;
 	}
 
+	public static byte[] addBytes(byte[] addTo, byte[] from, int offset) {
+		for (int i = offset; i < from.length + offset; ++i) {
+			addTo[i] = from[i - offset];
+		}
+		return addTo;
+	}
+
+	/**Get a subset of array **/
+	public static byte[] getSubset(byte[] bytes, int start, int end) {
+		byte[] newBytes = new byte[(end + 1) - start];
+		for (int i = 0; i <= (end - start); ++i) {
+			newBytes[i] = bytes[start + i];
+		}
+		return newBytes;
+	}
+	
+	public static byte[] getSubset(byte[] bytes, int start) {
+		
+		return getSubset(bytes, start, bytes.length - 1);
+	}
+	
+	public static byte[] arrayListToByte(ArrayList<Byte> bList) {
+		byte[] bytes = new byte[bList.size()];
+		for (int i = 0; i < bytes.length; ++i) {
+			bytes[i] = bList.get(i);
+		}
+		return bytes;
+	}
+	
+	
+	/** changes a 2d array to a long 1d array **/
+	public static double[] tableToLongRow(double[][] table) {
+		//get length
+		int l = 0;
+		for (double[] row : table) {
+			l += row.length;
+		}
+		double[] lr = new double[l];
+		int c = 0;
+		for (int i = 0; i < table.length; ++i) {
+			for (int j = 0; j < table[i].length; ++j) {
+				lr[c] = table[i][j];
+				c++;
+			}
+		}
+		return lr;
+	}
+	
+	/** changes a 2d array to a long 1d array **/
+	public static byte[] tableToLongRow(byte[][] table) {
+		//get length
+		int l = 0;
+		for (byte[] row : table) {
+			l += row.length;
+		}
+		byte[] lr = new byte[l];
+		int c = 0;
+		for (int i = 0; i < table.length; ++i) {
+			for (int j = 0; j < table[i].length; ++j) {
+				lr[c] = table[i][j];
+				c++;
+			}
+		}
+		return lr;
+	}
+
 }

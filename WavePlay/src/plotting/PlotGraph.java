@@ -83,7 +83,7 @@ public class PlotGraph extends JPanel {
 			drawBar(g2d);
 	}
 	
-	private void drawLines(Graphics2D g2d) {
+	protected void drawLines(Graphics2D g2d) {
 		//Y axis
 		g2d.drawLine(offsetSize.width, heightness, offsetSize.width, offsetSize.height);
 		//X axis
