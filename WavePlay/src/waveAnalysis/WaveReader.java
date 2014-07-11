@@ -9,11 +9,13 @@ import java.util.Arrays;
 import javax.naming.InvalidNameException;
 
 import plotting.WavController;
+import riff.Chunk;
+import riff.InfoChunk;
+import riff.WaveChunk;
 import filemanager.ArrayStuff;
 import filemanager.ByteReader;
-import filemanager.Chunk;
 import filemanager.HexByte;
-import filemanager.InfoChunk;
+import filemanager.Log;
 import filemanager.Wave;
 
 public class WaveReader {
@@ -33,11 +35,15 @@ public class WaveReader {
 		//System.out.println(wr.getHex(100));
 		//System.out.println(wr.getHexHeader());
 		//wr.makeGraph();
+		//File logPath = new File("/Users/Jonny/Documents/Timbre/Logs/log.txt");
+		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/log.txt"));
 		String f2 = "/Users/Jonny/Documents/Timbre/PracticeBassMeta.wav";
-		Wave wr2 = new Wave(f2);
-		wr2.init();
+		WaveChunk wr2 = new WaveChunk(f2);
+		Log.d(wr2.toStringRecursive());
+		double[][] sigs = wr2.getSignalsDouble();
+		wr2.makeGraph();
+		System.out.println(sigs[0].length);
 		//wr2.makeGraph();
-		InfoChunk bds = wr2.getListChunk();
 		//System.out.println(bds.toString());
 		//System.out.println(HexByte.byteToLetterString(bds));
 		//InfoChunk lc = new InfoChunk(bds);
@@ -55,43 +61,6 @@ public class WaveReader {
 		*/
 		
 		
-		try {
-			String f = "/Users/Jonny/Documents/Timbre/PracticeRunText.wav";
-			Wave wr = new Wave(f);
-			wr.init();
-			ArrayList<Byte> arg = new ArrayList<Byte>();
-			for (byte b: wr.getBytes()) {
-				arg.add(b);
-			}
-			
-			Chunk nc = new Chunk();
-			nc.setName("IART");
-			nc.setData("FARTS");
-			Chunk nd = new Chunk();
-			nd.setName("ICRD");
-			nd.setData("1500");
-			InfoChunk icr = new InfoChunk();
-			icr.AddChunk(nc);
-			icr.AddChunk(nd);
-			for (byte b: icr.getBytes()) {
-				arg.add(b);
-			}
-			String output = "/Users/Jonny/Documents/Timbre/PracticeRunText2.wav";
-			FileOutputStream fileOut = new FileOutputStream(output);
-            
-            byte[] bb = ArrayStuff.arrayListToByte(arg);
-            wr2 = new Wave(bb);
-            wr2.init();
-            System.out.println(wr.getHexHeader());
-            System.out.println(wr2.getHexHeader());
-            
-            fileOut.write(bb);
-            fileOut.close();
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		/** WaveFund wf = new WaveFund(wr);
 		wf.verbose(true);

@@ -109,22 +109,7 @@ public class RunIris {
         return mln;
 	}
 	
-	public static void logTesting() {
-		FileHandler fh;
-		try {
-			fh = new FileHandler("fileDemo.txt");
-			Logger logger = Logger.getLogger("New Log");
-			logger.addHandler(fh);
-			SimpleFormatter sf = new SimpleFormatter();
-			fh.setFormatter(sf);
-			logger.setLevel(Level.ALL);
-			logger.log(Level.CONFIG, "TESTING");
-			logger.log(Level.FINER, "Ytfgh");
-			logger.log(Level.ALL, "TESTING2");
-		} catch (Exception e) {
-			e.printStackTrace();;
-		} 
-	}
+	
 	
 
 }

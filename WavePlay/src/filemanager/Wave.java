@@ -3,6 +3,7 @@ package filemanager;
 import java.io.File;
 
 import plotting.WavController;
+import riff.InfoChunk;
 
 
 

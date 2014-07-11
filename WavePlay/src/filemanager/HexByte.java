@@ -82,15 +82,26 @@ public class HexByte {
 		}
 	}
 	
-	/**Converts a 32 bit hex array to a 32bit float. 
-	 * Also multiplies by 2^16 to get some useful amp values
+	/**Converts hex to double. 
+	 * 
 	 */
 	public static double hexToFloat(byte[] bytes) {
 		int[] sep = convertByteArrayLE(bytes); //we now have an array of the correct numbers
 		int n = (int)hexArrayToInt(sep); 
 		//System.out.println(Float.intBitsToFloat(n) * 65536);
+		return Float.intBitsToFloat(n);
+	}
+	
+	/**Converts hex to double approximating a 16 bit fixed point value 
+	 * 
+	 */
+	public static double hexToFloat16(byte[] bytes) {
+		int[] sep = convertByteArrayLE(bytes); //we now have an array of the correct numbers
+		int n = (int)hexArrayToInt(sep); 
+		//System.out.println(Float.intBitsToFloat(n) * 65536);
 		return Float.intBitsToFloat(n) * 65536;
 	}
+	
 	
 	/**Converts single byte to decimal **/
 	public static int hexToDecimal(byte b) {

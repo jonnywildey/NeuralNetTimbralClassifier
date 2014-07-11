@@ -1,9 +1,15 @@
-package filemanager;
+package riff;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import javax.naming.InvalidNameException;
+
+import filemanager.ArrayStuff;
+import filemanager.HexByte;
+import filemanager.Log;
 
 
 /** Basic RIFF type chunk object. In order to stop the whole thing being horribly confusing
@@ -16,6 +22,7 @@ public class Chunk {
 							//name and length
 	protected ArrayList<Chunk> chunks; //may or may not have sub-chunks
 	protected String[] acceptableSubChunks;
+	protected static int dataOffset = 8; //amount of bytes before actual data. Normally 8
 	
 	public Chunk() {
 		this.chunks = new ArrayList<Chunk>();
@@ -24,14 +31,14 @@ public class Chunk {
 	public Chunk(byte[] bytes) {
 		this();
 		this.bytes = bytes;
-		this.name = new String(HexByte.getSubset(bytes, 0, 4));
+		this.name = new String(HexByte.getSubset(bytes, 0, 3));
 		this.initTypes();
 		this.initSubChunks();
 	}
 	
 	/*generates a new byte chunk based upon data and name */
 	private byte[] generateByteChunk() {
-		if (this.hasChunks()) {
+		if (this.hasSubChunks()) {
 			byte[][] tb = new byte[this.chunks.size()][];
 			for (int i = 0; i < this.chunks.size(); ++i) {
 				tb[i] = this.chunks.get(i).generateByteChunk();
@@ -43,23 +50,20 @@ public class Chunk {
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("\nName: " + name);
-		sb.append("\tData Length: " + (this.bytes.length - 8));
-		//sb.append("\nData:\n" + HexByte.byteToLetterString(data));
-		try {
-			sb.append("\tData: " + new String(ArrayStuff.getSubset(bytes, 8), "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		if (hasBytes()) {
+			sb.append("\nName: " + name);
+			sb.append("\tData Length: " + (this.bytes.length - dataOffset));
+			sb.append("\tData: " + new String(ArrayStuff.getSubset(bytes, dataOffset)));
 		}
 		return sb.toString();
 	}
 	
 
 	public String toStringRecursive() {
-		if (hasChunks()) {
+		if (hasSubChunks()) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("\nName: " + name);
-			sb.append("\tData Length: " + (this.bytes.length - 8));
+			sb.append("\tData Length: " + (this.bytes.length - dataOffset));
 			for (Chunk c: this.chunks) {
 				sb.append(c.toStringRecursive());
 			}
@@ -67,6 +71,15 @@ public class Chunk {
 		} else {
 			return this.toString();
 		}
+	}
+	
+	protected String toStringNoData() {
+		StringBuilder sb = new StringBuilder();
+		if (hasBytes()) {
+			sb.append("\nName: " + name);
+			sb.append("\tData Length: " + (this.bytes.length - dataOffset));
+		}
+		return sb.toString();
 	}
 	
 	/** Does this chunk contain a chunk with name?
@@ -82,12 +95,39 @@ public class Chunk {
 		if (acceptableSubChunks != null) {
 			for (String lc : acceptableSubChunks) {
 				Integer ic = isThereSubChunk(lc);
+				//System.out.println(lc + " " + ic);
 				if (ic != null) { //chunk exists
 					long cs = getSubChunkSize(ic);
-					chunks.add(new Chunk(getSubChunkBytes(ic, cs + 8)));
+					chunks.add(makeChunk(lc, ic, cs));
 				}
 			}
 		}
+	}
+	
+	/** kind of lame method that determines which class
+	 * should be made. length input is PRE offset**/
+	private Chunk makeChunk(String name, int start, long Datalength) { 
+		Chunk chunk;
+		byte[] tBytes;
+		switch (name) {
+		case "LIST":
+			tBytes = getSubChunkBytes(start, Datalength + InfoChunk.dataOffset);
+			chunk = new InfoChunk(tBytes);
+			break;
+		case "fmt ":
+			tBytes = getSubChunkBytes(start, Datalength + FMTChunk.dataOffset);
+			chunk = new FMTChunk(tBytes);
+			break;
+		case "data":
+			tBytes = getSubChunkBytes(start, Datalength + DataChunk.dataOffset);
+			chunk = new DataChunk(tBytes);
+			break;
+		default:
+			tBytes = getSubChunkBytes(start, Datalength + Chunk.dataOffset);
+			chunk = new Chunk(tBytes);
+			break;
+		}
+		return chunk;
 	}
 	
 	/** Private method for pulling out subchunk data **/
@@ -103,7 +143,7 @@ public class Chunk {
 	
 	/**Returns the sub-chunk of this chunk if it exists **/
 	public Chunk getSubChunk(String chunkType) {
-		if (hasChunks()) {
+		if (hasSubChunks()) {
 			for (Chunk ict : chunks) {
 				if (ict.name.equals(chunkType)) {
 					return ict;
@@ -116,7 +156,7 @@ public class Chunk {
 
 	
 	/** returns true if this Chunk has any sub-chunks **/
-	protected boolean hasChunks() {
+	public boolean hasSubChunks() {
 		if (this.chunks != null) {
 			return this.chunks.size() > 0;
 		} else {
@@ -126,7 +166,7 @@ public class Chunk {
 	
 	/** Returns true if sub-chunk exists **/
 	public boolean hasSubChunk(byte[] chunkType) {
-		if (this.hasChunks()) {
+		if (this.hasSubChunks()) {
 			for (Chunk ict : chunks) {
 				if (ict.getByteName() == chunkType) {
 					return true;
@@ -138,7 +178,7 @@ public class Chunk {
 	
 	/** Returns true if sub-chunk exists **/
 	public boolean hasSubChunk(String chunkType) {
-		if (this.hasChunks()) {
+		if (this.hasSubChunks()) {
 			for (Chunk ict : chunks) {
 				if (ict.name.equals(chunkType)) {
 					return true;
@@ -163,7 +203,10 @@ public class Chunk {
 	public String getName() {
 		return name;
 	}
-
+	
+	public byte[] getData() {
+		return ArrayStuff.getSubset(bytes, 8);
+	}
 	
 	
 	/** return name of the chunk (in bytes) **/
@@ -182,6 +225,18 @@ public class Chunk {
 		this.name = new String(byteName);
 		if (this.bytes != null) {
 			this.bytes = ArrayStuff.addBytes(this.bytes, byteName, 0);
+		}
+	}
+	
+	/** Writes the bytes to a file **/
+	public void writeFile(File f) {
+		try {
+			FileOutputStream fileOut = new FileOutputStream(f.getAbsoluteFile());
+			fileOut.write(this.bytes);
+			fileOut.close();
+			Log.d("File " + f.getName() + "written successfully");
+		} catch (Exception e) {
+			Log.bad("Couldn't write file.");
 		}
 	}
 	
@@ -206,6 +261,13 @@ public class Chunk {
 	/**returns the raw byte data of chunk, including name and length **/
 	public byte[] getBytes() {
 		return bytes;
+	}
+	
+	/**Does this object actually have any information
+	 * or is it an empty shell?
+	 */
+	protected boolean hasBytes() {
+		return (this.bytes != null);
 	}
 	
 	/**Returns the sub-chunk List**/

@@ -1,11 +1,16 @@
-package filemanager;
+package riff;
 
 import javax.naming.InvalidNameException;
+
+import filemanager.ArrayStuff;
+import filemanager.HexByte;
 
 
 /**A class for determining what information there is in an INFO chunk 
  * Written more for readability than efficiency**/
 public class InfoChunk extends Chunk{
+	
+	protected static int dataOffset = 12;
 
 	public InfoChunk(byte[] chunk) {
 		super(chunk);
@@ -40,7 +45,7 @@ public class InfoChunk extends Chunk{
 				"LANG",	"LOCA",	"PRT1",	"PRT2",	"RATE",	
 				"STAR",	"STAT",	"TAPE",	"TCDO",	"TCOD",	
 				"TITL",	"TLEN",	"TORG",	"TRCK",	"TURL",	
-				"TVER",	"VMAJ",	"VMIN",	"YEAR", "id3"};
+				"TVER",	"VMAJ",	"VMIN",	"YEAR"};
 		this.acceptableSubChunks = s;
 	}
 	
