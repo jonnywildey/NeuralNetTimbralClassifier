@@ -11,6 +11,8 @@ import javax.naming.InvalidNameException;
 import plotting.WavController;
 import riff.Chunk;
 import riff.InfoChunk;
+import riff.Pitch;
+import riff.Signal;
 import riff.WaveChunk;
 import filemanager.ArrayStuff;
 import filemanager.ByteReader;
@@ -36,13 +38,28 @@ public class WaveReader {
 		//System.out.println(wr.getHexHeader());
 		//wr.makeGraph();
 		//File logPath = new File("/Users/Jonny/Documents/Timbre/Logs/log.txt");
+		
+		
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/log.txt"));
-		String f2 = "/Users/Jonny/Documents/Timbre/PracticeBassMeta.wav";
+		String f2 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticePan.wav";
+		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeANorm.wav";
 		WaveChunk wr2 = new WaveChunk(f2);
 		Log.d(wr2.toStringRecursive());
-		double[][] sigs = wr2.getSignalsDouble();
-		wr2.makeGraph();
-		System.out.println(sigs[0].length);
+		Signal sigs = wr2.getSignals();
+		//Signal bigSig = Gain.volume(sigs, 12);
+		//Signal smallSig = Gain.volume(sigs, -6.02);
+		//Log.d(ArrayStuff.getMax(sigs.getSignal()));
+		//Signal pSig = Pitch.pitchShift(sigs, 0.5);
+		sigs = Pitch.pitchShift(sigs, 2.4);
+		WaveChunk pw = new WaveChunk(sigs);
+		pw.writeFile(new File("/Users/Jonny/Documents/PracticeWav/Timbre/PA.wav"));
+		//for (int i = 200; i < 300; ++i) {
+			//Log.d(sigs.getSignal()[0][i] + "  " + s2.getSignal()[0][i]);
+		//}
+		
+		
+		
+		//wr2.makeGraph();
 		//wr2.makeGraph();
 		//System.out.println(bds.toString());
 		//System.out.println(HexByte.byteToLetterString(bds));

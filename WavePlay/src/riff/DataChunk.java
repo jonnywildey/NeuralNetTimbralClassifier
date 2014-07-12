@@ -1,5 +1,6 @@
 package riff;
 
+import filemanager.ArrayStuff;
 import filemanager.HexByte;
 import filemanager.Log;
 
@@ -11,8 +12,39 @@ public class DataChunk extends Chunk{
 	}
 	
 	
+	public DataChunk(Signal signal) {
+		signalToByte(signal);
+		
+	}
 	
+	public void signalToByte(Signal signal) {
+		int bj = signal.getBit() / 8;
+		int channels = signal.getChannels();
+		int jump = bj * channels;
+		//int cj = bj / channels;
+		double[][] s = signal.getSignal();
+		byte[] nb = new byte[s[0].length * channels * bj];
+		for (int i = 0; i < s[0].length; ++i) {
+			for (int j = 0; j < channels; ++j) {
+				//Log.d(i + " " + s[j][i]);
+				nb = ArrayStuff.addBytes(nb, 
+						HexByte.doubleToLittleEndianBytes( //need to make this work for floats
+								s[j][i], bj), (i*jump) + (j*bj));
+			}
+			
+		}
+		doHeader(nb);
+	}
 	
+	private void doHeader(byte[] data) {
+		this.bytes = new byte[data.length + 8];
+		this.bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes("data", 4), 0);
+		this.bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(data.length, 4), 4);
+		this.bytes = ArrayStuff.addBytes(bytes, data, 8);	
+		this.name = new String(HexByte.getSubset(bytes, 0, 3));
+	}
+
+
 	/** return array of each channel's amplitude values. For bitRates less than 24 
 	 * @throws BitRateException **/
 	public long[][] getSignalsLong(int bit, int channel) {
@@ -68,9 +100,9 @@ public class DataChunk extends Chunk{
 				}
 				//turn bytearray to int
 				if (bit >= 32) {
-					signal[i] = (long) HexByte.hexToFloat16(newBit);	 //FLOAT
+					signal[i] =  HexByte.hexToFloat16(newBit);	 //FLOAT
 				} else {
-					signal[i] =  (HexByte.hexToDecimalSigned(newBit)); //NORMAL
+					signal[i] =  (HexByte.hexToDecimalSigned(newBit)); //FIXED
 				}
 			}
 			signals[k] = signal;

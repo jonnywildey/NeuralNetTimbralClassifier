@@ -1,6 +1,8 @@
 package riff;
 
 import java.io.File;
+import java.util.ArrayList;
+
 import filemanager.ArrayStuff;
 import filemanager.ByteReader;
 import filemanager.HexByte;
@@ -33,23 +35,18 @@ public class WaveChunk extends Chunk{
 		this.bytes = bytes;
 	}
 	
-	
-	/** Basic checks as to whether file is wav **/
-	public boolean isWav(byte[] bytes) {
-		try {
-			long riff = HexByte.hexArrayToInt(HexByte.convertByteArray(HexByte.getOffsetSubset(bytes, 0, 4)));
-			long wave = HexByte.hexArrayToInt(HexByte.convertByteArray(HexByte.getOffsetSubset(bytes, 8, 4)));
-			long data = HexByte.hexArrayToInt(HexByte.convertByteArray(HexByte.getOffsetSubset(bytes, 36, 4)));
-			long fmt = HexByte.hexArrayToInt(HexByte.convertByteArray(HexByte.getOffsetSubset(bytes, 12, 4)));
-			if (riff == 1380533830 & wave == 1463899717 && data == 1684108385 & fmt == 1718449184) {
-				return true;
-			} else {
-				return false;
-			} 
-		} catch (Exception e) {
-			return false;
-		}
+	/** Constructs a Wave from a signal. Make sure you've set
+	 * your bit rate and sample rate
+	 * @param signal
+	 */
+	public WaveChunk(Signal signal) {
+		this.name = "RIFF";
+		setSignal(signal);
 	}
+	
+	
+	
+	
 	
 	/** gets byte array from filePath file **/
 	public void readFile() {
@@ -79,7 +76,55 @@ public class WaveChunk extends Chunk{
 	public byte[] getBytes() {
 		return this.bytes;
 	}
+	
+	/** This essentially completely rewrites the data of the 
+	 * wav, reencoding the header, fmt and data chunks.
+	 */
+	public void setSignal(Signal s) {
+		this.chunks = new ArrayList<Chunk>();
+		FMTChunk fmt = new FMTChunk(s.getBit(), s.getSampleRate(), s.getChannels());
+		DataChunk dc = new DataChunk(s);
+		this.chunks.add(fmt);
+		this.chunks.add(dc);
+		int fmtl = (int) fmt.getBytesLength();
+		int dcl = (int) dc.getBytesLength();
+		this.bytes = new byte[(int) (12 + fmtl + dcl)];
+		this.bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes("RIFF", 4), 0);
+		this.bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(fmtl + dcl, 4), 4);
+		this.bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes("WAVE", 4), 8);
+		this.bytes = ArrayStuff.addBytes(bytes, fmt.getBytes(), 12);
+		this.bytes =  ArrayStuff.addBytes(bytes, dc.getBytes(), 12 + fmtl);
 
+	}
+	
+	/**Clears the wav of any information **/
+	public void clear() {
+		this.bytes = null;
+		this.chunks = new ArrayList<Chunk>();
+	}
+	
+	
+	/** return the signals in a fixed point format **/
+	public long[][] getSignalsLong() {
+		DataChunk dc = (DataChunk) this.getSubChunk("data");
+		long[][] signals = dc.getSignalsLong(this.getBitRate(), this.getChannels());
+		return signals;
+	}
+	
+	/** return the signal(s) in a floating point format **/
+	public double[][] getSignalsDouble() {
+		DataChunk dc = (DataChunk) this.getSubChunk("data");
+		double[][]	signals = dc.getSignalsDouble(this.getBitRate(), this.getChannels());
+		return signals;
+	}
+	
+	/**Returns the signals in a process-friendly Signal format **/
+	public Signal getSignals() {
+		DataChunk dc = (DataChunk) this.getSubChunk("data");
+		double[][]	signals = dc.getSignalsDouble(this.getBitRate(), this.getChannels());
+		return new Signal(signals, this.getBitRate(), this.getSampleRate());
+	}
+	
 	
 	/** Makes a waveform graph **/
 	public void makeGraph() {
@@ -114,7 +159,11 @@ public class WaveChunk extends Chunk{
 	
 	/** Return the first x of the file in a semireadable format **/
 	public String getHex(int x) {
-		return HexByte.byteToHexString(ArrayStuff.getSubset(this.bytes, 0, x));
+		return HexByte.byteToHexString(ArrayStuff.getSubset(this.bytes, 0, x - 1));
+	}
+	
+	public String getHex() {
+		return getHex(this.bytes.length);
 	}
 	
 	
@@ -125,7 +174,7 @@ public class WaveChunk extends Chunk{
 	}
 	
 	/**Returns sample rate of Wave **/
-	public long getSampleRate() {
+	public int getSampleRate() {
 		FMTChunk fc =  (FMTChunk) this.getSubChunk("fmt ");
 		return fc.getSampleRate();
 	}
@@ -160,20 +209,32 @@ public class WaveChunk extends Chunk{
 		String[] s = {"fmt ", "data", "LIST"};
 		this.acceptableSubChunks = s;
 	}
-
-	/** return the signals in a fixed point format **/
-	public long[][] getSignalsLong() {
-		DataChunk dc = (DataChunk) this.getSubChunk("data");
-		long[][] signals = dc.getSignalsLong(this.getBitRate(), this.getChannels());
-		return signals;
+	
+	@Override
+	public void setData(byte[] data) {
+		throw new UnsupportedOperationException();
 	}
 	
-	/** return the signal(s) in a floating point format **/
-	public double[][] getSignalsDouble() {
-		DataChunk dc = (DataChunk) this.getSubChunk("data");
-		double[][]	signals = dc.getSignalsDouble(this.getBitRate(), this.getChannels());
-		return signals;
+
+	
+	/** Basic checks as to whether file is wav **/
+	public boolean isWav(byte[] bytes) {
+		try {
+			long riff = HexByte.hexArrayToInt(HexByte.convertByteArray(HexByte.getOffsetSubset(bytes, 0, 4)));
+			long wave = HexByte.hexArrayToInt(HexByte.convertByteArray(HexByte.getOffsetSubset(bytes, 8, 4)));
+			long data = HexByte.hexArrayToInt(HexByte.convertByteArray(HexByte.getOffsetSubset(bytes, 36, 4)));
+			long fmt = HexByte.hexArrayToInt(HexByte.convertByteArray(HexByte.getOffsetSubset(bytes, 12, 4)));
+			if (riff == 1380533830 & wave == 1463899717 && data == 1684108385 & fmt == 1718449184) {
+				return true;
+			} else {
+				return false;
+			} 
+		} catch (Exception e) {
+			return false;
+		}
 	}
+
+	
 	
 	
 }

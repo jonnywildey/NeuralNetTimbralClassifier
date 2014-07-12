@@ -1,5 +1,7 @@
 package filemanager;
 
+import java.util.Arrays;
+
 
 /** a bunch of utility methods for hex and byte conversion **/
 public class HexByte {
@@ -62,8 +64,6 @@ public class HexByte {
 	/**hexadecimal conversion. Unsigned with Little Endian **/
 	public static long hexToDecimalUnsignedLE(byte[] bytes) {
 		int[] sep = convertByteArrayLE(bytes);
-		//convert to decimal
-		//System.out.println("sep " + Arrays.toString(sep));
 		return hexArrayToInt(sep);
 	}
 
@@ -76,7 +76,7 @@ public class HexByte {
 		//System.out.println("max " + max );
 		if (unsigned > max) { //BIT FLIP
 			//System.out.println("BitFlip!!! " + (int) (((max * 2) - unsigned + 1) * -1));
-			return  (((max * 2) - unsigned + 1) * -1);
+			return  (((max * 2) - unsigned) * -1);
 		} else {
 			return unsigned;
 		}
@@ -98,8 +98,7 @@ public class HexByte {
 	public static double hexToFloat16(byte[] bytes) {
 		int[] sep = convertByteArrayLE(bytes); //we now have an array of the correct numbers
 		int n = (int)hexArrayToInt(sep); 
-		//System.out.println(Float.intBitsToFloat(n) * 65536);
-		return Float.intBitsToFloat(n) * 65536;
+		return Double.longBitsToDouble(n);
 	}
 	
 	
@@ -220,6 +219,47 @@ public class HexByte {
 		}
 		return bytes;
 	}
+	
+	/**cheap and cheerful number to byte converter. If length is too
+	 * small things will go wrong. Signed
+	 */
+	public static byte[] doubleToLittleEndianBytes(double d, int length) {
+		long val = Math.abs(Math.round(d));
+		
+		byte[] bytes = new byte[length];
+		byte mod = 0;
+		int q = 256;
+		boolean negative = (d < 0);
+		for (int i = 0; i < bytes.length; ++i) {
+			mod = (byte) (val % q);
+			val /= q;
+			
+			bytes[i] = mod;
+		}
+		if (negative) {
+			bytes = twosFlipLE(bytes);
+		} 
+		return bytes;
+	}
+	
+	public static byte[] twosFlipLE(byte[] bytes) {
+		bytes[0] -= 1; 
+		for (int i = 0; i < bytes.length; ++i) {
+			//Log.d("i " + i + "mod " + bytes[i] + "  " + (byte) (255 - bytes[i]));
+			bytes[i] = (byte) (255 - bytes[i]);
+		}
+		return bytes;
+	}
+	
+	public static byte[] twosFlip(byte[] bytes) {
+		bytes[bytes.length - 1] -= 1; 
+		for (int i = 0; i < bytes.length; ++i) {
+			Log.d("i " + i + "mod " + bytes[i] + "  " + (byte) (255 - bytes[i]));
+			bytes[i] = (byte) (255 - bytes[i]);
+		}
+		return bytes;
+	}
+	
 	
 	public static byte[] stringToBytes(String str, int byteRound) {
 		byte[] bytes = str.getBytes(); //check charset is UTF-16

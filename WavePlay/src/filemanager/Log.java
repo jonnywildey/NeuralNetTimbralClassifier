@@ -42,6 +42,7 @@ public class Log {
 		} 
 	}
 	
+	/**Standard debug log **/
 	public static void d(String str) {
 		if (init) {
 			logger.fine(str);;
@@ -49,11 +50,60 @@ public class Log {
 		System.out.println(str);
 	}
 	
+	/**Standard debug log **/
+	public static void d(double d) {
+		d(String.valueOf(d));
+	}
+	
+	/**Standard debug log **/
+	public static void d(byte d) {
+		d(String.valueOf(d));
+	}
+	
+	/**Standard debug log **/
+	public static void d(int d) {
+		d(String.valueOf(d));
+	}
+	
+	/**Standard debug log **/
+	public static void d(char d) {
+		d(String.valueOf(d));
+	}
+	
+	/**Standard debug log **/
+	public static void d(Object o) {
+		d(o.toString());
+	}
+	
 	public static void bad(String str) {
 		if (init) {
 			logger.fine(str);;
 		}
 		System.err.println(str);
+	}
+	
+	public static void bad(double f) {
+		bad(String.valueOf(f));
+	}
+	
+	public static void bad(int f) {
+		bad(String.valueOf(f));
+	}
+	
+	public static void bad(long f) {
+		bad(String.valueOf(f));
+	}
+	
+	public static void bad(byte f) {
+		bad(String.valueOf(f));
+	}
+	
+	public static void bad(float f) {
+		bad(String.valueOf(f));
+	}
+	
+	public static void bad(Object o) {
+		bad(o.toString());
 	}
 	
 	
@@ -75,6 +125,10 @@ public class Log {
 			e.printStackTrace();;
 		} 
 	}
+
+	
+
+	
 	
 
 }

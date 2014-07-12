@@ -11,14 +11,31 @@ public class FMTChunk extends Chunk{
 		super(bytes);
 	}
 	
+	/** Constructor From Nothing **/
+	public FMTChunk(int bit, int sampleRate, int channels) {
+		int byteRate = sampleRate * channels * (bit / 8);
+		int blockAlign = channels * (bit / 8);
+		byte[] bytes = new byte[24];
+		bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes("fmt ", 4), 0); //name
+		bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(16, 4), 4); //length
+		bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(1, 2), 8); //compression
+		bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(channels, 2), 10); //channels
+		bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(sampleRate, 4), 12); //samplerate
+		bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(byteRate, 4), 16); //byterate
+		bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(blockAlign, 2), 20); //blockalign
+		bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(bit, 2), 22); //bit
+		this.bytes = bytes;
+		this.name = new String(HexByte.getSubset(bytes, 0, 3));
+	}
+	
 	public int getBitSize() {
 		byte[] bit = HexByte.getEndianSubset(this.bytes, 22, 2);
 		return (int)HexByte.hexToDecimalUnsigned(bit); 
 	}
 	
-	public long getSampleRate() {
+	public int getSampleRate() {
 		byte[] sampleRate = HexByte.getEndianSubset(this.bytes, 12,4);
-		return HexByte.hexToDecimalUnsigned(sampleRate);
+		return (int) HexByte.hexToDecimalUnsigned(sampleRate);
 	}
 	
 	public int getChannels() {

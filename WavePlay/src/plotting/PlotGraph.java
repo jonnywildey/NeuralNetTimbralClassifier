@@ -26,7 +26,11 @@ public class PlotGraph extends JPanel {
 	protected double wr;
 	protected double hOffset;
 	protected int half;
-
+	
+	public PlotGraph() {
+		
+	}
+	
 	public PlotGraph(long[][] values, Dimension winSize, String[] axisLabels)  {
 		super();
 		this.values = values;
