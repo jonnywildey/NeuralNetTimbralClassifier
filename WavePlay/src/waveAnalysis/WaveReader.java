@@ -26,7 +26,7 @@ public class WaveReader {
 		
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 	
 		//String f = "/Users/Jonny/Documents/Timbre/PracticeBass.wav";
 		//Wave wr = new Wave(f);
@@ -41,18 +41,26 @@ public class WaveReader {
 		
 		
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/log.txt"));
+		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeSil.wav";
 		String f2 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticePan.wav";
 		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeANorm.wav";
+		WaveChunk wr1 = new WaveChunk(f1);
 		WaveChunk wr2 = new WaveChunk(f2);
+		Log.d(wr1.toStringRecursive());
 		Log.d(wr2.toStringRecursive());
-		Signal sigs = wr2.getSignals();
+		Signal s1 = wr1.getSignals();
+		Signal s2 = wr2.getSignals();
+		s1 = Gain.volume(s1, -9);
+		s2 = Gain.volume(s2, -9);
 		//Signal bigSig = Gain.volume(sigs, 12);
 		//Signal smallSig = Gain.volume(sigs, -6.02);
 		//Log.d(ArrayStuff.getMax(sigs.getSignal()));
 		//Signal pSig = Pitch.pitchShift(sigs, 0.5);
-		sigs = Pitch.pitchShift(sigs, 2.4);
-		WaveChunk pw = new WaveChunk(sigs);
-		pw.writeFile(new File("/Users/Jonny/Documents/PracticeWav/Timbre/PA.wav"));
+		Signal sum = Gain.sum(s1, s2);
+		//sigs = Pitch.reverse(sigs);
+		WaveChunk pw = new WaveChunk(sum);
+		Log.d(pw.toStringRecursive());
+		pw.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/PA.wav"));
 		//for (int i = 200; i < 300; ++i) {
 			//Log.d(sigs.getSignal()[0][i] + "  " + s2.getSignal()[0][i]);
 		//}

@@ -34,12 +34,7 @@ public class Signal {
 		sc.makeChart();
 	}
 	
-	public WaveChunk toWave() {
-		FMTChunk fmt = new FMTChunk(this.bit, this.sampleRate, getChannels());
-		//Make data chunk, make wav chunk, put them together
-		//compareByte[] method
-		return null;
-	}
+
 	
 	/** get the amount of channels **/
 	public int getChannels() {
@@ -50,8 +45,13 @@ public class Signal {
 		return signal;
 	}
 
+
 	public int getBit() {
 		return bit;
+	}
+
+	public void setBit(int bit) {
+		this.bit = bit;
 	}
 
 	public int getSampleRate() {

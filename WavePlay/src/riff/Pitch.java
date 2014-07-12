@@ -35,10 +35,17 @@ public class Pitch {
 		}
 	}
 	
-	//public static void main (String[] args) {
-		//double[] arr = {0,10,20,30};
-		//Log.d(linearApproximate(arr, 1.75));
-		//Log.d((int)((20 / 1.234) + 1));
-	//}
+	/**Reverses |||| sesreveR**/
+	public static Signal reverse(Signal signal) {
+		//set up arrays
+		double[][] os = signal.getSignal();
+		double[][] ns = new double[os.length][os[0].length];
+		for (int i = 0; i < os.length;++i) {
+			for (int j = 0; j < os[0].length;++j) {
+				ns[i][j] = os[i][os[i].length - 1 - j];
+			}
+		}
+		return new Signal(ns, signal.getBit(), signal.getSampleRate());
+	}
 
 }
