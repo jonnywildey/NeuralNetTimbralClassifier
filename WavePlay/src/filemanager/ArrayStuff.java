@@ -112,6 +112,38 @@ public class ArrayStuff {
 		return bytes;
 	}
 	
+	/**Extends the array to length x. Adding 0s after. 
+	 * Will also work for shortening **/
+	public static double[] extend(double[] values, int newLength) {
+		double[] na = new double[newLength];
+		for (int i = 0; i < newLength; ++i) {
+			if (i < values.length) {
+				na[i] = values[i];
+			} else {
+				na[i] = 0;
+			}
+		}
+		return na;
+	}
+	
+	/**Extends the array to length x. Adding 0s after. 
+	 * Will also work for shortening. Will only work for rectangular
+	 * arrays **/
+	public static double[][] extend(double[][] values, int newLength) {
+		double[][] na = new double[newLength][values[0].length];
+		for (int i = 0; i < newLength; ++i) {
+			
+			for (int j = 0; j < values[i].length; ++j) {
+				if (i < values.length) {
+					na[i][j] = values[i][j];
+				} else {
+					na[i][j] = 0;
+				}
+			}
+		}
+		return na;
+	}
+	
 	
 	/** changes a 2d array to a long 1d array **/
 	public static double[] tableToLongRow(double[][] table) {
@@ -148,5 +180,73 @@ public class ArrayStuff {
 		}
 		return lr;
 	}
+
+	/**Convert columns to rows and rows to columns **/
+	public static double[][] flip(double[][] table, boolean verbose) {
+		//assume first row has correct column amount
+		int columnNo = table[0].length;
+		if (verbose) {System.out.println("Column No.: " + columnNo);}
+		double[][] flipTable = new double[columnNo][table.length];
+		int i = 0;
+		for (double[] row: table) {
+			int j = 0;
+			for (double val: row) {
+				flipTable[j][i] = val;
+				j++;
+			}
+			i++;
+		}
+		return flipTable;
+	}
+
+	public static double[][] flip(double[][] table) {
+		return flip(table, false);
+	}
+
+	/**Convert columns to rows and rows to columns **/
+	public static String[][] flip(String[][] table, boolean verbose) {
+		//assume first row has correct column amount
+		int columnNo = table[0].length;
+		if (verbose) {System.out.println("Column No.: " + columnNo);}
+		String[][] flipTable = new String[columnNo][table.length];
+		int i = 0;
+		for (String[] row: table) {
+			int j = 0;
+			for (String val: row) {
+				flipTable[j][i] = val;
+				j++;
+			}
+			i++;
+		}
+		return flipTable;
+	}
+
+	public static String[][] flip(String[][] table) {
+		return flip(table, false);
+	}
+
+	/**Convert columns to rows and rows to columns **/
+	public static Object[][] flip(Object[][] table, boolean verbose) {
+		//assume first row has correct column amount
+		int columnNo = table[0].length;
+		if (verbose) {System.out.println("Column No.: " + columnNo);}
+		Object[][] flipTable = new Object[columnNo][table.length];
+		int i = 0;
+		for (Object[] row: table) {
+			int j = 0;
+			for (Object val: row) {
+				flipTable[j][i] = val;
+				j++;
+			}
+			i++;
+		}
+		return flipTable;
+	}
+
+	public static Object[][] flip(Object[][] table) {
+		return flip(table, false);
+	}
+
+	
 
 }

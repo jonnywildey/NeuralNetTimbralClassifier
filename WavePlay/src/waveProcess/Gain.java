@@ -1,7 +1,8 @@
-package waveAnalysis;
+package waveProcess;
 
 import filemanager.Log;
 import riff.Signal;
+import waveAnalysis.SampleRateException;
 
 public class Gain {
 	

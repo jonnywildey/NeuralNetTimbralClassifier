@@ -1,5 +1,6 @@
-package riff;
+package waveProcess;
 
+import riff.Signal;
 import filemanager.Log;
 
 public class Pitch {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import filemanager.ArrayStuff;
+
 
 /** Various utilities for helping to use data in Neural Networks **/
 public  class NNUtilities {
@@ -11,72 +13,6 @@ public  class NNUtilities {
 
 
 
-	
-	/**Convert columns to rows and rows to columns **/
-	public static double[][] flip(double[][] table, boolean verbose) {
-		//assume first row has correct column amount
-		int columnNo = table[0].length;
-		if (verbose) {System.out.println("Column No.: " + columnNo);}
-		double[][] flipTable = new double[columnNo][table.length];
-		int i = 0;
-		for (double[] row: table) {
-			int j = 0;
-			for (double val: row) {
-				flipTable[j][i] = val;
-				j++;
-			}
-			i++;
-		}
-		return flipTable;
-	}
-	
-	public static double[][] flip(double[][] table) {
-		return flip(table, false);
-	}
-	
-	/**Convert columns to rows and rows to columns **/
-	public static String[][] flip(String[][] table, boolean verbose) {
-		//assume first row has correct column amount
-		int columnNo = table[0].length;
-		if (verbose) {System.out.println("Column No.: " + columnNo);}
-		String[][] flipTable = new String[columnNo][table.length];
-		int i = 0;
-		for (String[] row: table) {
-			int j = 0;
-			for (String val: row) {
-				flipTable[j][i] = val;
-				j++;
-			}
-			i++;
-		}
-		return flipTable;
-	}
-	
-	public static String[][] flip(String[][] table) {
-		return flip(table, false);
-	}
-	
-	/**Convert columns to rows and rows to columns **/
-	public static Object[][] flip(Object[][] table, boolean verbose) {
-		//assume first row has correct column amount
-		int columnNo = table[0].length;
-		if (verbose) {System.out.println("Column No.: " + columnNo);}
-		Object[][] flipTable = new Object[columnNo][table.length];
-		int i = 0;
-		for (Object[] row: table) {
-			int j = 0;
-			for (Object val: row) {
-				flipTable[j][i] = val;
-				j++;
-			}
-			i++;
-		}
-		return flipTable;
-	}
-	
-	public static Object[][] flip(Object[][] table) {
-		return flip(table, false);
-	}
 	
 	/** Converts an array to a unique bitArray (e.g. 001, 010, 100) the length of the array **/
 	public static double[][] convertToUniqueBits(Object[] array, boolean verbose) {
@@ -217,9 +153,9 @@ public  class NNUtilities {
 	
 	/** gets target Conversion from .csv style array **/
 	public static double[][][] createTargetConversionTable(double[][] array, boolean verbose) {
-		array = flip(array); //flip table to make sense
+		array = ArrayStuff.flip(array); //flip table to make sense
 		Double[][] nc = getCount(array[array.length - 1], verbose); //assumes the target is the last column in array
-		return createConversionTable(flip(Doubletodouble(nc))[0], verbose);
+		return createConversionTable(ArrayStuff.flip(Doubletodouble(nc))[0], verbose);
 	}
 	
 	
