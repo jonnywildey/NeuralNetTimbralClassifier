@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import riff.Signal;
 import riff.WaveChunk;
-import filemanager.Wave;
 /**
  * Class for determining the fundamental pitch of a waveform
  * @author Jonny Wildey

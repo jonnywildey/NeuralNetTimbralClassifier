@@ -28,6 +28,16 @@ public class FFT {
 		this.amplitudes = amplitudes;
 	}
 	
+	/**Using the inverse FFT create a new signal **/
+	public Signal synthesiseSignal() {
+		double[][] s = new double[][]{
+				Complex.getReals(FFT.slow(this.cValues))};
+		return new Signal(s, 24, (int) this.sampleRate);
+	}
+	
+	
+	
+	
 	public FFT(Signal s) {
 		this.sampleRate = s.getSampleRate();
 		//find nearest bigger frame size
@@ -127,6 +137,45 @@ public class FFT {
 		return amplitudes;
 	}
 	
+	public static Complex[] icfft(Complex[] amplitudes) {
+		double n = amplitudes.length;
+		//conjugate...
+		for (int i = 0; i < n; ++i) {
+			amplitudes[i].im *= -1;
+		}
+		//apply transform
+		amplitudes = cfft(amplitudes);
+		for(int i = 0; i < n; ++i)
+		{
+			//conjugate again
+			amplitudes[i].im *= -1;
+			//scale
+			amplitudes[i].re /= n;
+			amplitudes[i].im /= n;
+		}
+		return amplitudes;
+	}
+	
+	public static Complex[] slow(Complex[] amplitudes) {
+		double n = amplitudes.length;
+		//conjugate...
+		for (int i = 0; i < n; ++i) {
+			amplitudes[i].im *= -1;
+		}
+		//apply transform
+		amplitudes = cfft(amplitudes);
+		Complex[] as = new Complex[(int) (2 * n)];
+		for(int i = 0; i < n * 2; ++i)
+		{
+			//conjugate again
+			as[i] = new Complex(amplitudes[i / 2].re, amplitudes[i / 2].im * -1);
+			//scale
+			as[i].re /= (n * 2);
+			as[i].im /= (n * 2);
+		}
+		return as;
+	}
+	
 	public boolean hasAnalysed() {
 		return this.cValues != null;
 	}
@@ -148,5 +197,7 @@ public class FFT {
 	public double[][] getTable() {
 		return this.table;
 	}
+	
+
 
 }

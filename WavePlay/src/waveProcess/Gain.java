@@ -155,10 +155,9 @@ public class Gain {
 		return new Signal(ns, bit, sr);
 	}
 	
-	/**Add signals together. very useful. Stereo. 
+	/**Add signals together. very useful. Mono. 
 	 * Uses the highest bit rate. throws an exception if 
 	 * sample rates are bad.
-	 * Use sumMono for mono summing 
 	 * @throws SampleRateException **/
 	public static Signal sumMono(Signal... signals) throws SampleRateException {
 		//set up arrays
@@ -175,7 +174,7 @@ public class Gain {
 			}
 		}
 		double[][] ns = new double[1][max];	
-		Log.d(signals.length + " " + bit + " " + max);
+		//Log.d(signals.length + " " + bit + " " + max);
 		for (int k = 0; k < os.length; ++k) { //each signal
 			os[k] = bitRateConvert(signals[k], bit).getSignal()[0];
 				for (int j = 0; j < os[k].length;++j) {
@@ -186,6 +185,7 @@ public class Gain {
 		}
 		return new Signal(ns, bit, sr);
 	}
+	
 	
 	
 	public static Signal midSideEncode(Signal signal) {

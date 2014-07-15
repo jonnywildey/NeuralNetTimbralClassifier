@@ -14,6 +14,7 @@ import riff.InfoChunk;
 import riff.Signal;
 import riff.WaveChunk;
 import waveProcess.EQFilter;
+import waveProcess.Edit;
 import waveProcess.Gain;
 import waveProcess.Gen;
 import waveProcess.Noise;
@@ -23,7 +24,6 @@ import filemanager.ByteReader;
 import filemanager.CSVWriter;
 import filemanager.HexByte;
 import filemanager.Log;
-import filemanager.Wave;
 
 public class WaveReader {
 
@@ -46,7 +46,7 @@ public class WaveReader {
 		
 		
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/log.txt"));
-		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeA.wav";
+		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/Slow.wav";
 		String f2 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeSil.wav";
 		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeANorm.wav";
 		WaveChunk wr1 = new WaveChunk(f1);
@@ -57,14 +57,16 @@ public class WaveReader {
 		//s1 = Gen.pinkNoise(100000, -3, 44100, 16);
 		//s1 = Gain.changeGain(s1, 0);
 		Signal s1 = wr1.getSignals();
-		WaveChunk wr2 = new WaveChunk(s1);
-		Signal s3 = wr1.getSignals();
-		//WaveChunk wr3 = new WaveChunk(Gain.volume(s3, -2));
-
-		//s1 = Noise.whiteNoise(s1, -6);
-		//s1.makeGraph(800, 600);
-
+		//s1 = Gain.normalise(s1);
+		//s1 = Noise.addTapeHiss(s1, -6);
 		
+		/*Signal s1 = wr1.getSignals();
+		s1 = Edit.crop(s1, 120000, s1.getLength());
+		s1 = EQFilter.highPassFilter(s1, 140, 0.72);
+		s1 = Gain.changeGain(s1, -1);
+		s1.makeGraph();
+		WaveChunk wc = new WaveChunk(s1);
+		wc.writeFile(new File("../assets/wav/Tape.wav")); */
 		//s1 = Noise.whiteNoise(s1, -18);
 		//s1 = EQFilter.highPassFilter(s1, 50, 1);
 		//s1 = Gain.volume(s1, -12);
@@ -78,12 +80,15 @@ public class WaveReader {
 		//sigs = Pitch.reverse(sigs);
 		FFT fft = new FFT(s1);
 		double[][] ddd = fft.analyse(20000);
-		fft.filter(60, 700);
-		fft.makeChart();
-		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
-		cd.writeArraytoFile(ddd);
+		//fft.filter(60, 500);
+		//fft.makeChart();
+		Signal s2 = fft.synthesiseSignal();
+		//s2 = Gain.volume(s2, -9);
+		
+		//CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
+		//cd.writeArraytoFile(ddd);
 		//Log.d(fft.toString());
-		WaveChunk pw = new WaveChunk(s1);
+		WaveChunk pw = new WaveChunk(s2);
 		Log.d(pw.toStringRecursive());
 		pw.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/PA.wav"));
 		//for (int i = 200; i < 300; ++i) {

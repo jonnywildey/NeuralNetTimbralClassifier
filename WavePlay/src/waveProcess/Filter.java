@@ -4,23 +4,23 @@ package waveProcess;
 /** basic template for filter. Just need to change the coefficients **/
 public class Filter {
 	
-	double sampleRate;
-	double centreFreq;
-	double octaveBW;
-	double gain;
+	protected double sampleRate;
+	protected double centreFreq;
+	protected double octaveBW;
+	protected double gain;
 	
-	double bigA;
-	double w0;   
-	double c; 
-	double s; 
-	double alpha;
+	protected double bigA;
+	protected double w0;   
+	protected double c; 
+	protected double s; 
+	protected double alpha;
 	
-	double a0;
-	double a1;
-	double a2;
-	double b0;
-	double b1;
-	double b2;
+	protected double a0;
+	protected double a1;
+	protected double a2;
+	protected double b0;
+	protected double b1;
+	protected double b2;
 	
 	double xmem1, xmem2, ymem1, ymem2;
 	

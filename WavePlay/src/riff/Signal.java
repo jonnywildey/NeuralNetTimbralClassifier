@@ -39,6 +39,24 @@ public class Signal {
 		sc.makeChart();
 	}
 	
+	public String toString() {
+		StringBuilder sb = new StringBuilder(this.signal[0].length * 20);
+		for (int i = 0; i < this.signal.length; ++i) {
+			sb.append("[");
+			for (int j = 0; j < this.signal[i].length; ++j) {
+				sb.append(this.signal[i][j]);
+				if (j < this.signal[i].length - 1) {
+					sb.append(",");
+				}
+			}
+			sb.append("]");
+			if (i < this.signal.length - 1) {
+				sb.append(",");
+			}
+		}
+		return sb.toString();
+	}
+	
 
 	
 	/** get the amount of channels **/
@@ -65,6 +83,10 @@ public class Signal {
 
 	public void setSampleRate(int sampleRate) {
 		this.sampleRate = sampleRate;
+	}
+
+	public int getLength() {
+		return this.signal[0].length;
 	}
 
 	

@@ -86,6 +86,7 @@ class Complex {
 		return cs;
 	}
 	
+	/** return all maginutes (distance) of a complex array **/
 	public static double[] getMagnitudes(Complex[] values) {
 		double[] cs = new double[values.length];
 		for (int i = 0; i < values.length; ++i) {
@@ -94,12 +95,24 @@ class Complex {
 		return cs;
 	}
 	
-	
-	public static void main(String[] args) {
-		//Complex a = new Complex(0, -2);
-		//Complex b = new Complex(3, -2);
-		//Log.d(a.multiply(a));
+	/** return all reals of a complex array **/
+	public static double[] getReals(Complex[] values) {
+		double[] cs = new double[values.length];
+		for (int i = 0; i < values.length; ++i) {
+			cs[i] = values[i].re;
+		}
+		return cs;
 	}
+	
+	/** return all imaginaries of a complex array **/
+	public static double[] getImaginary(Complex[] values) {
+		double[] cs = new double[values.length];
+		for (int i = 0; i < values.length; ++i) {
+			cs[i] = values[i].im;
+		}
+		return cs;
+	}
+	
 	
 	
 }
