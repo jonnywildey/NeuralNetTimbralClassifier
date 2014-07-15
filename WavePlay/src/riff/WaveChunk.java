@@ -185,6 +185,12 @@ public class WaveChunk extends Chunk{
 		return fc.getChannels();
 	}
 	
+	/** get the bitwise hamming distance between the signals
+	 * of waves. correlation above 0.9 suggests waves are VERY similar **/
+	public double compareTo(WaveChunk wave) {
+		return ArrayStuff.byteSimilarity(this.getData(), wave.getData());
+	}
+	
 	/** Returns the length of the signal data. A bit 
 	 * different than other chunk's getDataLength
 	 * @return

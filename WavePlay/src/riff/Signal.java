@@ -34,6 +34,11 @@ public class Signal {
 		sc.makeChart();
 	}
 	
+	public void makeGraph(int width, int height) {
+		SignalController sc = new SignalController(this, width, height);
+		sc.makeChart();
+	}
+	
 
 	
 	/** get the amount of channels **/
@@ -61,6 +66,8 @@ public class Signal {
 	public void setSampleRate(int sampleRate) {
 		this.sampleRate = sampleRate;
 	}
+
+	
 	
 	
 }

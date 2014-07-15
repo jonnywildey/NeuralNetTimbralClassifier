@@ -1,5 +1,6 @@
 package waveProcess;
 
+import filemanager.ArrayStuff;
 import filemanager.Log;
 import riff.Signal;
 import waveAnalysis.SampleRateException;
@@ -154,6 +155,38 @@ public class Gain {
 		return new Signal(ns, bit, sr);
 	}
 	
+	/**Add signals together. very useful. Stereo. 
+	 * Uses the highest bit rate. throws an exception if 
+	 * sample rates are bad.
+	 * Use sumMono for mono summing 
+	 * @throws SampleRateException **/
+	public static Signal sumMono(Signal... signals) throws SampleRateException {
+		//set up arrays
+		double[][] os = new double[signals.length][];
+		int max = 0; 
+		int bit = 0;
+		int sr = signals[0].getSampleRate();
+		for (int i = 0; i < signals.length; ++i) {
+			os[i] = signals[i].getSignal()[0];
+			max = (os[i].length > max) ? os[i].length: max;
+			bit = (signals[i].getBit() > bit) ? signals[i].getBit(): bit;
+			if (signals[i].getSampleRate() != sr) {
+				throw new SampleRateException();
+			}
+		}
+		double[][] ns = new double[1][max];	
+		Log.d(signals.length + " " + bit + " " + max);
+		for (int k = 0; k < os.length; ++k) { //each signal
+			os[k] = bitRateConvert(signals[k], bit).getSignal()[0];
+				for (int j = 0; j < os[k].length;++j) {
+				//Process
+					ns[0][j] += os[k][j];
+				}
+			
+		}
+		return new Signal(ns, bit, sr);
+	}
+	
 	
 	public static Signal midSideEncode(Signal signal) {
 		double[][] os = signal.getSignal();
@@ -180,6 +213,30 @@ public class Gain {
 		}
 		
 	}
+	
+	/**Adjusts volume to distance from ceiling, -ve **/
+	public static Signal changeGain(Signal signal, double dbBelowFloor) {
+		//set up arrays
+		double[][] os = signal.getSignal();
+		double[][] ns = new double[os.length][os[0].length];
+		double maxAmp = signal.getMaxAmplitude() * decibelToAmplitude(dbBelowFloor);
+		double signalMax = ArrayStuff.getMaxAbs(os);
+		double factor = maxAmp / signalMax;
+		for (int i = 0; i < os.length;++i) {
+			for (int j = 0; j < os[0].length;++j) {
+				//Process
+				ns[i][j] = factor * os[i][j];
+			}
+		}
+		return new Signal(ns, signal.getBit(), signal.getSampleRate());
+	}
+	
+	/**Adjusts volume to distance from ceiling, -ve **/
+	public static Signal normalise(Signal signal) {
+		return changeGain(signal, 0);
+	}
+	
+	
 	
 	
 }

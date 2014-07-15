@@ -3,6 +3,8 @@ package waveAnalysis;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import riff.Signal;
+import riff.WaveChunk;
 import filemanager.Wave;
 /**
  * Class for determining the fundamental pitch of a waveform
@@ -11,28 +13,45 @@ import filemanager.Wave;
  */
 public class WaveFund {
 
-	private Wave wave;
+	private Signal s;
 	private int frame;
-	private long[] signal;
+	private double[] signal;
 	private boolean verbose;
 	public int intError;
 	public double percentageError;
 
-	public WaveFund(Wave wave) {
-		this.wave = wave;
+	public WaveFund(WaveChunk wave) {
+		this.s = wave.getSignals();
 		this.frame = 2560;
-		this.signal = wave.signals[0]; //always pick left for now
+		this.signal = this.s.getSignal()[0]; //always pick left for now
+		this.verbose = false;
+		percentageError = 0.05; 
+		intError = 3; 
+	}
+	
+	public WaveFund(Signal s) {
+		this.s = s;
+		this.frame = 2560;
+		this.signal = s.getSignal()[0]; //always pick left for now
 		this.verbose = false;
 		percentageError = 0.05; 
 		intError = 3; 
 	}
 
 	public double samplesToHz(double avg) {
-		long sampleRate = wave.getSampleRate();
-		return sampleRate / (double)avg; 
+		double sampleRate = this.s.getSampleRate();
+		return (sampleRate / avg) * 0.5; 
 	}
 
 	public static boolean changeSign(long a, long b) {
+		if ((a < 0 && b >= 0) | (a >= 0 && b < 0)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private boolean changeSign(double a, double b) {
 		if ((a < 0 && b >= 0) | (a >= 0 && b < 0)) {
 			return true;
 		} else {
@@ -146,7 +165,7 @@ public class WaveFund {
 
 	private ArrayList<Integer> getZeroCrossings() {
 		ArrayList<Integer> zeroX = new ArrayList<Integer>(frame); //can't be more zero crossing than samples
-		long prev = signal[0];
+		double prev = signal[0];
 		for (int i = 1; i < frame; ++i) {
 			if (changeSign(prev, signal[i])) {
 				zeroX.add(i);
@@ -158,6 +177,8 @@ public class WaveFund {
 		}
 		return zeroX;
 	}
+
+	
 
 	/** determines fundamental frequency using zero crossing analysis **/
 	public double zeroCross() {
@@ -187,7 +208,7 @@ public class WaveFund {
 		//and convert
 		fundamental = samplesToHz(avg);
 		if(verbose) {
-			System.out.println("Fundamental frequency of " + this.wave.filepath.getName() + ": " + 
+			System.out.println("Fundamental frequency of Signal: " + 
 					fundamental + "HZ");
 		}
 		return fundamental;

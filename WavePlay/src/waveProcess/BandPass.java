@@ -1,6 +1,7 @@
 package waveProcess;
 
 
+
 public class BandPass extends Filter{
 	
 	protected double q;

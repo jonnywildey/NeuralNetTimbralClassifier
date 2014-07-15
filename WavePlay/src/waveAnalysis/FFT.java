@@ -1,5 +1,9 @@
 package waveAnalysis;
 
+import java.util.Arrays;
+
+import plotting.FFTController;
+import plotting.SignalController;
 import filemanager.ArrayStuff;
 import filemanager.Log;
 import riff.Signal;
@@ -11,8 +15,9 @@ public class FFT {
 	private double frameSize; //must be power of two
 	private double[] amplitudes;
 	private Complex[] cValues;
-	private double[] magnitudes;
+	protected double[] magnitudes;
 	private double[] freqRow;
+	protected double[][] table;
 	
 	public FFT() {		
 	}
@@ -25,8 +30,32 @@ public class FFT {
 	
 	public FFT(Signal s) {
 		this.sampleRate = s.getSampleRate();
-		this.frameSize = (int) Math.pow(2,(Math.floor(Music.log(s.getSignal()[0].length, 2)) + 1));
+		//find nearest bigger frame size
+		this.frameSize = (int) Math.pow(2,(Math.floor(
+				Music.log(s.getSignal()[0].length, 2)) + 1));
 		this.amplitudes = ArrayStuff.extend(s.getSignal()[0], (int) this.frameSize);
+	}
+	
+	public double[][] filter(double from, double to) {
+		//get min and max
+		int min = 0;
+		int max = 0;
+		for (int i = 0; i < this.magnitudes.length; ++i) {
+			if (this.freqRow[i] > from) {
+				min = i;
+				break;
+			}
+		}
+		for (int i = this.magnitudes.length - 1; i >= 0; --i) {
+			if (this.freqRow[i] < to) {
+				max = i;
+				break;
+			}
+		}
+		this.freqRow = ArrayStuff.getSubset(this.freqRow, min, max);
+		this.magnitudes = ArrayStuff.getSubset(this.magnitudes, min, max);
+		this.table = new double[][]{this.freqRow, this.magnitudes};
+		return this.table;
 	}
 	
 	
@@ -34,21 +63,21 @@ public class FFT {
 		this.cValues = cfft(Complex.doubleToComplex(this.amplitudes));
 		this.magnitudes = Complex.getMagnitudes(this.cValues);
 		this.freqRow = this.getFreqRow();
-		return ArrayStuff.flip(new double[][]{freqRow, magnitudes});
+		this.table = new double[][]{this.freqRow, this.magnitudes};
+		return this.table;
+		//return ArrayStuff.flip(new double[][]{freqRow, magnitudes});
 	}
 	
 	/** only returns values up to a particular frequency **/
 	public double[][] analyse(int toFreq) {
 		double[][] vals = this.analyse();
 		int limit = 0;
-		Log.d("lrng" + vals[0].length);
 		for (int i = 0; i < vals.length; ++i) {
 			if (vals[i][0] > toFreq) {
 				limit = i;
 				break;
 			}
 		}
-		Log.d(limit);
 		return ArrayStuff.extend(vals, limit);
 	}
 	
@@ -59,6 +88,11 @@ public class FFT {
 			fr[i] = i * sr;
 		}
 		return fr;
+	}
+	
+	public void makeChart() {
+		FFTController sc = new FFTController(this, 600, 400);
+		sc.makeChart();
 	}
 
 	private static Complex[] cfft(Complex[] amplitudes) {
@@ -109,6 +143,10 @@ public class FFT {
 			sb.append(this.magnitudes[i]);
 		}
 		return sb.toString();
+	}
+
+	public double[][] getTable() {
+		return this.table;
 	}
 
 }

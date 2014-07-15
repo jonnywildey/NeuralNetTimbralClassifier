@@ -15,6 +15,8 @@ import riff.Signal;
 import riff.WaveChunk;
 import waveProcess.EQFilter;
 import waveProcess.Gain;
+import waveProcess.Gen;
+import waveProcess.Noise;
 import waveProcess.Pitch;
 import filemanager.ArrayStuff;
 import filemanager.ByteReader;
@@ -51,8 +53,20 @@ public class WaveReader {
 		//WaveChunk wr2 = new WaveChunk(f2);
 		Log.d(wr1.toStringRecursive());
 		//Log.d(wr2.toStringRecursive());
+		//Signal s1 = Gen.sineSweep(200, 500, 100000, -3, 44100, 16);
+		//s1 = Gen.pinkNoise(100000, -3, 44100, 16);
+		//s1 = Gain.changeGain(s1, 0);
 		Signal s1 = wr1.getSignals();
-		s1 = EQFilter.highPassFilter(s1, 50, 1);
+		WaveChunk wr2 = new WaveChunk(s1);
+		Signal s3 = wr1.getSignals();
+		//WaveChunk wr3 = new WaveChunk(Gain.volume(s3, -2));
+
+		//s1 = Noise.whiteNoise(s1, -6);
+		//s1.makeGraph(800, 600);
+
+		
+		//s1 = Noise.whiteNoise(s1, -18);
+		//s1 = EQFilter.highPassFilter(s1, 50, 1);
 		//s1 = Gain.volume(s1, -12);
 		//s1 = EQFilter.notch(s1, 600, 1);
 		//s2 = Gain.volume(s2, -9);
@@ -63,7 +77,9 @@ public class WaveReader {
 		//Signal sum = Gain.sum(s1, s2);
 		//sigs = Pitch.reverse(sigs);
 		FFT fft = new FFT(s1);
-		double[][] ddd = fft.analyse(1200);
+		double[][] ddd = fft.analyse(20000);
+		fft.filter(60, 700);
+		fft.makeChart();
 		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
 		cd.writeArraytoFile(ddd);
 		//Log.d(fft.toString());
