@@ -8,77 +8,106 @@ import filemanager.ArrayStuff;
 import filemanager.Log;
 import riff.Signal;
 
-
+/**Basic FFT algorithm implemented with lots of 
+ * help from Rosetta Code
+ * @author Jonny
+ *
+ */
 public class FFT {
 	
-	private double sampleRate;
-	private double frameSize; //must be power of two
-	private double[] amplitudes;
-	private Complex[] cValues;
-	protected double[] magnitudes;
-	private double[] freqRow;
-	protected double[][] table;
+	protected Signal signal; //initial signal
+	protected double frameSize; //must be power of two
+	protected double[] amplitudes; //amplitudes from signal
+	protected Complex[] cValues; //FFT complex values
+	protected double[] magnitudes; //Magnitudes from FFT values
+	protected double[] freqRow; //frequency row
+	protected double[][] table; //freqRow & magnitudes
 	
 	public FFT() {		
 	}
 	
-	public FFT(double[] amplitudes, double sampleRate, int frameSize) {
-		this.sampleRate = sampleRate;
+	/** Custom frame size constructor **/
+	public FFT(Signal s, int frameSize) {
+		this.signal = s;
 		this.frameSize = frameSize;
-		this.amplitudes = amplitudes;
+		this.amplitudes = s.getSignal()[0]; //assume left
 	}
 	
-	/**Using the inverse FFT create a new signal **/
-	public Signal synthesiseSignal() {
-		double[][] s = new double[][]{
-				Complex.getReals(FFT.slow(this.cValues))};
-		return new Signal(s, 24, (int) this.sampleRate);
-	}
-	
-	
-	
-	
+	/** Custom frame size constructor **/
 	public FFT(Signal s) {
-		this.sampleRate = s.getSampleRate();
+		this.signal = s;
 		//find nearest bigger frame size
 		this.frameSize = (int) Math.pow(2,(Math.floor(
 				Music.log(s.getSignal()[0].length, 2)) + 1));
 		this.amplitudes = ArrayStuff.extend(s.getSignal()[0], (int) this.frameSize);
+		
 	}
 	
-	public double[][] filter(double from, double to) {
+	
+	
+	/**Using the inverse FFT create a new signal **/
+	public Signal invertFFTSignal() {
+		double[][] s = new double[][]{
+				ArrayStuff.getSubset(
+						Complex.getReals(FFT.icfft(this.cValues)), 
+						0, this.signal.getLength())
+				};
+		return new Signal(s, this.signal.getBit(), 
+				(int) this.signal.getSampleRate());
+	}
+	
+	/**Filters an FFT by frequency. Does not care about frame size
+	 * (as long as to and from frequencies exist) **/
+	public static double[][] filter(double[][] table, double from, double to) {
 		//get min and max
 		int min = 0;
 		int max = 0;
-		for (int i = 0; i < this.magnitudes.length; ++i) {
-			if (this.freqRow[i] > from) {
+		double[] magnitudes = table[1];
+		double[] freqRow = table[0];
+		//get array positions of to and from
+		for (int i = 0; i < freqRow.length; ++i) {
+			if (freqRow[i] > from) {
 				min = i;
 				break;
 			}
 		}
-		for (int i = this.magnitudes.length - 1; i >= 0; --i) {
-			if (this.freqRow[i] < to) {
+		for (int i = freqRow.length - 1; i >= 0; --i) {
+			if (freqRow[i] < to) {
 				max = i;
 				break;
 			}
 		}
-		this.freqRow = ArrayStuff.getSubset(this.freqRow, min, max);
-		this.magnitudes = ArrayStuff.getSubset(this.magnitudes, min, max);
-		this.table = new double[][]{this.freqRow, this.magnitudes};
-		return this.table;
+		//make new table
+		double[][] newt = new double[table.length][];
+		for (int i = 0; i < newt.length; ++i) {
+			newt[i] = ArrayStuff.getSubset(table[i], min, max);
+		}
+		return newt;
 	}
 	
-	
+	/** Perform FFT analysis. get table of frequencies
+	 * and magnitudes **/
 	public double[][] analyse() {
 		this.cValues = cfft(Complex.doubleToComplex(this.amplitudes));
-		this.magnitudes = Complex.getMagnitudes(this.cValues);
-		this.freqRow = this.getFreqRow();
-		this.table = new double[][]{this.freqRow, this.magnitudes};
+		makeFromValues();
 		return this.table;
-		//return ArrayStuff.flip(new double[][]{freqRow, magnitudes});
 	}
 	
-	/** only returns values up to a particular frequency **/
+	/** is number a power of 2? **/
+	protected static boolean powerOf2(int number) {
+		double x = Math.log(number) / Math.log(2);
+		return (x - Math.rint(x) == 0);
+	}
+	
+	/** updates magnitudes etc. from cValues **/
+	protected void makeFromValues() {
+		this.magnitudes = Complex.getMagnitudes(this.cValues);
+		this.freqRow = FFT.getFreqRow(this.signal, (int) this.frameSize);
+		this.table = new double[][]{this.freqRow, this.magnitudes};
+	}
+	
+	/** only returns values up to a particular frequency. 
+	 * Not particularly useful **/
 	public double[][] analyse(int toFreq) {
 		double[][] vals = this.analyse();
 		int limit = 0;
@@ -91,22 +120,32 @@ public class FFT {
 		return ArrayStuff.extend(vals, limit);
 	}
 	
-	public double[] getFreqRow() {
-		double sr = this.sampleRate / this.frameSize;
-		double[] fr = new double[this.amplitudes.length];
-		for (int i = 0; i < this.amplitudes.length; ++i) {
+	/** return the frequencies **/
+	public static double[] getFreqRow(Signal s, int frameSize) {
+		double sr = s.getSampleRate() / frameSize;
+		double[] fr = new double[frameSize];
+		for (int i = 0; i < frameSize; ++i) {
 			fr[i] = i * sr;
 		}
 		return fr;
 	}
 	
-	public void makeChart() {
-		FFTController sc = new FFTController(this, 600, 400);
+	/**Quick normalised frequency response graph **/
+	public void makeGraph() {
+		FFTController sc = new FFTController(this.table, 600, 400);
 		sc.makeChart();
 	}
-
-	private static Complex[] cfft(Complex[] amplitudes) {
+	/**Quick normalised frequency response graph with filter options**/
+	public void makeGraph(int filterFrom, int filterTo, int width, int height) {
+		FFTController sc = new FFTController(FFT.filter(
+				this.table, filterFrom, filterTo), width, height);
+		sc.makeChart();
+	}
+	
+	/** the cfft algorithm **/
+	protected static Complex[] cfft(Complex[] amplitudes) {
 		double bigN = amplitudes.length;
+		//Log.d("BN" + bigN);
 		if (bigN <= 1) { //base case
 			return amplitudes;
 		}
@@ -156,7 +195,9 @@ public class FFT {
 		return amplitudes;
 	}
 	
-	public static Complex[] slow(Complex[] amplitudes) {
+	/*	EXAMPLE OF PITCH SHIFTING
+	 * public static Complex[] slow(Complex[] amplitudes) {
+		double slow = 2;
 		double n = amplitudes.length;
 		//conjugate...
 		for (int i = 0; i < n; ++i) {
@@ -164,17 +205,21 @@ public class FFT {
 		}
 		//apply transform
 		amplitudes = cfft(amplitudes);
-		Complex[] as = new Complex[(int) (2 * n)];
-		for(int i = 0; i < n * 2; ++i)
+		Complex[] as = new Complex[(int) (slow * n)];
+		double[] reals = Complex.getReals(amplitudes);
+		double[] ims = Complex.getImaginary(amplitudes);
+		for(int i = 0; i < n * slow; ++i)
 		{
 			//conjugate again
-			as[i] = new Complex(amplitudes[i / 2].re, amplitudes[i / 2].im * -1);
+			as[i] = new Complex(ArrayStuff.linearApproximate(reals, (double)(i) / slow), 
+					ArrayStuff.linearApproximate(ims, (double)(i) / slow) * -1);
+			 
 			//scale
-			as[i].re /= (n * 2);
-			as[i].im /= (n * 2);
+			as[i].re /= n;
+			as[i].im /= n;
 		}
 		return as;
-	}
+	}*/
 	
 	public boolean hasAnalysed() {
 		return this.cValues != null;

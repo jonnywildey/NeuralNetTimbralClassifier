@@ -11,15 +11,14 @@ import waveAnalysis.FFT;
 import filemanager.ArrayStuff;
 import filemanager.Log;
 
+/**Messy but somewhat functional FFT graph**/
 public class FFTGraph extends PlotGraph {
 	
 	protected double[][] values;
-	protected FFT fft;
 	
-	public FFTGraph(FFT fft, Dimension winSize, String[] axisLabels) {
+	public FFTGraph(double[][] table, Dimension winSize, String[] axisLabels) {
 		super();
-		this.values = new double[][]{fft.getTable()[1]};
-		this.fft = fft;
+		this.values = table;
 		this.axisLabels = axisLabels;
 		size = winSize;
 		offsetSize = new Dimension((int) (size.getWidth() * marginOffset), (int) (size.getHeight() * marginOffset));
@@ -44,11 +43,11 @@ public class FFTGraph extends PlotGraph {
 	
 	private String getLowFreq() {
 		//Log.d(Arrays.deepToString(this.fft.getTable()));
-		return String.valueOf(Math.rint(ArrayStuff.getMin(this.fft.getTable()[0]))) + "hz";
+		return String.valueOf(Math.rint(ArrayStuff.getMin(this.values[0])) + "hz");
 	}
 	
 	private String getHighFreq() {
-		return String.valueOf(Math.rint(ArrayStuff.getMax(this.fft.getTable()[0]))) + "hz";
+		return String.valueOf(Math.rint(ArrayStuff.getMax(this.values[0])) + "hz");
 	}
 	
 	@Override
@@ -68,7 +67,7 @@ public class FFTGraph extends PlotGraph {
 		//System.out.println("widthness" + widthness);
 		//System.out.println("values length " + values[0].length);
 		int c = 0;
-		double[] av = values[0];
+		double[] av = values[1]; //magnitudes
 			g2d.setColor(rColors[c]);
 			for (int i = 0; i < av.length -1; ++i) {
 				g2d.drawLine((int)((i * wr) + wOffset), 

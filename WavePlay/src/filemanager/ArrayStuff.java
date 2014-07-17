@@ -341,6 +341,11 @@ public class ArrayStuff {
 		return newBytes;
 	}
 	
+	/**Get a subset of an array **/
+	public static double[] getSubset(double[] doubles, int start) {
+		return getSubset(doubles, start, doubles.length - 1);
+	}
+	
 	/** calculate hamming distance for a bit char array **/
 	private static int hamm(char[] s1, char[] s2) {
 		int c = 0;
@@ -406,6 +411,23 @@ public class ArrayStuff {
 			}
 		}
 		return lr;
+	}
+
+
+	/**Linearly approximates the continous value between two discrete values **/
+	public static double linearApproximate(double[] array, double distance) {
+		/*Obviously we can't round the array lengths so I've decided to slightly 
+		 * extend the new one by one sample. Probably better than reducing the information
+		 */
+		if ((int)distance >= array.length - 1) { 
+			return array[array.length - 1];
+		} else {
+			int r = (int) distance;
+			double rd = array[r];
+			double ru = array[r + 1];
+			double f = distance - r;
+			return rd + (ru - rd) * f;
+		}
 	}
 
 

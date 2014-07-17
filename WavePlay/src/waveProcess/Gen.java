@@ -130,6 +130,27 @@ public class Gen {
 		double maxThresh = getMax(bitRate) * Gain.decibelToAmplitude(dbBelowCeiling);
 		for (int i = 0; i < ns.length;++i) {
 				//Process
+				ns[i] = saw((double)i / x) * maxThresh;
+		}
+		return new Signal(new double[][]{ns}, bitRate, sampleRate);
+	}
+	
+	/**Generates a weird saw wave 
+	 * frequency: in hz
+	 * length: in samples
+	 * db: 0 would be normalised. 
+	 * so you'll want -dbs in general
+	 * sampleRate: the sample rate e.g. 44100
+	 * bitRate: normally 16 or 24**/
+	public static Signal weirdSaw(double frequency, int length, double dbBelowCeiling, int sampleRate, int bitRate) {
+		//set up arrays
+		double[] ns = new double[length];
+		//sine normally has a 2PI frequency e.g. 7018hz
+		//44100 / (2PI * x) = freq
+		double x = sampleRate / frequency / (Math.PI * 2);
+		double maxThresh = getMax(bitRate) * Gain.decibelToAmplitude(dbBelowCeiling);
+		for (int i = 0; i < ns.length;++i) {
+				//Process
 				ns[i] = weirdSaw((double)i / x) * maxThresh;
 		}
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);

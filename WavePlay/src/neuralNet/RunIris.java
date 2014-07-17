@@ -59,7 +59,8 @@ public class RunIris {
 		nn.setAcceptableErrorRate(0.1d);
 		nn.setMaxEpoch(1000);
 		nn.initialiseRandomWeights(seed2);
-		nn.setShuffleTrainingPatterns(true, seed3);
+		nn.setShuffleTrainingPatterns(false, seed3);
+		//TURN OFF SHUFFLING AFTER A WHILE
 		return nn;
 	}
 	

@@ -23,6 +23,7 @@ public class Gain {
 		return 10 * (Math.log10(power));
 	}
 	
+	
 	/**TEMPLATE **/
 	public static Signal processTemplate(Signal signal) {
 		//set up arrays
@@ -142,7 +143,7 @@ public class Gain {
 			}
 		}
 		double[][] ns = new double[2][max];	
-		Log.d(signals.length + " " + bit + " " + max);
+		//Log.d(signals.length + " " + bit + " " + max);
 		for (int k = 0; k < os.length; ++k) { //each signal
 			os[k] = bitRateConvert(signals[k], bit).getSignal();
 			for (int i = 0; i < ns.length;++i) { //pan
@@ -189,13 +190,35 @@ public class Gain {
 	
 	
 	public static Signal midSideEncode(Signal signal) {
+		double[][] ns = new double[][]{
+				getMid(signal).getSignal()[0], 
+				getSide(signal).getSignal()[0]};
+		return new Signal(ns, signal.getBit(), signal.getSampleRate());
+	}
+	
+	public static Signal getMid(Signal signal) {
+		if (signal.getChannels() == 1) {
+			return signal;
+		}
 		double[][] os = signal.getSignal();
-		double[][] ns = new double[os.length][os[0].length];
+		double[][] ns = new double[1][os[0].length];
 		for (int i = 0; i < os.length;++i) {
 			for (int j = 0; j < os[0].length;++j) {
-				//Process
+				ns[0][j] += os[i][j] / 2;
 			}
 		}
+		return new Signal(ns, signal.getBit(), signal.getSampleRate());
+	}
+	
+	public static Signal getSide(Signal signal) {
+		if (signal.getChannels() == 1) {
+			return signal;
+		}
+		double[][] os = signal.getSignal();
+		double[][] ns = new double[1][os[0].length];
+			for (int j = 0; j < os[0].length;++j) {
+				ns[0][j] += os[0][j] - os[1][j];
+			}
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
@@ -231,9 +254,66 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
+	/**calculates root mean square **/
+	public static double calculateRMS(Signal signal) {
+		//set up arrays
+		double[][] os = signal.getSignal();
+		double avg = 0;		
+		for (int i = 0; i < os.length;++i) {
+			for (int j = 0; j < os[0].length;++j) {
+				avg += os[i][j] * os[i][j];
+			}
+		}
+		avg /= os[0].length;
+		avg = Math.pow(avg, 0.5);
+		avg = avg / signal.getMaxAmplitude();
+		return amplitudeToDecibel(avg);
+	}
+	
+	/**changes the volume to an rms value (e.g -12). Does NOT
+	 * check if this will clip **/
+	public static Signal volumeRMS(Signal signal, double rms) {
+		//Log.d("a");
+		double error = 0.05;
+		//set up arrays
+		double current = calculateRMS(signal);
+		double factor = decibelToAmplitude(rms - current);
+		Signal s = amplifyByFactor(signal, factor);
+		//double a = calculateRMS(s);
+		//Log.d(current + " " + a + (Math.abs(a) - Math.abs(current)));
+		return s;
+	}
+	
+	
+	
 	/**Adjusts volume to distance from ceiling, -ve **/
 	public static Signal normalise(Signal signal) {
 		return changeGain(signal, 0);
+	}
+	
+	/**converts to stereo **/
+	public static Signal monoToStereo(Signal signal) {
+		//set up arrays
+		double[][] os = signal.getSignal();
+		double[][] ns = new double[2][os[0].length];
+				
+		for (int i = 0; i < os.length;++i) {
+			for (int j = 0; j < os[0].length;++j) {
+				ns[i][j] = os[0][j];
+			}
+		}
+		return new Signal(ns, signal.getBit(), signal.getSampleRate());
+	}
+
+	/**converts channels sort of ok **/
+	public static Signal toChannels(Signal signal, int channel) {
+		if (signal.getChannels() == channel) {
+			return signal;
+		} else if (signal.getChannels() == 1 & channel == 2) {
+			return monoToStereo(signal);
+		} else { //2 -> 1
+			return getMid(signal);
+		}
 	}
 	
 	

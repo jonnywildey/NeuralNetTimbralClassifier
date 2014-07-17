@@ -46,7 +46,7 @@ public class WaveReader {
 		
 		
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/log.txt"));
-		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/Slow.wav";
+		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeDrums.wav";
 		String f2 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeSil.wav";
 		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeANorm.wav";
 		WaveChunk wr1 = new WaveChunk(f1);
@@ -56,7 +56,17 @@ public class WaveReader {
 		//Signal s1 = Gen.sineSweep(200, 500, 100000, -3, 44100, 16);
 		//s1 = Gen.pinkNoise(100000, -3, 44100, 16);
 		//s1 = Gain.changeGain(s1, 0);
-		Signal s1 = wr1.getSignals();
+		Signal s0 = Gen.weirdSaw(5, 500000, -3, 44100, 16);
+		Signal s1 = Gen.weirdSaw(35, 88000, -6, 44100, 16);
+		Signal s2 = Gen.weirdSaw(70, 88000, -9, 44100, 16);
+		Signal s3 = Gen.weirdSaw(140, 88000, -12, 44100, 16);
+		Signal s4 = Gen.weirdSaw(280, 88000, -15, 44100, 16);
+		Signal s5 = Gen.weirdSaw(560, 88000, -18, 44100, 16);
+		Signal s6 = Gen.weirdSaw(1120, 88000, -21, 44100, 16);
+		Signal s7 = Edit.concat(s1, s2, s3, s4, s5, s6, s0);
+		WaveChunk ws = new WaveChunk(s7);
+		ws.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/weirdsaw.wav"));
+
 		//s1 = Gain.normalise(s1);
 		//s1 = Noise.addTapeHiss(s1, -6);
 		
@@ -78,19 +88,16 @@ public class WaveReader {
 		//Signal pSig = Pitch.pitchShift(sigs, 0.5);
 		//Signal sum = Gain.sum(s1, s2);
 		//sigs = Pitch.reverse(sigs);
-		FFT fft = new FFT(s1);
-		double[][] ddd = fft.analyse(20000);
-		//fft.filter(60, 500);
-		//fft.makeChart();
-		Signal s2 = fft.synthesiseSignal();
-		//s2 = Gain.volume(s2, -9);
-		
-		//CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
-		//cd.writeArraytoFile(ddd);
+		s1 = Gain.volume(s1, -12);
+		FrameFFT fft = new FrameFFT(s7, 4096);
+		double[][] table = fft.analyse(10, 20000);
+		table = ArrayStuff.flip(table);
+		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
+		cd.writeArraytoFile(table);
 		//Log.d(fft.toString());
-		WaveChunk pw = new WaveChunk(s2);
-		Log.d(pw.toStringRecursive());
-		pw.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/PA.wav"));
+		//Log.d(pw.compareTo(wr1));
+		//Log.d(pw.toStringRecursive());
+		//pw.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/PA.wav"));
 		//for (int i = 200; i < 300; ++i) {
 			//Log.d(sigs.getSignal()[0][i] + "  " + s2.getSignal()[0][i]);
 		//}
