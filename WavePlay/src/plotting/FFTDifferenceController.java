@@ -8,18 +8,18 @@ import waveAnalysis.FFT;
 import waveAnalysis.FrameFFT;
 
 
-public class FFTController {
+public class FFTDifferenceController {
 	
 	private Dimension size;
 	private double[][] table;
 	
-	public FFTController(double[][] table) {
+	public FFTDifferenceController(double[][] table) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.size = new Dimension(screenSize.width, screenSize.height / 3);
 		this.table = table;
 	}
 	
-	public FFTController(double[][] table, int width, int height) {
+	public FFTDifferenceController(double[][] table, int width, int height) {
 		this.size = new Dimension(width, height);
 		this.table = table;
 	}
@@ -41,7 +41,7 @@ public class FFTController {
 		//Variables
 		//String[] names = new String{""}; 
 		String[] axisLabels = {"DB", "Frequency (log2)"};
-		frame.getContentPane().add(new FFTGraph(table, winSize, axisLabels));
+		frame.getContentPane().add(new FFTDifferenceGraph(table, winSize, axisLabels));
 		//frame.pack();
 		frame.setVisible(true);
 	}

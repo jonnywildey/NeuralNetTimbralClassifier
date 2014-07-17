@@ -50,6 +50,7 @@ public class WaveFund {
 		}
 	}
 	
+	
 	private boolean changeSign(double a, double b) {
 		if ((a < 0 && b >= 0) | (a >= 0 && b < 0)) {
 			return true;
@@ -176,8 +177,35 @@ public class WaveFund {
 		}
 		return zeroX;
 	}
+	
+	private ArrayList<Integer> getSignChanges() {
+		ArrayList<Integer> zeroX = new ArrayList<Integer>(frame); //can't be more zero crossing than samples
+		double prev = posGrad(signal[0], 0);
+		double now = 0;
+		for (int i = 1; i < frame; ++i) {
+			now = posGrad(signal[i], signal[i - 1]);
+			if (changeSign(prev, now)) {
+				zeroX.add(i);
+			}
+			prev = now;
+		}
+		if (verbose) {
+			System.out.println("Zero crossings:\n" + zeroX.toString());
+		}
+		return zeroX;
+	}
+	
+	
 
 	
+	/** Put later first!!! **/
+	private double posGrad(double d, double e) {
+		if (d > e) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
 
 	/** determines fundamental frequency using zero crossing analysis **/
 	public double zeroCross() {
@@ -187,7 +215,8 @@ public class WaveFund {
 					+ "zero cross detection with frame size " + this.frame);
 		}
 		//get zero crossing array
-		ArrayList<Integer> zeroX = getZeroCrossings();
+		//ArrayList<Integer> zeroX = getZeroCrossings(); CHANGED
+		ArrayList<Integer> zeroX = getSignChanges();
 		//get distance between sample and next.
 		int[] zeroDif = getSampleDistance(zeroX);
 		//find each sample distance's nearest close match

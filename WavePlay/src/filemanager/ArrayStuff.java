@@ -430,6 +430,32 @@ public class ArrayStuff {
 		}
 	}
 
+	
+	/** Get the average of a particular subset of an array **/
+	public static double getAverageOfSubset(double[] array, int from, int to) {
+		double average = 0;
+		for (int i = from; i < to; ++i) {
+			average += array[i];
+		}
+		average /= (to - from);
+		return average;
+	}
+
+
+	public static double[][] copy(double[][] table) {
+		double[][] nt = new double[table.length][];
+		for (int i = 0; i < table.length; ++i) {
+			double[] nr = new double[table[i].length];
+			for (int j = 0; j < table[i].length;++j) {
+				nr[j] = table[i][j];
+			}
+			nt[i] = nr;
+		}
+		return nt;
+	}
+
+	
+
 
 
 	

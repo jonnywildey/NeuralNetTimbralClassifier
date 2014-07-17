@@ -13,11 +13,11 @@ import filemanager.ArrayStuff;
 import filemanager.Log;
 
 /**Messy but somewhat functional FFT graph**/
-public class FFTGraph extends PlotGraph {
+public class FFTDifferenceGraph extends PlotGraph {
 	
 	protected double[][] values;
 	
-	public FFTGraph(double[][] table, Dimension winSize, String[] axisLabels) {
+	public FFTDifferenceGraph(double[][] table, Dimension winSize, String[] axisLabels) {
 		super();
 		this.values = table;
 		this.axisLabels = axisLabels;
@@ -31,15 +31,15 @@ public class FFTGraph extends PlotGraph {
 		wr = ((double)widthness / (double)values[0].length);
 		this.half = (int)((size.height - offsetSize.height) * 0.5);
 		maxBar = ((double)(heightness - (offsetSize.height )) 
-				/ ArrayStuff.getMaxAbs(values));
-		//Log.d(ArrayStuff.getMaxAbs(values));
+				/ ArrayStuff.getMaxAbs(values) * 0.5);
+		Log.d("maxbar" + maxBar);
 	}
 	
 	
 	/** converts amp value to graph value **/
 	public int ampValue(double c) {
 		//Log.d(c);
-		 return (int) (offsetSize.height - (c * maxBar));
+		 return (int) (this.half - (c * maxBar));
 	}
 	
 
@@ -54,6 +54,10 @@ public class FFTGraph extends PlotGraph {
 		g2d.drawLine(offsetSize.width, heightness, offsetSize.width, offsetSize.height);
 		//X axis
 		g2d.drawLine(offsetSize.width, heightness, size.width - offsetSize.width, heightness);
+		
+		g2d.drawLine(offsetSize.width, this.half, 
+				size.width - offsetSize.width, this.half);
+		
 		//axis labels
 		drawCentredString(axisLabels[0], offsetSize.width, offsetSize.height, g2d);
 		drawCentredString(axisLabels[1], widthness + offsetSize.width, heightness, g2d);

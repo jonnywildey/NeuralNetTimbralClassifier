@@ -28,7 +28,7 @@ public class SignalGraph extends PlotGraph {
 		wr = ((double)widthness / (double)values[0].length);
 		this.half = (int)((size.height - offsetSize.height) * 0.5);
 		maxBar = ((double)(heightness - (offsetSize.height )) / signals.getMaxAmplitude() * 0.5);
-		Log.d(maxBar);
+		//Log.d(maxBar);
 	}
 	
 	

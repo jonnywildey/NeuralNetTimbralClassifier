@@ -46,8 +46,8 @@ public class WaveReader {
 		
 		
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/log.txt"));
-		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeDrums.wav";
-		String f2 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeSil.wav";
+		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeB.wav";
+		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeSil.wav";
 		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeANorm.wav";
 		WaveChunk wr1 = new WaveChunk(f1);
 		//WaveChunk wr2 = new WaveChunk(f2);
@@ -56,16 +56,38 @@ public class WaveReader {
 		//Signal s1 = Gen.sineSweep(200, 500, 100000, -3, 44100, 16);
 		//s1 = Gen.pinkNoise(100000, -3, 44100, 16);
 		//s1 = Gain.changeGain(s1, 0);
-		Signal s0 = Gen.weirdSaw(5, 500000, -3, 44100, 16);
-		Signal s1 = Gen.weirdSaw(35, 88000, -6, 44100, 16);
-		Signal s2 = Gen.weirdSaw(70, 88000, -9, 44100, 16);
-		Signal s3 = Gen.weirdSaw(140, 88000, -12, 44100, 16);
-		Signal s4 = Gen.weirdSaw(280, 88000, -15, 44100, 16);
-		Signal s5 = Gen.weirdSaw(560, 88000, -18, 44100, 16);
-		Signal s6 = Gen.weirdSaw(1120, 88000, -21, 44100, 16);
-		Signal s7 = Edit.concat(s1, s2, s3, s4, s5, s6, s0);
-		WaveChunk ws = new WaveChunk(s7);
-		ws.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/weirdsaw.wav"));
+		//Signal s1 = Gen.silence(200000, 44100, 16);
+		Signal s1 = wr1.getSignals();
+		WaveChunk wer = new WaveChunk(s1);
+		
+		//Signal s1 = wr1.getSignals();
+		//s1 = EQFilter.highPassFilter(s1, 120, 1);
+		//s1 = Gain.normalise(s1);
+
+		
+		//4096 works well
+		FrameFFT fft = new FrameFFT(s1, 4096);
+		double[][] dd = fft.analyse(20, 15000);
+		
+		dd = fft.getSumTable(dd);
+		
+		//wer.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/PA.wav"));
+		dd = FrameFFT.convertTableToDecibels(fft.signal, dd, fft.frameSize);
+		double[][] nd = Statistics.getPeaks(dd);
+		//nd = FFT.filter(nd, 40, 2000);
+		//nd = ArrayStuff.flip(nd);
+		Log.d("freq: " + Statistics.getFundamental(dd));
+		//fft.sumDifference();
+
+		fft.makeGraph(40, 20000, 800, 600);
+		//FFTDifference fd = new FFTDifference(fft);
+		//fd.analyse();
+		//double[][] dd = FFTDifference.splitAndAverage(fft.table, 80);
+		//dd = ArrayStuff.flip(dd);
+		//fd.makeGraph();
+		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft2.csv");
+		cd.writeArraytoFile(dd);
+		//dd = ArrayStuff.flip(dd);
 
 		//s1 = Gain.normalise(s1);
 		//s1 = Noise.addTapeHiss(s1, -6);
@@ -88,12 +110,12 @@ public class WaveReader {
 		//Signal pSig = Pitch.pitchShift(sigs, 0.5);
 		//Signal sum = Gain.sum(s1, s2);
 		//sigs = Pitch.reverse(sigs);
-		s1 = Gain.volume(s1, -12);
-		FrameFFT fft = new FrameFFT(s7, 4096);
-		double[][] table = fft.analyse(10, 20000);
-		table = ArrayStuff.flip(table);
-		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
-		cd.writeArraytoFile(table);
+		//s1 = Gain.volume(s1, -12);
+		//FrameFFT fft = new FrameFFT(s7, 4096);
+		//double[][] table = fft.analyse(10, 20000);
+		//table = ArrayStuff.flip(table);
+		//CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
+		//cd.writeArraytoFile(table);
 		//Log.d(fft.toString());
 		//Log.d(pw.compareTo(wr1));
 		//Log.d(pw.toStringRecursive());

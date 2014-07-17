@@ -206,6 +206,22 @@ public class Gen {
 		}
 	}
 	
+	/**Generates silence
+	 * length: in samples
+	 * sampleRate: the sample rate e.g. 44100
+	 * bitRate: normally 16 or 24**/
+	public static Signal silence(int length, int sampleRate, int bitRate) {
+		//set up arrays
+		double[] ns = new double[length];
+		//sine normally has a 2PI frequency e.g. 7018hz
+		//44100 / (2PI * x) = freq
+		for (int i = 0; i < ns.length;++i) {
+				//Process
+				ns[i] = 0;
+		}
+		return new Signal(new double[][]{ns}, bitRate, sampleRate);
+	}
+	
 	/**computes the triangle function in radians **/
 	private static double triangle(double position) {
 		position %= (Math.PI * 2);

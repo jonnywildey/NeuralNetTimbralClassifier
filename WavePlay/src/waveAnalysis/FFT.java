@@ -81,6 +81,7 @@ public class FFT {
 		double[][] newt = new double[table.length][];
 		for (int i = 0; i < newt.length; ++i) {
 			newt[i] = ArrayStuff.getSubset(table[i], min, max);
+			
 		}
 		return newt;
 	}
@@ -102,7 +103,7 @@ public class FFT {
 	/** updates magnitudes etc. from cValues **/
 	protected void makeFromValues() {
 		this.magnitudes = Complex.getMagnitudes(this.cValues);
-		this.freqRow = FFT.getFreqRow(this.signal, (int) this.frameSize);
+		this.freqRow = FFT.getFreqRow(this.signal, this.frameSize);
 		this.table = new double[][]{this.freqRow, this.magnitudes};
 	}
 	
@@ -121,9 +122,9 @@ public class FFT {
 	}
 	
 	/** return the frequencies **/
-	public static double[] getFreqRow(Signal s, int frameSize) {
+	public static double[] getFreqRow(Signal s, double frameSize) {
 		double sr = s.getSampleRate() / frameSize;
-		double[] fr = new double[frameSize];
+		double[] fr = new double[(int) frameSize];
 		for (int i = 0; i < frameSize; ++i) {
 			fr[i] = i * sr;
 		}
@@ -132,13 +133,13 @@ public class FFT {
 	
 	/**Quick normalised frequency response graph **/
 	public void makeGraph() {
-		FFTController sc = new FFTController(this.table, 600, 400);
-		sc.makeChart();
+		makeGraph(40, 20000, 600, 400);
 	}
 	/**Quick normalised frequency response graph with filter options**/
 	public void makeGraph(int filterFrom, int filterTo, int width, int height) {
-		FFTController sc = new FFTController(FFT.filter(
-				this.table, filterFrom, filterTo), width, height);
+		FFTController sc = new FFTController(FrameFFT.logarithmicFreq(FFT.filter(
+						FrameFFT.convertTableToDecibels(this.signal, this.table, this.frameSize), 
+						filterFrom, filterTo)), width, height);
 		sc.makeChart();
 	}
 	
@@ -238,6 +239,8 @@ public class FFT {
 		}
 		return sb.toString();
 	}
+	
+	
 
 	public double[][] getTable() {
 		return this.table;
