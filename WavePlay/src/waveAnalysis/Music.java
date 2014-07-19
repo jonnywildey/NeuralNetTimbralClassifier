@@ -1,5 +1,7 @@
 package waveAnalysis;
 
+import filemanager.Log;
+
 public class Music {
 	
 	/**Music and music theory based utility methods**/
@@ -22,14 +24,16 @@ public class Music {
 		return (int) Math.rint(hzToMidi(hz));
 	}
 
+	/** Converts a frequency to a pitch **/
 	public static String hzToPitch(double hz) {
 		int n = hzToMidiInt(hz);
 		String str = notes[n % 12] + String.valueOf((n / 12) - 2) ;
 		return str;
 	}
-
-	public static double log(double x, double base) {
-		    return (Math.log(x) / Math.log(base));
+	
+	/** returns the semitone interval between two frequencies **/
+	public static double getInterval(double a, double b) {
+		return (Math.log((b /a)) / Math.log(2)) * 12;
 	}
-
+	
 }

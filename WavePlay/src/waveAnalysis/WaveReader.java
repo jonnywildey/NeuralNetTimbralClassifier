@@ -12,7 +12,7 @@ import plotting.WavController;
 import riff.Chunk;
 import riff.InfoChunk;
 import riff.Signal;
-import riff.WaveChunk;
+import riff.Wave;
 import waveProcess.EQFilter;
 import waveProcess.Edit;
 import waveProcess.Gain;
@@ -49,7 +49,7 @@ public class WaveReader {
 		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeB.wav";
 		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeSil.wav";
 		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeANorm.wav";
-		WaveChunk wr1 = new WaveChunk(f1);
+		Wave wr1 = new Wave(f1);
 		//WaveChunk wr2 = new WaveChunk(f2);
 		Log.d(wr1.toStringRecursive());
 		//Log.d(wr2.toStringRecursive());
@@ -58,7 +58,7 @@ public class WaveReader {
 		//s1 = Gain.changeGain(s1, 0);
 		//Signal s1 = Gen.silence(200000, 44100, 16);
 		Signal s1 = wr1.getSignals();
-		WaveChunk wer = new WaveChunk(s1);
+		Wave wer = new Wave(s1);
 		
 		//Signal s1 = wr1.getSignals();
 		//s1 = EQFilter.highPassFilter(s1, 120, 1);
@@ -76,7 +76,7 @@ public class WaveReader {
 		double[][] nd = Statistics.getPeaks(dd);
 		//nd = FFT.filter(nd, 40, 2000);
 		//nd = ArrayStuff.flip(nd);
-		Log.d("freq: " + Statistics.getFundamental(dd));
+		Log.d("freq: " + Pitch.getFundamental(dd));
 		//fft.sumDifference();
 
 		fft.makeGraph(40, 20000, 800, 600);

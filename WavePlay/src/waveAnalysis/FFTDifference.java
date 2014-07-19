@@ -64,6 +64,7 @@ public class FFTDifference {
 		sc.makeChart();
 	}
 	
+	/** Obtain the difference table **/
 	public static double[][] getDifferenceTable(double[][] table, int frames) {
 		//array is one less than table (because of difference)
 		double[][] dif = new double[frames + 1][table[0].length];

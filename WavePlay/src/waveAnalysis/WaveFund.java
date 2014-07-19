@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import riff.Signal;
-import riff.WaveChunk;
+import riff.Wave;
 /**
- * Class for determining the fundamental pitch of a waveform
+ * Class for determining the fundamental pitch of a waveform.
+ * DEPRECATED, USE GETFUNDAMENTAL IN PITCH INSTEAD
  * @author Jonny Wildey
  *
  */
@@ -19,7 +20,7 @@ public class WaveFund {
 	public int intError;
 	public double percentageError;
 
-	public WaveFund(WaveChunk wave) {
+	public WaveFund(Wave wave) {
 		this.s = wave.getSignals();
 		this.frame = 2560;
 		this.signal = this.s.getSignal()[0]; //always pick left for now

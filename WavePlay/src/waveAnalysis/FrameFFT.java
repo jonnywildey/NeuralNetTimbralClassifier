@@ -26,6 +26,7 @@ public class FrameFFT{
 		this(s, 2048);
 	}
 	
+	/** Converts tables amplitude values to decibels away from maximum amplitude **/
 	public static double[][] convertTableToDecibels(Signal s, double[][] table, double frame) {
 		double max = Gain.amplitudeToDecibel(s.getMaxAmplitude());
 		//Log.d(max);
@@ -40,6 +41,7 @@ public class FrameFFT{
 		return nt;
 	}
 	
+	/** converts frequecies to a power of two. Useful for graphs **/
 	public static double[][] logarithmicFreq(double[][] table) {
 		//double min = ArrayStuff.getMin(table[0]);
 		double[][] nt = ArrayStuff.copy(table);
@@ -50,6 +52,7 @@ public class FrameFFT{
 		return nt;
 	}
 	
+	/** return the frame count of the signal with frame size **/
 	protected static int getFrameCount(Signal s, int frameSize) {
 		return (int) Math.ceil(
 				(double)(s.getLength()) / (double)(frameSize));
@@ -126,16 +129,17 @@ public class FrameFFT{
 		return table;
 	}
 	
+	/** Gets the loudest frequency bins **/
 	public double getLoudestFreq(double[][] table) {
 		//sum each
 		double[][] nt = getSumTable(table);
 		return ArrayStuff.getMax(nt[1]);
 	}
 	
+	/** returns the sum of the bins **/
 	public static double[][] getSumTable(double[][] table) {
 		double[][] sums = new double[2][table[0].length];
 		sums[0] = table[0]; //freq row
-		double sum = 0;
 		for (int i = 0; i < table[0].length; ++i) {
 			for (int j = 1; j < table.length; ++j) {
 				sums[1][i] += table[j][i];

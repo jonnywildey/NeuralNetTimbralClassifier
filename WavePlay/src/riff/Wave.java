@@ -9,16 +9,16 @@ import filemanager.HexByte;
 import filemanager.Log;
 import plotting.WavController;
 
-public class WaveChunk extends Chunk{
+public class Wave extends Chunk{
 	
 	protected static int dataOffset = 12;
 	public File filepath;
 	
-	public WaveChunk() {
+	public Wave() {
 		super();
 	}
 	
-	public WaveChunk(File f) {
+	public Wave(File f) {
 		super();
 		this.filepath = f;
 		this.readFile();
@@ -27,11 +27,11 @@ public class WaveChunk extends Chunk{
 		this.initSubChunks();
 	}
 
-	public WaveChunk(String file) {
+	public Wave(String file) {
 		this(new File(file));
 	}
 	
-	public WaveChunk(byte[] bytes) {
+	public Wave(byte[] bytes) {
 		this.bytes = bytes;
 	}
 	
@@ -39,7 +39,7 @@ public class WaveChunk extends Chunk{
 	 * your bit rate and sample rate
 	 * @param signal
 	 */
-	public WaveChunk(Signal signal) {
+	public Wave(Signal signal) {
 		this.name = "RIFF";
 		setSignal(signal);
 	}
@@ -187,7 +187,7 @@ public class WaveChunk extends Chunk{
 	
 	/** get the bitwise hamming distance between the signals
 	 * of waves. correlation above 0.9 suggests waves are VERY similar **/
-	public double compareTo(WaveChunk wave) {
+	public double compareTo(Wave wave) {
 		return ArrayStuff.byteSimilarity(this.getData(), wave.getData());
 	}
 	
