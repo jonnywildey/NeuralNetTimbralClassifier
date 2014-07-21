@@ -8,7 +8,6 @@ import plotting.FFTDifferenceController;
 /** Object for analysing the difference between
  * successive FFT windows
  * @author Jonny
- *
  */
 public class FFTDifference {
 	

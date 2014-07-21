@@ -20,6 +20,15 @@ public class ArrayStuff {
 		return addTo;
 	}
 	
+	/** **/
+	public static double[] stringToDouble(String[] strings) {
+		double[] doubles = new double[strings.length];
+		for (int i = 0; i < doubles.length; ++i) {
+			doubles[i] = Double.parseDouble(strings[i]);
+		}
+		return doubles;
+	}
+	
 	
 	/**Convert Byte ArrayList to byte array **/
 	public static byte[] arrayListToByte(ArrayList<Byte> bList) {
@@ -80,6 +89,14 @@ public class ArrayStuff {
 	/**Convert byte to a bit string (e.g. 00100000) **/
 	public static String byteToBitString(byte b) {
 		return String.valueOf(byteToBitString(b));
+	}
+	
+	public static ArrayList<Double> doubleToArrayList(double[] array) {
+		ArrayList<Double> al = new ArrayList<Double>(array.length);
+		for (double d : array) {
+			al.add(d);
+		}
+		return al;
 	}
 	
 	/** get the bitwise hamming distance between two byte arrays **/
@@ -452,6 +469,42 @@ public class ArrayStuff {
 			nt[i] = nr;
 		}
 		return nt;
+	}
+
+
+	public static byte[] concat(byte[]...bytes) {
+		//get length
+		int length = 0;
+		for (int i = 0; i < bytes.length; ++i) {
+			length += bytes[i].length;
+		}
+		byte[] newBytes = new byte[length];
+		int c = 0;
+		for (int i = 0; i < bytes.length; ++i) {
+			for (int j = 0; j < bytes[i].length; ++j) {
+				newBytes[c] = bytes[i][j];
+				c++;
+			}
+		}
+		return newBytes;
+	}
+
+
+	public static String arrayToString(double[][] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * dd[0].length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+			for (int j = 0; j < dd[i].length; ++j) {
+				sb.append(dd[i][j]);
+				if (j != dd[i].length - 1) {
+					sb.append(",");
+				}
+				
+			}
+			//sb.append("}");
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 
 	

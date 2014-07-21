@@ -59,6 +59,7 @@ public class Wave extends Chunk{
 		}
 	}
 	
+	
 	/** gets byte array from file **/
 	public void readFile(File f) {
 		this.filepath = f;
@@ -101,6 +102,15 @@ public class Wave extends Chunk{
 	public void clear() {
 		this.bytes = null;
 		this.chunks = new ArrayList<Chunk>();
+	}
+	
+	@Override
+	/** Adds an infoChunk **/
+	public void addChunk(Chunk chunk) {
+		this.bytes = ArrayStuff.concat(this.bytes, chunk.bytes);
+		//this.bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(
+		//		this.bytes.length - 8, 4), 4);
+		
 	}
 	
 	
@@ -216,10 +226,10 @@ public class Wave extends Chunk{
 		this.acceptableSubChunks = s;
 	}
 	
-	@Override
+	/*@Override
 	public void setData(byte[] data) {
 		throw new UnsupportedOperationException();
-	}
+	} */
 	
 
 	

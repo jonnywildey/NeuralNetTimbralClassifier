@@ -176,6 +176,23 @@ public class Gen {
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);
 	}
 	
+	/**adds tape hiss to the signal. db should be -ve  **/
+	public static Signal tapeHiss(int length, double dbBelowCeiling, int sampleRate, int bitRate) {
+		//set up arrays
+		double[][] tape = TapeHiss.tape.getSignal();
+		double[][] ns = new double[1][length];
+
+		double factor = Gain.decibelToAmplitude(dbBelowCeiling);
+		for (int i = 0; i < length;++i) {
+			for (int j = 0; j < length;++j) {
+				//Process
+				ns[i][j] = (tape[i % tape[0].length][j % tape[0].length]) 
+						* factor;
+			}
+		}
+		return new Signal(ns, bitRate, sampleRate);
+	}
+	
 	/**Generates pink noise
 	 * length: in samples
 	 * db: 0 would be normalised. 

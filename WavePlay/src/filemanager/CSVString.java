@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CSVReader {
+public class CSVString {
 	/*Took some stuff from Graham Roberts */
 
     private String filename = "" ;
@@ -22,10 +22,24 @@ public class CSVReader {
     
 	
     /*explicit separator constructor*/
-    public CSVReader(String fname, char separate) {
-    	this(fname);
+    public CSVString(String str, char separate) {
+    	this(str);
     	this.separate = separate;
     	typeIndex = 0;
+    }
+    
+    public CSVString(String fname)
+    {
+      filename = fname ;
+      try
+      {
+        reader = new BufferedReader(new StringReader(filename)) ;
+      }
+      catch (Exception e)
+      {
+    	  error("Can't open file: " + filename) ;
+      }
+      
     }
     
 
@@ -93,19 +107,7 @@ public class CSVReader {
     
     
     
-	 public CSVReader(String fname)
-	    {
-	      filename = fname ;
-	      try
-	      {
-	        reader = new BufferedReader(new FileReader(filename)) ;
-	      }
-	      catch (FileNotFoundException e)
-	      {
-		error("Can't open file: " + filename) ;
-	      }
-	      
-	    }
+	 
 
 	 	private void stringToCSV(String str) {
 	 		

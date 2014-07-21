@@ -15,7 +15,7 @@ public class Music {
 
 	/**converts hz to fractional midi number */
 	public static double hzToMidi(double hz) {
-		double n = Music.log(hz / middleA, 2) * 12;
+		double n = (Math.log(hz / middleA) / Math.log(2))* 12;
 		return n + middleAMIDI;
 	}
 
@@ -30,6 +30,7 @@ public class Music {
 		String str = notes[n % 12] + String.valueOf((n / 12) - 2) ;
 		return str;
 	}
+	
 	
 	/** returns the semitone interval between two frequencies **/
 	public static double getInterval(double a, double b) {

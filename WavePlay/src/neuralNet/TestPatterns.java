@@ -29,6 +29,10 @@ public class TestPatterns implements Serializable {
 		}
 	}
 	
+	public TestPatterns(WavePattern[] patterns, long seed) {
+		this(convertPatterns(patterns), seed);
+	}
+	
 	
 	public TestPatterns(ArrayList<Pattern> patterns) {
 		this(patterns, System.currentTimeMillis());
@@ -36,6 +40,14 @@ public class TestPatterns implements Serializable {
 	
 	public TestPatterns() {
 		this(null);
+	}
+	
+	public static ArrayList<Pattern> convertPatterns(WavePattern[] wavePatterns) {
+		ArrayList<Pattern> nwp = new ArrayList<Pattern>(wavePatterns.length);
+		for (WavePattern wp : wavePatterns) {
+			nwp.add(wp);
+		}
+		return nwp;
 	}
 	
 	/** separates training pattern sets, testing pattern sets and validation pattern sets **/

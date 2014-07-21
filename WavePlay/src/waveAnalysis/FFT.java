@@ -38,7 +38,7 @@ public class FFT {
 		this.signal = s;
 		//find nearest bigger frame size
 		this.frameSize = (int) Math.pow(2,(Math.floor(
-				Music.log(s.getSignal()[0].length, 2)) + 1));
+				Math.log(s.getSignal()[0].length) / Math.log(2)) + 1));
 		this.amplitudes = ArrayStuff.extend(s.getSignal()[0], (int) this.frameSize);
 		
 	}

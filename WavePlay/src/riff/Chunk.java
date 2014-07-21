@@ -2,6 +2,7 @@ package riff;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
@@ -16,7 +17,12 @@ import filemanager.Log;
  * most methods just read/write straight from the chunk byte array. However this can't really be done
  * for sub-chunks, so be aware that every time you make a sub chunk you are essentially copying the data.
  * As this will be mainly used for meta data I don't think this will be much of a problem **/
-public class Chunk {
+
+public class Chunk implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 780237399568607900L;
 	protected String name;
 	protected byte[] bytes; //the byte array of the entire chunk including
 							//name and length
@@ -189,7 +195,7 @@ public class Chunk {
 	}
 	
 	/** adds a chunk to the chunkList **/
-	public void AddChunk(Chunk chunk) {
+	public void addChunk(Chunk chunk) {
 		this.chunks.add(chunk);
 		this.generateByteChunk();
 	}

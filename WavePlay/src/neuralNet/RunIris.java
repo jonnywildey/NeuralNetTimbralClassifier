@@ -1,10 +1,8 @@
 package neuralNet;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.FileHandler;
@@ -15,6 +13,8 @@ import java.util.logging.SimpleFormatter;
 import plotting.MatthewsChart;
 import filemanager.ArrayStuff;
 import filemanager.CSVReader;
+import filemanager.Log;
+import filemanager.Serialize;
 
 public class RunIris {
 
@@ -28,8 +28,12 @@ public class RunIris {
 		//Make Iris data
 		boolean verbose = true;
 		long seed = System.currentTimeMillis();
-		TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
+		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
+		WavePatterns wavePatterns = (WavePatterns) Serialize.getFromSerial(
+				"/Users/Jonny/Documents/Timbre/WavePatterns.ser");
+		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
+		System.out.println("TP" + testPatterns.toString());
 		int runCount = 1;
 		MultiLayerNet bestNN = ManyNets.runNets(runCount, testPatterns,verbose);
 		//System.out.println(bestNN.toString());
@@ -50,16 +54,18 @@ public class RunIris {
 										boolean verbose, long seed2, long seed3) {
 		LayerStructure ls = new LayerStructure(testPatterns);
 		//ls.addHiddenLayer(10);
-		ls.addHiddenLayer(4);
+		//ls.addHiddenLayer(4);
+		nn.setTrainingRate(0.1d);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
 		nn.setDebug(false);
 		nn.initialiseNeurons();
 		nn.setVerbose(verbose);
 		nn.setAcceptableErrorRate(0.1d);
-		nn.setMaxEpoch(1000);
+		nn.setMaxEpoch(10000);
 		nn.initialiseRandomWeights(seed2);
-		nn.setShuffleTrainingPatterns(false, seed3);
+		nn.setShuffleTrainingPatterns(true, seed3);
+
 		//TURN OFF SHUFFLING AFTER A WHILE
 		return nn;
 	}
@@ -78,37 +84,7 @@ public class RunIris {
 		return testPatterns;
 	}
 	
-	/** make sure output is .ser **/
-	public static void serialize(MultiLayerNet mln, String output) {
-		// Serialization code
-        try {
-            FileOutputStream fileOut = new FileOutputStream(output);
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(mln);
-            out.close();
-            fileOut.close();
-        } catch (IOException i) {
-            i.printStackTrace();
-        }
-	}
 	
-	public MultiLayerNet getFromSerial(String file) {
-		MultiLayerNet mln = null;
-        try {
-            FileInputStream fileIn = new FileInputStream(file);
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            mln = (MultiLayerNet) in.readObject();
-            in.close();
-            fileIn.close();
-           // System.out.println(mln.toString());
-            
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } catch (ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
-        } 
-        return mln;
-	}
 	
 	
 	

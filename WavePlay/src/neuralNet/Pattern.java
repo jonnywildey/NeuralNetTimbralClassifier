@@ -3,6 +3,8 @@ package neuralNet;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import filemanager.Log;
+
 public class Pattern implements Serializable {
 	/**
 	 * 

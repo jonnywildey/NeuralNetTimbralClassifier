@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import filemanager.ArrayStuff;
+import filemanager.Log;
 
 
 /** Various utilities for helping to use data in Neural Networks **/
@@ -63,6 +64,24 @@ public  class NNUtilities {
 		int i = 0;
 		for (double val: array) { //don't actually need value
 			bArray[i][0] = new double[] {val}; //original value
+			for (int j = 0; j < length; ++j) { //Think it is a bit confusing if I for each this...
+				bArray[i][1][j] = 0; //every value 0 except...
+			}
+			bArray[i][1][length - i - 1] = 1; //this guy
+			i++;
+		}
+		if (verbose) {
+			System.out.println("Conversion table:\n" + Arrays.deepToString(bArray));
+			}
+		return bArray;
+	}
+	
+	public static double[][][] createConversionTable(String[] array, boolean verbose) {
+		int length = array.length;
+		double[][][] bArray = new double[length][2][length]; 
+		int i = 0;
+		for (String val: array) { //don't actually need value
+			bArray[i][0] = new double[] {10}; //original value
 			for (int j = 0; j < length; ++j) { //Think it is a bit confusing if I for each this...
 				bArray[i][1][j] = 0; //every value 0 except...
 			}
@@ -220,6 +239,41 @@ public  class NNUtilities {
 		return createPatterns(array, false);
 	}
 	
+	/** **/
+	public static String[][] getCount(String[] array, boolean verbose) {
+		ArrayList<String[]> countArray = new ArrayList<String[]>();
+		double count = 0;
+		for(int i = 0; i < array.length; ++i) {
+			//check if list contains current value
+			boolean unique = true;
+			for (String[] ia: countArray) {
+				if (ia[0].equals(array[i])) {
+					unique = false;
+				}
+			}
+			//Count values
+			if (unique) {
+				count = 1;
+				for (int j = i + 1; j <  array.length; ++j) {
+					if (array[i] == array[j]) {
+						count++;
+					}
+				}
+				countArray.add(new String[]{array[i], String.valueOf(count)});
+			}
+		}
+		Log.d(countArray);
+		String[][] stringArray = new String[countArray.size()][];
+
+		stringArray = countArray.toArray(stringArray);
+		if (verbose){
+			System.out.println("Value and count of value:\n" + Arrays.deepToString(stringArray));
+		}
+		return stringArray;
+	}
+
+	
+	
 	/** return a 2d array with the value and its count.
 	 * Can deal with multiples. Values should be in the same order as array (with 
 	 * subsequent duplicate values removed). **/
@@ -285,6 +339,8 @@ public  class NNUtilities {
 		}
 		return set;
 	}
+
+	
 
 
 

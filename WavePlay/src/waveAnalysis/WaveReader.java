@@ -46,7 +46,7 @@ public class WaveReader {
 		
 		
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/log.txt"));
-		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeB.wav";
+		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeGuit.wav";
 		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeSil.wav";
 		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeANorm.wav";
 		Wave wr1 = new Wave(f1);
@@ -68,24 +68,22 @@ public class WaveReader {
 		//4096 works well
 		FrameFFT fft = new FrameFFT(s1, 4096);
 		double[][] dd = fft.analyse(20, 15000);
-		
-		dd = fft.getSumTable(dd);
-		
+		dd = FrameFFT.getBarkedSubset(dd);
+		//dd = FrameFFT.getSumTable(dd);
 		//wer.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/PA.wav"));
 		dd = FrameFFT.convertTableToDecibels(fft.signal, dd, fft.frameSize);
-		double[][] nd = Statistics.getPeaks(dd);
+		//double[][] nd = Statistics.getPeaks(dd);
 		//nd = FFT.filter(nd, 40, 2000);
 		//nd = ArrayStuff.flip(nd);
-		Log.d("freq: " + Pitch.getFundamental(dd));
+		//Log.d("freq: " + Pitch.getFundamental(dd));
 		//fft.sumDifference();
-
-		fft.makeGraph(40, 20000, 800, 600);
+		//fft.makeGraph(40, 20000, 800, 600);
 		//FFTDifference fd = new FFTDifference(fft);
 		//fd.analyse();
 		//double[][] dd = FFTDifference.splitAndAverage(fft.table, 80);
 		//dd = ArrayStuff.flip(dd);
 		//fd.makeGraph();
-		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft2.csv");
+		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
 		cd.writeArraytoFile(dd);
 		//dd = ArrayStuff.flip(dd);
 

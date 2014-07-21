@@ -202,6 +202,7 @@ public class MultiLayerNet  implements Serializable{
 	
 	public  void setMaxEpoch(Integer maxEpoch) {
 		this.maxEpoch = maxEpoch;
+		this.errorBox = new CoefficientLogger(maxEpoch);
 	}
 	
 	public boolean isMatthews() {

@@ -8,7 +8,8 @@ import filemanager.Log;
 public class Pitch {
 	
 	/** Pitch Shifts the audio 0 < factor < inf **/
-	public static Signal pitchShift(Signal signal, double factor) {
+	public static Signal pitchShift(Signal signal, double semitones) {
+		double factor = Math.pow(2, semitones / 12);
 		//set up arrays
 		double[][] os = signal.getSignal();
 		double[][] ns = new double[os.length][(int)((os[0].length / factor) + 1)]; //round up
@@ -38,7 +39,16 @@ public class Pitch {
 	/** converts frequency to Bark **/
 	public static double freqToBark(double freq) {
 		return 13 * Math.atan(freq * 0.00076) + 
-				Math.atan(Math.pow(freq / 7500, 2));
+				3.5 * Math.atan(Math.pow(freq / 7500, 2));
+	}
+	
+	/** converts frequency row to Bark **/
+	public static double[] freqToBark(double[] freqRow) {
+		double[] nt = new double[freqRow.length];
+		for (int i = 0; i < freqRow.length;++i) {
+			nt[i] = freqToBark(freqRow[i]);
+		}
+		return nt;
 	}
 
 	public static double getFundamental(double[][] table) {

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import plotting.FFTController;
 import riff.Signal;
 import waveProcess.Gain;
+import waveProcess.Pitch;
 import filemanager.ArrayStuff;
 import filemanager.Log;
 
@@ -41,6 +42,40 @@ public class FrameFFT{
 		return nt;
 	}
 	
+	/** returns the table as bark subset **/
+	public static double[][] getBarkedSubset(double[][] table) {
+		table[0] = Pitch.freqToBark(table[0]);
+		//get tables 
+		int to = 0;
+		int from = 0;
+		int length = table.length - 1;
+		int b = 20;
+		double lim = 0;
+		double[][] nt = new double[table.length][b];
+		
+		for (int i = 0;i < b; ++i) {
+			nt[0][i] = i + 1;
+			lim = i + 1;
+			for (int j = to; j < table[0].length; ++j) {
+				//Log.d(table[0][j]);
+				if (table[0][j] > lim | 
+						j >= table[0].length - 1) {
+					//Log.d(from + " " + to + " : " + table[0][j] + " " + j);
+					lim = table[0][j];
+					from = to;
+					to = j;
+					
+					for (int k = 1; k < table.length; ++k) {
+						nt[k][i] = ArrayStuff.getAverageOfSubset(table[k], from, to);
+						//Log.d(nt[k][i]);
+					}
+					break;
+				}
+			}
+		}
+		return nt;
+	}
+	
 	/** converts frequecies to a power of two. Useful for graphs **/
 	public static double[][] logarithmicFreq(double[][] table) {
 		//double min = ArrayStuff.getMin(table[0]);
@@ -51,6 +86,7 @@ public class FrameFFT{
 		}
 		return nt;
 	}
+	
 	
 	/** return the frame count of the signal with frame size **/
 	protected static int getFrameCount(Signal s, int frameSize) {
@@ -119,6 +155,7 @@ public class FrameFFT{
 						filterFrom, filterTo)), width, height);
 		sc.makeChart();
 	}
+
 	
 	/**Perform frame analysis **/
 	public double[][] analyse() {
@@ -148,12 +185,25 @@ public class FrameFFT{
 		return sums;
 	}
 	
+	public static double[][] getExponentTable(double[][] table, double exponent) {
+		double[][] sums = new double[2][table[0].length];
+		sums[0] = table[0]; //freq row
+		for (int i = 0; i < table[0].length; ++i) {
+			for (int j = 1; j < table.length; ++j) {
+				sums[1][i] += table[j][i] * (Math.pow(exponent, i));
+			}
+		}
+		return sums;
+	}
+	
 	
 	/**Perform frame analysis **/
 	public double[][] analyse(int filterFrom, int filterTo) {
 		double[][] table = analyse();
 		return FFT.filter(table, filterFrom, filterTo);
 	}
+
+	
 	
 
 
