@@ -1,5 +1,6 @@
 package neuralNet;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,7 +25,7 @@ public class RunIris {
 	
 	public static void main(String[] args) {
 		
-
+		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/RunNN.Log"));
 		//Make Iris data
 		boolean verbose = true;
 		long seed = System.currentTimeMillis();
@@ -32,6 +33,7 @@ public class RunIris {
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
 		WavePatterns wavePatterns = (WavePatterns) Serialize.getFromSerial(
 				"/Users/Jonny/Documents/Timbre/WavePatterns.ser");
+		wavePatterns.reduceScale();
 		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
 		System.out.println("TP" + testPatterns.toString());
 		int runCount = 1;
@@ -53,8 +55,8 @@ public class RunIris {
 	public static MultiLayerNet config(MultiLayerNet nn, TestPatterns testPatterns, 
 										boolean verbose, long seed2, long seed3) {
 		LayerStructure ls = new LayerStructure(testPatterns);
-		//ls.addHiddenLayer(10);
-		//ls.addHiddenLayer(4);
+		ls.addHiddenLayer(150);
+		//ls.addHiddenLayer(20);
 		nn.setTrainingRate(0.1d);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
@@ -62,9 +64,9 @@ public class RunIris {
 		nn.initialiseNeurons();
 		nn.setVerbose(verbose);
 		nn.setAcceptableErrorRate(0.1d);
-		nn.setMaxEpoch(10000);
+		nn.setMaxEpoch(200);
 		nn.initialiseRandomWeights(seed2);
-		nn.setShuffleTrainingPatterns(true, seed3);
+		nn.setShuffleTrainingPatterns(false, seed3);
 
 		//TURN OFF SHUFFLING AFTER A WHILE
 		return nn;

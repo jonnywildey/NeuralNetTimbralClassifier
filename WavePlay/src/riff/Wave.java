@@ -53,6 +53,7 @@ public class Wave extends Chunk{
 		try{
 			ByteReader br = new ByteReader(this.filepath.toString());
 			this.bytes = br.readFile();
+			br.close();
 			Log.d("Wave " + this.filepath.getName() + " read successfully");
 		} catch (Exception e) {
 			Log.d("Wave " + this.filepath.getName() + " could not be read");

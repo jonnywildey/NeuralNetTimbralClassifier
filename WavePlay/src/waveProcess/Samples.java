@@ -30,7 +30,7 @@ public class Samples {
 		Random lpRand = new Random();
 		
 		for (File nf: files) {
-			for (int i = 0; i < 20; ++i) {	
+			for (int i = 0; i < 15; ++i) {	
 				Wave nw = new Wave(nf);
 				Signal s1 = nw.getSignals();
 				s1 = Gain.getMid(s1);
@@ -104,7 +104,7 @@ public class Samples {
 	
 	public static Signal addNoise(Signal s, Random nr) {
 		double nc = nr.nextDouble();
-		double maxLoud = -36;
+		double maxLoud = -52;
 		double loudness = maxLoud - (nr.nextDouble() * 60);
 		//Log.d(loudness);
 		try {
@@ -175,14 +175,15 @@ public class Samples {
 	}
 	
 	public static void main(String[] args) {
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Cello"), 
+		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
+		/*batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Cello"), 
 				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"), 
 				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Harp"), 
 				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Trombone"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch")); 
+				new File("/Users/Jonny/Documents/Timbre/Samples/Batch")); */
 		
 		Wave[] waves = getWavs(new File(
 				"/Users/Jonny/Documents/Timbre/Samples/Batch"));
@@ -193,6 +194,9 @@ public class Samples {
 			Log.d(wp.patterns[i]);
 		}
 		
+		Serialize.serialize(wp, "/Users/Jonny/Documents/Timbre/WavePatternsWithWaves.ser");
+		Log.d("serialised!");
+		wp.removeWaves();
 		Serialize.serialize(wp, "/Users/Jonny/Documents/Timbre/WavePatterns.ser");
 		
 	}

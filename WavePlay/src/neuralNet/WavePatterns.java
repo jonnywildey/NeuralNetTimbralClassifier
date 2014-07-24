@@ -39,6 +39,16 @@ public class WavePatterns implements Serializable {
 		return al;
 	}
 	
+	public void reduceScale() {
+		double val = Math.pow(2, 30);
+		for (WavePattern p : patterns) {
+			for (InputShell is : p.inputArray) {
+				is.value /=  val;
+			}
+			Log.d(p.toString());
+		}
+	}
+	
 	/** turns a wav with metadata to a pattern **/
 	public void wavToPattern() {
 		//patterns
@@ -78,6 +88,10 @@ public class WavePatterns implements Serializable {
 				}
 			}
 		}
+	}
+
+	public void removeWaves() {
+		this.waves = null;
 	}
 
 }

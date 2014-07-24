@@ -3,6 +3,8 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import filemanager.ArrayStuff;
+
 
 public class MatthewsChart {
 	
@@ -46,10 +48,15 @@ public class MatthewsChart {
 
 		public MatthewsGraph(long[][] values, Dimension winSize, String[] axisLabels) {
 			super(values, winSize, axisLabels);
+			this.max = 1d;
+			maxBar = ((heightness - offsetSize.height) / 1d);
 		}
+		
+
 		
 		public void drawBar(Graphics2D g2d) {
 			drawLines(g2d);
+			drawGuides(g2d, 5);
 			int c = 0;
 			for(long[] av: values) {
 				g2d.setColor(rColors[c]);

@@ -26,6 +26,7 @@ public class PlotGraph extends JPanel {
 	protected double wr;
 	protected double hOffset;
 	protected int half;
+	protected double max;
 	
 	public PlotGraph() {
 		
@@ -41,7 +42,8 @@ public class PlotGraph extends JPanel {
 		widthness = size.width - (offsetSize.width * 2);
 		heightness = size.height - (offsetSize.height * 2);
 		//get bar value - height of chart ratio (so biggest value is at top of chart)
-		maxBar = (((heightness - offsetSize.height) / ArrayStuff.getMax(values)));
+		max = ArrayStuff.getMax(values);
+		maxBar = ((heightness - offsetSize.height) / max);
 		//System.out.println("max b " + maxBar);
 		rColors = colorArray(values.length);
 		wOffset = (winSize.getWidth() - widthness) / 2;
@@ -96,6 +98,34 @@ public class PlotGraph extends JPanel {
 		drawCentredString(axisLabels[0], offsetSize.width, offsetSize.height, g2d);
 		drawCentredString(axisLabels[1], widthness + offsetSize.width, heightness, g2d);
 	}
+	
+	public static double round(double x, int decimal) {
+		double dec = Math.pow(10, decimal);
+		return Math.round(x * dec) / dec;
+	}
+	
+	public static double round(int x, int decimal) {
+		double dec =  Math.pow(10, decimal);
+		return Math.round((double)x * dec) / dec;
+	}
+	
+	
+	
+	protected void drawGuides(Graphics2D g2d, int number) {
+		for (int i = 1; i < number; ++i) {
+			g2d.drawLine((int) (offsetSize.width * 0.8), 
+					(int)(heightness - ((heightness / (double)(number)) * (double)i)), 
+					offsetSize.width, 
+					(int)(heightness - ((heightness / (double)(number)) * (double)i)));
+			//axis labels
+			drawCentredString(Double.toString(round(this.max / ((double)i * (double)(number)), 2)), 
+					(int) (offsetSize.width * 0.7), 
+					(int)(heightness - ((heightness / (double)(number)) * (double)i)), 
+					g2d);
+		}
+	}
+	
+	
 
 	public void drawBar(Graphics2D g2d) {
 		drawLines(g2d);
