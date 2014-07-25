@@ -5,6 +5,8 @@ import java.util.Random;
 
 import com.matrix.ConfusionMatrix;
 
+import filemanager.Log;
+
 public class Epoch {
 	protected ArrayList<Pattern> trainingPatterns;
 	protected ArrayList<Pattern> testingPatterns;
@@ -13,7 +15,8 @@ public class Epoch {
 	protected ArrayList<Double> errorList;
 	protected ArrayList<Double>  rmsError;
 	protected Double trainingRate;
-	protected ConfusionMatrix confusionMatrix;
+	protected ConfusionMatrix testConfusionMatrix;
+	public ConfusionMatrix trainingConfusionMatrix;
 	protected boolean debug;
 	protected boolean verbose;
 	protected Random shuffleRandom;
@@ -63,7 +66,7 @@ public class Epoch {
 	}
 
 	public ConfusionMatrix getConfusionMatrix() {
-		return confusionMatrix;
+		return testConfusionMatrix;
 	}
 
 	public void shuffleTrainingPatterns() {
@@ -88,7 +91,7 @@ public class Epoch {
 	}
 	
 	public ConfusionMatrix runValidationEpoch() {
-		confusionMatrix = new ConfusionMatrix(neurons.getOutputCount());
+		testConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount());
 		neurons.setLearning(false);
 		for (Pattern p: this.testingPatterns) {
 			//input pattern inputs
@@ -99,29 +102,29 @@ public class Epoch {
 				l.process(p);
 			}
 			if (addMaxOutputNeuron) {
-				addMax(p);
+				addMax(p, testConfusionMatrix);
 			} else {
-				addRounded(p);
+				addRounded(p, testConfusionMatrix);
 			}
 		}
 		if (verbose) {
-			System.out.println(confusionMatrix.toString());
+			Log.d(testConfusionMatrix.toString());
 		}
-		return confusionMatrix;	
+		return testConfusionMatrix;	
 	}
 	
 	/** add neuron outputs > 0.5 **/
-	public void addRounded(Pattern p) {
+	public void addRounded(Pattern p, ConfusionMatrix cm) {
 		for (Neuron n : neurons.getLastLayer().neurons) {
 			int roundedOut = (int)Math.rint(n.output);
 			if (roundedOut == 1) {
-				confusionMatrix.addToCell(n.id, p.getTargetNumber()); 
+				cm.addToCell(n.id, p.getTargetNumber()); 
 				//Neuron Row, Class Column
 			}
 		}
 	}
 	
-	public void addMax(Pattern p) {
+	public void addMax(Pattern p, ConfusionMatrix cm) {
 		double max = 0;
 		int nid = 0;
 		for (Neuron n : neurons.getLastLayer().neurons) {
@@ -130,7 +133,7 @@ public class Epoch {
 					nid = n.id;
 			}
 		}
-		confusionMatrix.addToCell(nid, p.getTargetNumber());
+		cm.addToCell(nid, p.getTargetNumber());
 		//Neuron Row, Class Column
 	}
 	
@@ -139,7 +142,7 @@ public class Epoch {
 	
 	
 	public void runEpoch() {
-		
+		trainingConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount());
 		Double patternErrors = 0d;
 		//Load Pattern
 		neurons.setLearning(true);
@@ -156,7 +159,15 @@ public class Epoch {
 				l.calculateDelta(p);
 				l.setWeights(p);
 			}
+			if (addMaxOutputNeuron) {
+				addMax(p, trainingConfusionMatrix);
+			} else {
+				addRounded(p, trainingConfusionMatrix);
+			}
 			patternErrors += neurons.getLastLayer().getErrors();
+		}
+		if (verbose) {
+			Log.d(trainingConfusionMatrix.toString());
 		}
 		double error = Math.pow((this.trainingPatterns.size() * this.neurons.getOutputCount()), -1) *
 				patternErrors;

@@ -4,8 +4,9 @@ package neuralNet;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
+import waveAnalysis.Statistics;
 import exceptions.*;
+import filemanager.Log;
 
 
 public class MultiLayerNet  implements Serializable{
@@ -43,7 +44,7 @@ public class MultiLayerNet  implements Serializable{
 	public void initialiseNeurons() {
 		this.neuronLayers = new LayerList(this.layerStructure, this.inputCount);
 		if (debug) {
-			System.out.println(this.neuronLayers.toString());
+			Log.d(this.neuronLayers.toString());
 		}
 	}
 
@@ -68,15 +69,15 @@ public class MultiLayerNet  implements Serializable{
 			if (this.shuffleTrainingPatterns) {
 				e.shuffleTrainingPatterns();
 				}
-			if (verbose){System.out.println("\n******** EPOCH " + (i + 1) + " ********\n");}
+			if (verbose){Log.d("\n******** EPOCH " + (i + 1) + " ********\n");}
 			e.runEpoch();
-			if (debug) {System.out.println(e.toString());}
+			if (debug) {Log.d(e.toString());}
 			e.runValidationEpoch();
 			er = calculateMatthews(this.testPatterns.getTestingPatterns(), e);
 			this.errorBox.add(er);
 			if(er > currentMaxMC) { //Should maybe be >
-				System.out.println(er + "  " + currentMaxMC);
-				System.out.println("Tally up: e: " + (i + 1));
+				Log.d("Previous highest validation MC: " + Statistics.round(currentMaxMC, 4));
+				Log.d("Increase in MC!");
 				currentMaxMC = er;
 				tally = new LayerList(this.neuronLayers);
 				tally.setEpoch(i + 1);
@@ -84,7 +85,8 @@ public class MultiLayerNet  implements Serializable{
 			this.matthewsCo = er;
 		}
 		if (verbose) {
-			System.out.println("Best Result at Epoch: " + tally.getEpoch());
+			Log.d("Best Result at Epoch: " + tally.getEpoch() 
+					+ " with MC: " + Statistics.round(currentMaxMC, 4));
 			}		
 		this.neuronLayers = tally;
 	}
@@ -94,7 +96,7 @@ public class MultiLayerNet  implements Serializable{
 		int size = patterns.size();
 		double er = e.getConfusionMatrix().getErrorRate(size);
 		if (verbose) {
-			System.out.println("Error: " + er +" Total: " + 
+			Log.d("Error: " + Statistics.round(er, 4) +" Total: " + 
 								e.getConfusionMatrix().getTotal() + " of " + size);
 		}
 		return er;
@@ -104,7 +106,7 @@ public class MultiLayerNet  implements Serializable{
 	public double calculateMatthews(ArrayList<Pattern> patterns, Epoch e) {
 		double er = e.getConfusionMatrix().matthewsCoefficient();
 		if (verbose) {
-			System.out.println("Matthews: " + er);
+			Log.d("Matthews: " + Statistics.round(er, 4));
 		}
 		return er;
 	}
@@ -113,7 +115,7 @@ public class MultiLayerNet  implements Serializable{
 	
 	public void runTestPatterns() throws Exception {
 		ready();
-		if (verbose) {System.out.println("\n****RUNNING TEST PATTERNS****\n"
+		if (verbose) {Log.d("\n****RUNNING TEST PATTERNS****\n"
 				+ "Testing Network with test patterns\n");}
 		Epoch e = new Epoch(null, testPatterns.getValidationPatterns(), neuronLayers, trainingRate, verbose, debug);
 		e.runValidationEpoch();
@@ -125,7 +127,7 @@ public class MultiLayerNet  implements Serializable{
 		}
 		
 		if ((matthews & er == 1) | (!matthews & er == 0)) { //perfect
-			if (verbose) {System.out.println("Perfect Validation Score!");}
+			if (verbose) {Log.d("Perfect Validation Score!");}
 		}
 		this.matthewsCo = er;
 	}

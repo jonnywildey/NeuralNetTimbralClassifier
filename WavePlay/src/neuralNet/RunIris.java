@@ -33,20 +33,13 @@ public class RunIris {
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
 		WavePatterns wavePatterns = (WavePatterns) Serialize.getFromSerial(
 				"/Users/Jonny/Documents/Timbre/WavePatterns.ser");
-		wavePatterns.reduceScale();
+		wavePatterns.reduceScale(0); //around 29.5 if not normalised before
 		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
 		System.out.println("TP" + testPatterns.toString());
-		int runCount = 1;
-		MultiLayerNet bestNN = ManyNets.runNets(runCount, testPatterns,verbose);
-		//System.out.println(bestNN.toString());
-		bestNN.getErrorBox().makeGraph();
-		//crappy graph test
-		double[] dds = {0.1, 0.5, 0, 0.3, 0.4, 0.5};
-		
-		dds = ArrayStuff.normalizeDouble(dds, 400);
-		long[] la = ArrayStuff.doubleToLong(dds);
-		long[][] las = {la};
-		MatthewsChart nc = new MatthewsChart(las);
+		int runCount = 7;
+		MultiLayerNet[] nets = ManyNets.runNets(runCount, testPatterns,verbose);
+		ManyNets.graphNets(nets);
+
 		//nc.makeChart();
 		
 
@@ -55,8 +48,8 @@ public class RunIris {
 	public static MultiLayerNet config(MultiLayerNet nn, TestPatterns testPatterns, 
 										boolean verbose, long seed2, long seed3) {
 		LayerStructure ls = new LayerStructure(testPatterns);
-		ls.addHiddenLayer(150);
-		//ls.addHiddenLayer(20);
+		ls.addHiddenLayer(50);
+		//ls.addHiddenLayer(10);
 		nn.setTrainingRate(0.1d);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
@@ -66,7 +59,7 @@ public class RunIris {
 		nn.setAcceptableErrorRate(0.1d);
 		nn.setMaxEpoch(200);
 		nn.initialiseRandomWeights(seed2);
-		nn.setShuffleTrainingPatterns(false, seed3);
+		nn.setShuffleTrainingPatterns(true, seed3);
 
 		//TURN OFF SHUFFLING AFTER A WHILE
 		return nn;

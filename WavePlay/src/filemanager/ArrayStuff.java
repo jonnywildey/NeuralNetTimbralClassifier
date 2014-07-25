@@ -451,12 +451,15 @@ public class ArrayStuff {
 	/** Get the average of a particular subset of an array **/
 	public static double getAverageOfSubset(double[] array, int from, int to) {
 		double average = 0;
+		//Log.d(ArrayStuff.arrayToString(array));
 		for (int i = from; i < to; ++i) {
 			average += array[i];
 		}
 		average /= (to - from);
 		return average;
 	}
+
+
 
 
 	public static double[][] copy(double[][] table) {
@@ -501,6 +504,20 @@ public class ArrayStuff {
 				}
 				
 			}
+			//sb.append("}");
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	public static String arrayToString(double[] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+				sb.append(dd[i]);
+				if (i != dd.length - 1) {
+					sb.append(",");
+				}
 			//sb.append("}");
 			sb.append("\n");
 		}

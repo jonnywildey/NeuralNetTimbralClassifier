@@ -50,4 +50,14 @@ public class Statistics {
 		return d > e;
 	}
 
+	public static double round(double x, int decimal) {
+		double dec = Math.pow(10, decimal);
+		return Math.round(x * dec) / dec;
+	}
+
+	public static double round(int x, int decimal) {
+		double dec =  Math.pow(10, decimal);
+		return Math.round((double)x * dec) / dec;
+	}
+
 }

@@ -8,7 +8,9 @@ import java.awt.LayoutManager;
 
 import javax.swing.JPanel;
 
+import waveAnalysis.Statistics;
 import filemanager.ArrayStuff;
+import filemanager.Log;
 
 public class PlotGraph extends JPanel {
 
@@ -95,34 +97,34 @@ public class PlotGraph extends JPanel {
 		//X axis
 		g2d.drawLine(offsetSize.width, heightness, size.width - offsetSize.width, heightness);
 		//axis labels
-		drawCentredString(axisLabels[0], offsetSize.width, offsetSize.height, g2d);
+		drawCentredString(axisLabels[0], (int) (offsetSize.width * 1.25), offsetSize.height, g2d);
 		drawCentredString(axisLabels[1], widthness + offsetSize.width, heightness, g2d);
 	}
 	
-	public static double round(double x, int decimal) {
-		double dec = Math.pow(10, decimal);
-		return Math.round(x * dec) / dec;
-	}
-	
-	public static double round(int x, int decimal) {
-		double dec =  Math.pow(10, decimal);
-		return Math.round((double)x * dec) / dec;
-	}
-	
-	
-	
 	protected void drawGuides(Graphics2D g2d, int number) {
-		for (int i = 1; i < number; ++i) {
-			g2d.drawLine((int) (offsetSize.width * 0.8), 
-					(int)(heightness - ((heightness / (double)(number)) * (double)i)), 
+		for (int i = 0; i <= number; ++i) {
+			g2d.drawLine((int) (offsetSize.width * 0.95), 
+					(int)(offsetSize.height + (((heightness - offsetSize.height) / ((double)(number)) * (double)i))), 
 					offsetSize.width, 
-					(int)(heightness - ((heightness / (double)(number)) * (double)i)));
-			//axis labels
-			drawCentredString(Double.toString(round(this.max / ((double)i * (double)(number)), 2)), 
-					(int) (offsetSize.width * 0.7), 
-					(int)(heightness - ((heightness / (double)(number)) * (double)i)), 
+					(int)(offsetSize.height + (((heightness - offsetSize.height) / ((double)(number)) * (double)i))));
+			// label
+			drawCentredString(Double.toString(Statistics.round((max - ((double)i * (max / (double)(number)))), 2)), 
+					(int) (offsetSize.width * 0.8), 
+					(int)((offsetSize.height * 1.3) + (((heightness - offsetSize.height) / (double)(number)) * (double)i)), 
 					g2d);
+			//x axis
+			g2d.drawLine((int)(offsetSize.width + ((widthness / (double)(number)) * (double)i)), 
+					(int)(heightness * 1.02), 
+					(int)(offsetSize.width + ((widthness / (double)(number)) * (double)i)), 
+					heightness);
+			drawCentredString(Integer.toString((int)(((double)i * ((double)(this.values[0].length) / (double)(number))))), 
+					(int)(offsetSize.width + ((widthness / (double)(number)) * (double)i)), 
+					(int)(heightness * 1.08), 
+					g2d);
+			
 		}
+		
+		
 	}
 	
 	

@@ -107,18 +107,12 @@ public class FFT {
 		this.table = new double[][]{this.freqRow, this.magnitudes};
 	}
 	
-	/** only returns values up to a particular frequency. 
-	 * Not particularly useful **/
-	public double[][] analyse(int toFreq) {
+	/** analyses, then filters. This affects the table in the FFT **/
+	public double[][] analyse(int fromFreq, int toFreq) {
 		double[][] vals = this.analyse();
-		int limit = 0;
-		for (int i = 0; i < vals.length; ++i) {
-			if (vals[i][0] > toFreq) {
-				limit = i;
-				break;
-			}
-		}
-		return ArrayStuff.extend(vals, limit);
+		vals = FFT.filter(vals, fromFreq, toFreq);
+		this.table = vals;
+		return vals;
 	}
 	
 	/** return the frequencies **/
@@ -133,7 +127,7 @@ public class FFT {
 	
 	/**Quick normalised frequency response graph **/
 	public void makeGraph() {
-		makeGraph(40, 20000, 600, 400);
+		makeGraph(40, 20000, 800, 600);
 	}
 	/**Quick normalised frequency response graph with filter options**/
 	public void makeGraph(int filterFrom, int filterTo, int width, int height) {

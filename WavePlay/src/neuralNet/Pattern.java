@@ -3,6 +3,7 @@ package neuralNet;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import waveAnalysis.Statistics;
 import filemanager.Log;
 
 public class Pattern implements Serializable {
@@ -52,16 +53,17 @@ public class Pattern implements Serializable {
 		}
 		return answer;
 	}
-
+	
+	/**Comprehensible String representation of pattern.**/
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\nTraining Pattern id: " + this.id + "\ninputs:\n");
 		for (NeuralComponent i: inputArray) {
-			sb.append(i.getValue() + "\t");
+			sb.append(Statistics.round(i.getValue(), 4) + "\t");
 		}
 		sb.append("\nTarget\n" );
 		for (Double i: targetArray) {
-			sb.append(i + "\t");
+			sb.append(Statistics.round(i, 4) + "\t"); //rounded
 		}
 		sb.append("Number: ");
 		sb.append(getTargetNumber());

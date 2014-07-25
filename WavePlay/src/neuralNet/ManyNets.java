@@ -1,5 +1,7 @@
 package neuralNet;
 
+import filemanager.Log;
+
 /** current dumping ground for any methods concerned
  * with running lots of nets at the same time
  * (needs more work)
@@ -7,25 +9,35 @@ package neuralNet;
  *
  */
 public class ManyNets {
-
-	public static MultiLayerNet runNets(int runCount, TestPatterns testPatterns, 
+	
+	/** Runs a network multiple times **/
+	public static MultiLayerNet[] runNets(int runCount, TestPatterns testPatterns, 
 											boolean verbose) {
 		
-		MultiLayerNet[] nns = new MultiLayerNet[runCount];
-		
+		MultiLayerNet[] nns = new MultiLayerNet[runCount];		
 		for (int i = 0; i < runCount; ++i) {
 			long seed = System.currentTimeMillis();
 			long seed2 = System.currentTimeMillis();
 			nns[i] = RunIris.config(new MultiLayerNet(), testPatterns, verbose, seed, seed2); //Make a net;
 			try {
 				nns[i].runEpoch();
-				nns[i].runTestPatterns();;
-				System.out.println("NN: " + i + " Error: " + nns[i].getErrorRate());
+				nns[i].runTestPatterns();
+				Log.d("NN: " + i + " Error: " + nns[i].getErrorRate());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return ManyNets.pickBestNet(nns);		
+		
+		return nns;		
+	}
+	
+	/** Makes a graph of your nets' Matthews Coefficient **/
+	public static void graphNets(MultiLayerNet[] nets) {
+		CoefficientLogger[] mBox = new CoefficientLogger[nets.length];
+		for (int i = 0; i < nets.length; ++i) {
+				mBox[i] = nets[i].getErrorBox();
+		}
+		CoefficientLogger.makeGraph(mBox);
 	}
 
 	public static MultiLayerNet pickBestNet(MultiLayerNet[] nns) {

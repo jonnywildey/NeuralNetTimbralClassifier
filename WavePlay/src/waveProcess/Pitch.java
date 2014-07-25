@@ -1,6 +1,7 @@
 package waveProcess;
 
 import riff.Signal;
+import waveAnalysis.FFT;
 import waveAnalysis.Statistics;
 import filemanager.ArrayStuff;
 import filemanager.Log;
@@ -80,6 +81,27 @@ public class Pitch {
 			}
 		}
 		return freq;
+	}
+	
+	/** Gets the fundamental of the signal. This will take ages for long wavs,
+	 * don't do it. 
+	 */
+	public static double getFundamental(Signal s) {
+		FFT fft = new FFT(s);
+		double[][] t = (fft.analyse(20, 20000));
+		//fft.makeGraph();
+		return getFundamental(t);
+	}
+	
+	/** Is the fundamental of the signal within the thresholds
+	 * of human hearing?
+	 */
+	public static boolean isFundamentalHearable(Signal s) {
+		double lowThreshold = 60; //or 40?
+		double highThreshold = 20000;
+		double fund = getFundamental(s);
+		Log.d("fund: " + fund);
+		return (fund > lowThreshold & fund < highThreshold);
 	}
 
 	/** returns true if b is of similar volume to a **/

@@ -39,8 +39,8 @@ public class WavePatterns implements Serializable {
 		return al;
 	}
 	
-	public void reduceScale() {
-		double val = Math.pow(2, 30);
+	public void reduceScale(double twoToThePower) {
+		double val = Math.pow(2, twoToThePower);
 		for (WavePattern p : patterns) {
 			for (InputShell is : p.inputArray) {
 				is.value /=  val;

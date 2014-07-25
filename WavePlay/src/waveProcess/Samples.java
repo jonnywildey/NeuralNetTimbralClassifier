@@ -19,6 +19,7 @@ import filemanager.Serialize;
 import riff.*;
 import waveAnalysis.FrameFFT;
 
+/** Class for transforming samples and preparing them for neural net **/
 public class Samples {
 	
 	public static void batchFolder(File sampleDir, File newDir) {
@@ -50,6 +51,8 @@ public class Samples {
 		}
 	}
 	
+	
+	
 	public static File[] getActualFiles(File dir) {
 		if (dir.isDirectory()) {
 			File[] allFiles = dir.listFiles(new FilenameFilter(){
@@ -69,7 +72,13 @@ public class Samples {
 	/**Applies a random pitch change to the file **/
 	public static Signal randomPitch(Signal s, double range, Random r) {
 		double semi = (range * r.nextDouble()) - (range * 0.5);
-		return Pitch.pitchShift(s, semi);
+		Signal ns = Pitch.pitchShift(s, semi);
+		if (!Pitch.isFundamentalHearable(ns)) { //BAD PITCH CHANGE
+			Log.d("Bad pitch change, trying again");
+			return randomPitch(s, range, r);
+		} else {
+			return ns;
+		}
 	}
 	
 	/**chance is a percentage. Normally 0.1 **/
@@ -104,8 +113,8 @@ public class Samples {
 	
 	public static Signal addNoise(Signal s, Random nr) {
 		double nc = nr.nextDouble();
-		double maxLoud = -52;
-		double loudness = maxLoud - (nr.nextDouble() * 60);
+		double maxLoud = -48;
+		double loudness = maxLoud - (nr.nextDouble() * 30);
 		//Log.d(loudness);
 		try {
 			//pick which
@@ -145,7 +154,7 @@ public class Samples {
 			infoChunk.addChunk(metaChunk);
 			infoChunk.addChunk(fftChunk);
 			wav.addChunk(infoChunk);
-			Log.d(infoChunk.toStringRecursive());
+			//Log.d(infoChunk.toStringRecursive());
 		} catch (InvalidNameException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,17 +162,21 @@ public class Samples {
 		return wav;
 	}
 	
+	
+	/** Performs FFT analysis and attaches to a data chunk **/
 	public static Chunk getFFTData(Signal s) {
 		//4096 works well
 		try {
 			FrameFFT fft = new FrameFFT(s, 4096);
 			double[][] dd = fft.analyse(20, 20000);
-			//dd = FrameFFT.getExponentTable(dd, 0.7); //rate
-			dd = FrameFFT.getSumTable(dd);
+			//dd = FrameFFT.getExponentTable(dd, 0.78); //rate
+			dd = FrameFFT.getSumTable(dd, 10);
 			dd = FrameFFT.getBarkedSubset(dd);
-			
+			//Log.d(ArrayStuff.arrayToString(dd));
+			dd = FrameFFT.normaliseTable(dd, 10);
 			//dd = FrameFFT.convertTableToDecibels(fft.signal, dd, fft.frameSize);
 			String str = ArrayStuff.arrayToString(dd);
+			//Log.d(str);
 			Chunk chunk = new Chunk();
 			chunk.setName("IAS7");
 			chunk.setData(str);
@@ -176,14 +189,14 @@ public class Samples {
 	
 	public static void main(String[] args) {
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
-		/*batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Cello"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"), 
+		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Cello"), 
 				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Harp"), 
 				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
+		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"), 
+				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Trombone"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch")); */
+				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		
 		Wave[] waves = getWavs(new File(
 				"/Users/Jonny/Documents/Timbre/Samples/Batch"));
@@ -201,16 +214,6 @@ public class Samples {
 		
 	}
 	
-	/*public static void main(String[] args) {
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Cello"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Harp"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Trombone"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
-	} */
 	
 	
 }

@@ -28,6 +28,7 @@ public class LayerStructure implements Serializable {
 		this.outputCount = p.getOutputCount();
 	}
 	
+	/**Adds a hidden layer to the end of current hidden layers **/
 	public void addHiddenLayer(int neuronCount) {
 		hiddenLayer.add(neuronCount);
 	}

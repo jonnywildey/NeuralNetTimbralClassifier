@@ -44,33 +44,64 @@ public class FrameFFT{
 	
 	/** returns the table as bark subset **/
 	public static double[][] getBarkedSubset(double[][] table) {
-		table[0] = Pitch.freqToBark(table[0]);
-		//get tables 
-		int to = 0;
-		int from = 0;
-		int length = table.length - 1;
-		int b = 20;
-		double lim = 0;
-		double[][] nt = new double[table.length][b];
+		return getHiResBarkedSubset(table, 0, 1);
+	}
+	
+	/** returns the table as bark subset with extra half measurements in the first x **/
+	public static double[][] getHiResBarkedSubset(double[][] table, int x, double div) {
 		
-		for (int i = 0;i < b; ++i) {
-			nt[0][i] = i + 1;
-			lim = i + 1;
-			for (int j = to; j < table[0].length; ++j) {
-				//Log.d(table[0][j]);
+		//get tables 
+		int to = 0; //holder for array index
+		int from = 0; //holder for array index
+		int b = 20 + x; //how many barks max
+		double lim = 0; //for determining cutoff
+		double[][] nt = new double[table.length][b]; //new array
+		table[0] = Pitch.freqToBark(table[0]);
+		double bCount = 1;
+		for (int i = 0;i < b; ++i) { //for each bark
+			nt[0][i] = bCount;
+			if (i < x) {
+				bCount += div;
+				lim = i + div;
+			} else {
+				lim = i + 1;
+				bCount += 1;
+			}
+			
+			for (int j = to; j < table[0].length; ++j) { //cycle through from last
 				if (table[0][j] > lim | 
-						j >= table[0].length - 1) {
+						j >= table[0].length - 1) { //found new value in freq table
 					//Log.d(from + " " + to + " : " + table[0][j] + " " + j);
-					lim = table[0][j];
-					from = to;
-					to = j;
-					
-					for (int k = 1; k < table.length; ++k) {
+					lim = table[0][j]; //set to new
+					from = to; // set to new
+					to = j; //set to new
+					for (int k = 1; k < table.length; ++k) { //input into new array
 						nt[k][i] = ArrayStuff.getAverageOfSubset(table[k], from, to);
-						//Log.d(nt[k][i]);
 					}
-					break;
+					break; //and out to i loop
 				}
+			}
+		}
+		return nt;
+	}
+	
+	/** Finds the maximum value in an FFT table and normalises the table to this. **/
+	public static double[][] normaliseTable(double[][] table, double ceiling) {
+		double max = Double.NEGATIVE_INFINITY;
+		for (int i = 1; i < table.length; ++i) {
+			for (int j = 0; j < table[i].length;++j) {
+				max = (table[i][j] > max) ? table[i][j] : max;
+			}
+		}
+		//Log.d("max:" + max);
+		double[][] nt = new double[table.length][table[0].length];
+		double factor = ceiling / max;
+		nt[0] = table[0]; //get barks
+		//Log.d("factor: " + factor);
+		for (int i = 1; i < table.length; ++i) {
+			for (int j = 0; j < table[i].length;++j) {
+				nt[i][j] = table[i][j] * factor;
+				
 			}
 		}
 		return nt;
@@ -174,23 +205,33 @@ public class FrameFFT{
 	}
 	
 	/** returns the sum of the bins **/
-	public static double[][] getSumTable(double[][] table) {
+	public static double[][] getSumTable(double[][] table, int count) {
+		if (count + 1 > table.length) {
+			Log.d("Count larger than table length. Using table length");
+			count = table.length -1;
+		}
 		double[][] sums = new double[2][table[0].length];
 		sums[0] = table[0]; //freq row
 		for (int i = 0; i < table[0].length; ++i) {
-			for (int j = 1; j < table.length; ++j) {
+			for (int j = 1; j < count + 1; ++j) {
 				sums[1][i] += table[j][i];
 			}
 		}
 		return sums;
 	}
 	
+	/** returns the sum of the bins **/
+	public static double[][] getSumTable(double[][]table) {
+		return getSumTable(table, table.length);
+	}
+	
+	/** Sum table, adding increasingly less value to further rows in time **/
 	public static double[][] getExponentTable(double[][] table, double exponent) {
 		double[][] sums = new double[2][table[0].length];
 		sums[0] = table[0]; //freq row
 		for (int i = 0; i < table[0].length; ++i) {
 			for (int j = 1; j < table.length; ++j) {
-				sums[1][i] += table[j][i] * (Math.pow(exponent, i));
+				sums[1][i] += table[j][i] * (Math.pow(exponent, j));
 			}
 		}
 		return sums;
