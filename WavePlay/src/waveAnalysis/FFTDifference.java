@@ -5,29 +5,28 @@ import filemanager.Log;
 import plotting.FFTController;
 import plotting.FFTDifferenceController;
 
-/** Object for analysing the difference between
+/** Object for analysing the difference in values between
  * successive FFT windows
  * @author Jonny
  */
-public class FFTDifference {
+public class FFTDifference extends TransformComponent{
 	
 	protected FrameFFT frameFFT;
-	protected double[][] table;
 	
 	public FFTDifference(FrameFFT frameFFT) {
 		this.frameFFT = frameFFT;
 	}
 	
-	public double[][] analyse() {
-		this.table = getDifferenceTable(this.frameFFT.getTable(), 
-				this.frameFFT.getTable().length - 1);
-		return this.table;
+	public FFTBox analyse() {
+		double[][] table = getDifferenceTable(this.frameFFT.getFFTBox().getTable(), 
+				this.frameFFT.getFFTBox().getTable().length - 1);
+		return new FFTBox(table, this.frameFFT.signal);
 	}
 	
-	public double[][] analyse(int frames) {
-		this.table = getDifferenceTable(this.frameFFT.getTable(), 
+	public FFTBox analyse(int frames) {
+		double[][] table = getDifferenceTable(this.frameFFT.getFFTBox().getTable(), 
 				frames);
-		return this.table;
+		return new FFTBox(table, this.frameFFT.signal);
 	}
 	
 	/**Quick normalised frequency response graph **/
@@ -56,9 +55,9 @@ public class FFTDifference {
 	
 	/**Quick normalised frequency response graph with filter options**/
 	public void makeGraph(int filterFrom, int filterTo, int width, int height) {
-		FFTDifferenceController sc = new FFTDifferenceController(FrameFFT.logarithmicFreq(FFT.filter(
+		FFTDifferenceController sc = new FFTDifferenceController(FFTBox.logarithmicFreq(FFTBox.filter(
 				//FrameFFT.convertTableToDecibels(this.frameFFT.signal, this.table, this.frameFFT.frameSize),  
-						this.table,
+						this.fftBox,
 						filterFrom, filterTo)), width, height);
 		sc.makeChart();
 	}

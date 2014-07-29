@@ -17,6 +17,7 @@ import filemanager.HexByte;
 import filemanager.Log;
 import filemanager.Serialize;
 import riff.*;
+import waveAnalysis.FFTBox;
 import waveAnalysis.FrameFFT;
 
 /** Class for transforming samples and preparing them for neural net **/
@@ -168,14 +169,14 @@ public class Samples {
 		//4096 works well
 		try {
 			FrameFFT fft = new FrameFFT(s, 4096);
-			double[][] dd = fft.analyse(20, 20000);
+			FFTBox dd = fft.analyse(20, 20000);
 			//dd = FrameFFT.getExponentTable(dd, 0.78); //rate
-			dd = FrameFFT.getSumTable(dd, 10);
-			dd = FrameFFT.getBarkedSubset(dd);
+			dd = FFTBox.getSumTable(dd, 10);
+			dd = FFTBox.getBarkedSubset(dd);
 			//Log.d(ArrayStuff.arrayToString(dd));
-			dd = FrameFFT.normaliseTable(dd, 10);
+			dd = FFTBox.normaliseTable(dd, 10);
 			//dd = FrameFFT.convertTableToDecibels(fft.signal, dd, fft.frameSize);
-			String str = ArrayStuff.arrayToString(dd);
+			String str = ArrayStuff.arrayToString(dd.getTable());
 			//Log.d(str);
 			Chunk chunk = new Chunk();
 			chunk.setName("IAS7");
@@ -188,7 +189,7 @@ public class Samples {
 	}
 	
 	public static void main(String[] args) {
-		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
+		/*Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Cello"), 
 				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Harp"), 
@@ -196,18 +197,18 @@ public class Samples {
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"), 
 				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Trombone"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch")); 
+				new File("/Users/Jonny/Documents/Timbre/Samples/Batch")); */ 
 		
 		Wave[] waves = getWavs(new File(
 				"/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		WavePatterns wp = new WavePatterns();
-		wp.setWaves(waves);;
+		wp.setWaves(waves);
 		wp.wavToPattern();
 		Log.d(wp.toString());
 		
 		Serialize.serialize(wp, "/Users/Jonny/Documents/Timbre/WavePatternsWithWaves.ser");
-		Log.d("serialised!");
-		wp.removeWaves();
+		Log.d("serialised!"); 
+
 		Serialize.serialize(wp, "/Users/Jonny/Documents/Timbre/WavePatterns.ser");
 		
 	}

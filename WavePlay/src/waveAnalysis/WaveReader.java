@@ -61,26 +61,29 @@ public class WaveReader {
 		//Signal s1 = Gen.silence(200000, 44100, 16);
 
 		//Signal s1 = wr1.getSignals();
-		Signal s1 = Gen.sine(220, 4096, -6, 44100, 16);
+		Signal s1 = wr1.getSignals();
+		DCT ft = new DCT(s1);
+		ft.analyse();
+
+		ft.makeGraph(80, 20000, 800, 600);
 		//Signal s1 = wr1.getSignals();
 		//s1 = EQFilter.highPassFilter(s1, 120, 1);
 		//s1 = Gain.normalise(s1);
-		double[][] dct = DCT.getDCTAnalysis(s1);
-		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/dct.csv");
-		cd.writeArraytoFile(dct);
-		double[] s1gen = DCT.idct(dct[1]);
-		double[][] comps = new double[][]{s1.getSignal()[0], s1gen}; 
-		cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/comp.csv");
-		cd.writeArraytoFile(comps);
+		//double[][] dct = DCT.getDCTAnalysis(s1);
+		//CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/dct.csv");
+		//cd.writeArraytoFile(dct);
+		//double[] s1gen = DCT.idct(dct[1]);
+		//double[][] comps = new double[][]{s1.getSignal()[0], s1gen}; 
+		//cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/comp.csv");
+		//cd.writeArraytoFile(comps);
 		
 		
 		//4096 works well
 		FrameFFT fft = new FrameFFT(s1, 4096);
-		double[][] dd = fft.analyse(20, 15000);
-		dd = FrameFFT.getBarkedSubset(dd);
+
 		//dd = FrameFFT.getSumTable(dd);
 		//wer.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/PA.wav"));
-		dd = FrameFFT.convertTableToDecibels(fft.signal, dd, fft.frameSize);
+		//dd = FFTBox.convertTableToDecibels(fft.signal, dd, fft.frameSize);
 		//double[][] nd = Statistics.getPeaks(dd);
 		//nd = FFT.filter(nd, 40, 2000);
 		//nd = ArrayStuff.flip(nd);

@@ -5,6 +5,7 @@ import javax.swing.*;
 
 import riff.Signal;
 import waveAnalysis.FFT;
+import waveAnalysis.FFTBox;
 import waveAnalysis.FrameFFT;
 
 
@@ -19,9 +20,9 @@ public class FFTDifferenceController {
 		this.table = table;
 	}
 	
-	public FFTDifferenceController(double[][] table, int width, int height) {
+	public FFTDifferenceController(FFTBox fftBox, int width, int height) {
 		this.size = new Dimension(width, height);
-		this.table = table;
+		this.table = fftBox.getTable();
 	}
 	
 	public void makeChart() {

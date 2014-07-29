@@ -113,6 +113,25 @@ public class Epoch {
 		return testConfusionMatrix;	
 	}
 	
+	/** returns an arraylist of all patterns that were incorrect **/
+	public ArrayList<WavePattern> getProblemPatterns() {
+		ArrayList<WavePattern> problems = new ArrayList<WavePattern>();
+		for (Pattern pattern: this.testingPatterns) {
+			WavePattern p = (WavePattern)pattern;
+			//input pattern inputs
+			//forward pass
+			for (int i = 0; i < neurons.getLayerCount(); ++i) {
+				NeuralLayer l = neurons.getLayer(i);
+				l.setTrainingRate(trainingRate);
+				l.process(p);
+			}
+			if (!isRight(p)) {
+				problems.add(p);
+			}
+		}
+		return problems;	
+	}
+	
 	/** add neuron outputs > 0.5 **/
 	public void addRounded(Pattern p, ConfusionMatrix cm) {
 		for (Neuron n : neurons.getLastLayer().neurons) {
@@ -135,6 +154,18 @@ public class Epoch {
 		}
 		cm.addToCell(nid, p.getTargetNumber());
 		//Neuron Row, Class Column
+	}
+	
+	public boolean isRight(Pattern p) {
+		double max = 0;
+		int nid = 0;
+		for (Neuron n : neurons.getLastLayer().neurons) {
+			if (n.output > max) {
+					max = n.output;
+					nid = n.id;
+			}
+		}
+		return nid == p.getTargetNumber();
 	}
 	
 	

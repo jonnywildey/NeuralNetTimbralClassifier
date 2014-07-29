@@ -29,7 +29,7 @@ public class TestPatterns implements Serializable {
 		}
 	}
 	
-	public TestPatterns(WavePattern[] patterns, long seed) {
+	public TestPatterns(Pattern[] patterns, long seed) {
 		this(convertPatterns(patterns), seed);
 	}
 	
@@ -42,9 +42,9 @@ public class TestPatterns implements Serializable {
 		this(null);
 	}
 	
-	public static ArrayList<Pattern> convertPatterns(WavePattern[] wavePatterns) {
+	public static ArrayList<Pattern> convertPatterns(Pattern[] wavePatterns) {
 		ArrayList<Pattern> nwp = new ArrayList<Pattern>(wavePatterns.length);
-		for (WavePattern wp : wavePatterns) {
+		for (Pattern wp : wavePatterns) {
 			nwp.add(wp);
 		}
 		return nwp;

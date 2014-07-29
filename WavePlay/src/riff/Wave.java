@@ -251,6 +251,10 @@ public class Wave extends Chunk{
 		}
 	}
 
+	public File getFilePath() {
+		return this.filepath;
+	}
+
 	
 	
 	

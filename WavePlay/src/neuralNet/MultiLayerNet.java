@@ -132,6 +132,14 @@ public class MultiLayerNet  implements Serializable{
 		this.matthewsCo = er;
 	}
 	
+	/** Receive all the incorrect patterns for a given set of patterns **/
+	public ArrayList<WavePattern> getProblemPatterns(ArrayList<Pattern> patterns) {
+		if (verbose) {Log.d("\n****RUNNING TEST PATTERNS****\n"
+				+ "Testing Network with test patterns\n");}
+		Epoch e = new Epoch(null, patterns, neuronLayers, trainingRate, verbose, debug);
+		return e.getProblemPatterns();
+	}
+	
 	public String toString() {
 		return this.layerStructure.toString() + "\n" + 
 				this.neuronLayers.toString() + "\nMatthews Coefficient: " +

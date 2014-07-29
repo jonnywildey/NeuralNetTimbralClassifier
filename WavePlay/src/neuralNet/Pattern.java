@@ -1,5 +1,6 @@
 package neuralNet;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ public class Pattern implements Serializable {
 	protected ArrayList<Double> targetArray;
 	protected ArrayList<Double> errorList;
 	protected Integer id;
+	public File filePath;
 	
 	public Pattern(int id) {
 		this.id = id;
@@ -69,6 +71,14 @@ public class Pattern implements Serializable {
 		sb.append(getTargetNumber());
 		sb.append("\n");
 		return sb.toString();
+	}
+
+	public File getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(File filePath) {
+		this.filePath = filePath;
 	}
 	
 	

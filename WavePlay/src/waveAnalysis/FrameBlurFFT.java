@@ -46,28 +46,12 @@ public class FrameBlurFFT extends FrameFFT{
 	
 	/**Perform frame analysis **/
 	@Override
-	public double[][] analyse() {
+	public FFTBox analyse() {
 		double[][] amps = makeBlurAmps(this.signal, this.frameSize);
 		Complex[][] cs = fftFromAmps(amps);
 		double[][] table = makeTable(cs);
-		this.table = table;
-		return table;
-	}
-
-	/** basic noise cancelling. Also removes first one of array 
-	 * @return **/
-	public double[][] sumDifference() {
-		double[][] nt = new double[table.length - 1][table[0].length];
-		nt[0] = table[0];
-		for (int i = 2; i <= nt.length; ++i) {
-			for (int j = 0; j < this.table[i].length; ++j) {
-			nt[i - 1][j] = (this.table[i - 1][j] - this.table[i][j]); 
-			}
-		}
-		//Log.d(Arrays.deepToString(nt));
-		
-		this.table = nt;
-		return this.table;
+		this.fftBox = new FFTBox(table, this.signal);
+		return this.fftBox;
 	}
 
 

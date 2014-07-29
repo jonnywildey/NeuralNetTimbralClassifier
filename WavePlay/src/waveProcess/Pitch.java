@@ -88,7 +88,7 @@ public class Pitch {
 	 */
 	public static double getFundamental(Signal s) {
 		FFT fft = new FFT(s);
-		double[][] t = (fft.analyse(20, 20000));
+		double[][] t = (fft.analyse(20, 20000).getTable());
 		//fft.makeGraph();
 		return getFundamental(t);
 	}

@@ -1,5 +1,6 @@
 package neuralNet;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,16 +23,30 @@ public class WavePatterns extends TestPatterns implements Serializable {
 		this.waves = waves;
 	}
 
-	public WavePattern[] getPatterns() {
+	public Pattern[] getPatterns() {
 		return patterns;
 	}
 
-	public void setPatterns(WavePattern[] patterns) {
+	public void setPatterns(Pattern[] patterns) {
 		this.patterns = patterns;
+	}
+	
+	public void setPatterns(ArrayList<WavePattern> wavePatterns) {
+		this.patterns = arrayListToArray(wavePatterns);
+	}
+	
+	/**Convert arraylist of wave patterns to array of wave patterns **/
+	public static Pattern[] arrayListToArray
+	(ArrayList<WavePattern> wavePatterns) {
+		Pattern[] wp = new Pattern[wavePatterns.size()];
+		for (int i = 0; i < wp.length; ++i) {
+			wp[i] = wavePatterns.get(i);
+		}
+		return wp;
 	}
 
 	public Wave[] waves;
-	public WavePattern[] patterns;
+	public Pattern[] patterns;
 	
 	/**Converts double values to input shell objects **/
 	public static ArrayList<InputShell> doubleToInputShell(double[] values) {
@@ -45,7 +60,7 @@ public class WavePatterns extends TestPatterns implements Serializable {
 	/** Reduces the size of all patterns input by 2^x **/
 	public void reduceScale(double twoToThePower) {
 		double val = Math.pow(2, twoToThePower);
-		for (WavePattern p : patterns) {
+		for (Pattern p : patterns) {
 			for (InputShell is : p.inputArray) {
 				is.value /=  val;
 			}
@@ -59,7 +74,7 @@ public class WavePatterns extends TestPatterns implements Serializable {
 		this.patterns = new WavePattern[waves.length];
 		String[] instrs = new String[waves.length];
 		for (int i = 0; i < waves.length; ++i) {
-			patterns[i] = new WavePattern(i); //make pattern
+			patterns[i] = new WavePattern(i, waves[i]); //make pattern
 			String str;
 			try {
 				//get inputs
@@ -95,10 +110,24 @@ public class WavePatterns extends TestPatterns implements Serializable {
 		}
 	}
 	
+	/** Get all the file names in a set a wave patterns **/
+	public static File[] getFileNames(Pattern[] patterns) {
+		File[] files = new File[patterns.length];
+		for (int i = 0; i < files.length; ++i) {
+			files[i] = patterns[i].getFilePath();
+			Log.d(files[i].getName());
+		}
+		return files;
+	}
+	
+	public File[] getFileNames() {
+		return getFileNames(this.patterns);
+	}
+	
 	public String toString() {
 		if (hasPatterns()) {
 			StringBuilder sb = new StringBuilder(this.patterns.length * 200);
-			for (WavePattern wp : this.patterns) {
+			for (Pattern wp : this.patterns) {
 				sb.append(wp.toString());
 			}
 			return sb.toString();
@@ -116,6 +145,10 @@ public class WavePatterns extends TestPatterns implements Serializable {
 
 	public void removeWaves() {
 		this.waves = null;
+		for (Pattern p : this.patterns) {
+			WavePattern wp = (WavePattern)p;
+			wp.wave = null;
+		}
 	}
 
 }
