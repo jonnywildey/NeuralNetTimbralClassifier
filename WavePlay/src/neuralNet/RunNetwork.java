@@ -14,42 +14,48 @@ import java.util.logging.SimpleFormatter;
 import plotting.MatthewsChart;
 import filemanager.ArrayStuff;
 import filemanager.CSVReader;
+import filemanager.CSVWriter;
 import filemanager.Log;
 import filemanager.Serialize;
 
-public class RunIris {
+/**Run time part of NN **/
+public class RunNetwork {
 
-	public RunIris() {
-		// TODO Auto-generated constructor stub
-	}
 	
 	public static void main(String[] args) {
-		
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/RunNN.Log"));
 		//Make Iris data
 		boolean verbose = true;
 		long seed = System.currentTimeMillis();
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
-		WavePatterns wavePatterns = (WavePatterns) Serialize.getFromSerial(
-				"/Users/Jonny/Documents/Timbre/WavePatterns.ser");
-		wavePatterns.reduceScale(0); //around 29.5 if not normalised before
-		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
-		System.out.println("TP" + testPatterns.toString());
-		int runCount = 7;
-		MultiLayerNet[] nets = ManyNets.runNets(runCount, testPatterns,verbose);
+		String serialPatterns = "/Users/Jonny/Documents/Timbre/WavePatterns.ser";
+		TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns);
+		int runCount = 1;
+		MultiLayerNet[][] nets = ManyNets.tryDifferentLayers(runCount, testPatterns,verbose);
+		//CoefficientLogger[][] cls = CoefficientLogger.getErrorsFromMultiLayer(nets);
+		//CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/comp.csv");
+		//cd.writeArraytoFile(CoefficientLogger.getMaxErrorFromCL(cls));
 		ManyNets.graphNets(nets);
+	}
 
-		//nc.makeChart();
-		
-
+	/**Get Wave Patterns from a serialised file **/
+	public static TestPatterns getWavePatternsSerial(long seed,
+			String serialPatterns) {
+		WavePatterns wavePatterns = (WavePatterns) Serialize.getFromSerial(
+				serialPatterns);
+		wavePatterns.reduceScale(1); //added
+		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
+		return testPatterns;
 	}
 	
+	/**Config settings for MLN **/
 	public static MultiLayerNet config(MultiLayerNet nn, TestPatterns testPatterns, 
-										boolean verbose, long seed2, long seed3) {
+			Integer neuronCount, boolean verbose, long seed2, long seed3) {
 		LayerStructure ls = new LayerStructure(testPatterns);
-		ls.addHiddenLayer(50);
-		//ls.addHiddenLayer(10);
+		if (neuronCount != null) {
+			ls.addHiddenLayer(neuronCount);
+		}
 		nn.setTrainingRate(0.1d);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
@@ -57,14 +63,14 @@ public class RunIris {
 		nn.initialiseNeurons();
 		nn.setVerbose(verbose);
 		nn.setAcceptableErrorRate(0.1d);
-		nn.setMaxEpoch(200);
+		nn.setMaxEpoch(500);
 		nn.initialiseRandomWeights(seed2);
 		nn.setShuffleTrainingPatterns(true, seed3);
-
-		//TURN OFF SHUFFLING AFTER A WHILE
 		return nn;
 	}
 	
+	
+	/** Get test Patterns from a file **/
 	public static TestPatterns getTestPatterns(String file, boolean verbose, long seed) {
 		CSVReader sr = new CSVReader(file);
 		sr.readFile();

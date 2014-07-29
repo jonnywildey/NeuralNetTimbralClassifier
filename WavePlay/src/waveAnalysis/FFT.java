@@ -37,10 +37,33 @@ public class FFT {
 	public FFT(Signal s) {
 		this.signal = s;
 		//find nearest bigger frame size
-		this.frameSize = (int) Math.pow(2,(Math.floor(
-				Math.log(s.getSignal()[0].length) / Math.log(2)) + 1));
-		this.amplitudes = ArrayStuff.extend(s.getSignal()[0], (int) this.frameSize);
+		calculateSignalSize(s.getSignal()[0]);
 		
+	}
+	
+	/*return signal extended to a power of two **/
+	public void calculateSignalSize(double[] signals) {
+		double ls = Math.log((double)signals.length) / Math.log(2);
+		if (Math.floor(ls) == ls) { //if already is a power of two
+			this.frameSize = signals.length;
+			this.amplitudes = signals;
+		} else {
+			this.frameSize = (int) Math.pow(2,(Math.floor(
+					ls + 1)));
+			this.amplitudes = ArrayStuff.extend(signals, (int) this.frameSize);
+		}
+	}
+	
+	/*return signal extended to a power of two **/
+	public static double[] getPowerArray(double[] signals) {
+		double ls = Math.log((double)signals.length) / Math.log(2);
+		if (Math.floor(ls) == ls) { //if already is a power of two
+			return signals;
+		} else {
+			int frameSize = (int) Math.pow(2,(Math.floor(
+					ls + 1)));
+			return ArrayStuff.extend(signals, frameSize);
+		}
 	}
 	
 	
@@ -136,6 +159,7 @@ public class FFT {
 						filterFrom, filterTo)), width, height);
 		sc.makeChart();
 	}
+	
 	
 	/** the cfft algorithm **/
 	protected static Complex[] cfft(Complex[] amplitudes) {

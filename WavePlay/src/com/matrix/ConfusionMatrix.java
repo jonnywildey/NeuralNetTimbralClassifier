@@ -2,6 +2,7 @@ package com.matrix;
 
 import java.util.Arrays;
 
+import filemanager.Log;
 import neuralNet.NNFunctions;
 
 public class ConfusionMatrix extends Matrix {
@@ -69,6 +70,7 @@ public class ConfusionMatrix extends Matrix {
 		double[] ms = new double[array.length];
 		for (int i = 0; i < array.length; ++i) {
 			ms[i] = matthewsCoefficient(i);
+			Log.d("MC" + i + ": " + ms[i]);
 		}
 		return NNFunctions.average(ms);
 	}

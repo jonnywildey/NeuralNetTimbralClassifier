@@ -35,7 +35,7 @@ public class Samples {
 				Wave nw = new Wave(nf);
 				Signal s1 = nw.getSignals();
 				s1 = Gain.getMid(s1);
-				s1 = randomPitch(s1, 24, pitchRand);
+				s1 = randomPitch(s1, 12, pitchRand);
 				s1 = Gain.volume(s1, -6);
 				s1 = addNoise(s1, noiseRand);
 				s1 = randomHP(s1, 0.1, hpRand);
@@ -113,8 +113,8 @@ public class Samples {
 	
 	public static Signal addNoise(Signal s, Random nr) {
 		double nc = nr.nextDouble();
-		double maxLoud = -48;
-		double loudness = maxLoud - (nr.nextDouble() * 30);
+		double maxLoud = -60;
+		double loudness = maxLoud - (nr.nextDouble() * 12);
 		//Log.d(loudness);
 		try {
 			//pick which
@@ -196,16 +196,14 @@ public class Samples {
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"), 
 				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Trombone"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
+				new File("/Users/Jonny/Documents/Timbre/Samples/Batch")); 
 		
 		Wave[] waves = getWavs(new File(
 				"/Users/Jonny/Documents/Timbre/Samples/Batch"));
 		WavePatterns wp = new WavePatterns();
-		wp.waves = waves;
+		wp.setWaves(waves);;
 		wp.wavToPattern();
-		for (int i = 0; i < wp.patterns.length; ++i) {
-			Log.d(wp.patterns[i]);
-		}
+		Log.d(wp.toString());
 		
 		Serialize.serialize(wp, "/Users/Jonny/Documents/Timbre/WavePatternsWithWaves.ser");
 		Log.d("serialised!");

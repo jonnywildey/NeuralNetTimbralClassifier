@@ -76,16 +76,17 @@ public  class NNUtilities {
 		return bArray;
 	}
 	
-	public static double[][][] createConversionTable(String[] array, boolean verbose) {
+	/**creates a table showing target value (arbitrary) and bitArray it should be assigned to **/
+	public static String[][][] createConversionTable(String[] array, boolean verbose) {
 		int length = array.length;
-		double[][][] bArray = new double[length][2][length]; 
+		String[][][] bArray = new String[length][2][length]; 
 		int i = 0;
 		for (String val: array) { //don't actually need value
-			bArray[i][0] = new double[] {10}; //original value
+			bArray[i][0] = new String[]{array[i]}; //original value
 			for (int j = 0; j < length; ++j) { //Think it is a bit confusing if I for each this...
-				bArray[i][1][j] = 0; //every value 0 except...
+				bArray[i][1][j] = "0"; //every value 0 except...
 			}
-			bArray[i][1][length - i - 1] = 1; //this guy
+			bArray[i][1][length - i - 1] = "1"; //this guy
 			i++;
 		}
 		if (verbose) {

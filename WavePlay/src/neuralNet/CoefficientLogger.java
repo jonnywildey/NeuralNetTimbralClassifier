@@ -38,8 +38,57 @@ public class CoefficientLogger {
 		nc.makeChart();
 	}
 	
+	
+	/** Convert errors to a double table **/
+	public static double[][] getErrorsFromCL(CoefficientLogger[] cls) {
+		double[][] errors = new double[cls.length][];
+		for (int i = 0; i < cls.length; ++i) {
+			errors[i] = cls[i].getErrors();
+		}
+		return errors;
+	}
+	
+	/**Return the maximum error from coefficient logger **/
+	public static double[] getMaxErrorFromCL(CoefficientLogger[] cls) {
+		double[] errors = new double[cls.length];
+		for (int i = 0; i < cls.length; ++i) {
+			errors[i] = cls[i].maxCoefficient();
+		}
+		return errors;
+	}
+	
+	/**Return the maximum error from coefficient logger **/
+	public static double[][] getMaxErrorFromCL(CoefficientLogger[][] cls) {
+		double[][] errors = new double[cls.length][];
+		for (int i = 0; i < cls.length; ++i) {
+			errors[i] = getMaxErrorFromCL(cls[i]);
+		}
+		return errors;
+	}
+	
+	/** Return the highest Matthews Coefficient logged **/
+	public double maxCoefficient() {
+		return ArrayStuff.getMax(this.errors);
+	}
+	
 	public double[] getErrors() {
 		return this.errors;
+	}
+	/** Returns Coefficient Loggers from the MultiLayer Nets **/
+	public static CoefficientLogger[][] getErrorsFromMultiLayer(MultiLayerNet[][] multiLayer) {
+		CoefficientLogger[][] cl = new CoefficientLogger[multiLayer.length][];
+		for (int i = 0; i < multiLayer.length; ++i) {
+			cl[i] = getErrorsFromMultiLayer(multiLayer[i]);
+		}
+		return cl;
+	}
+	/** Returns Coefficient Loggers from the MultiLayer Nets **/
+	public static CoefficientLogger[] getErrorsFromMultiLayer(MultiLayerNet[] nets) {
+		CoefficientLogger[] mBox = new CoefficientLogger[nets.length];
+		for (int i = 0; i < nets.length; ++i) {
+				mBox[i] = nets[i].getErrorBox();
+		}
+		return mBox;
 	}
 
 }

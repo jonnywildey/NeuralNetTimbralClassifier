@@ -9,6 +9,7 @@ public class  Matrix  {
 protected int size;
 protected Object[][] array;
 
+
 	public Matrix(int size) {
 		if (size  > 0) {
 			this.size = size;

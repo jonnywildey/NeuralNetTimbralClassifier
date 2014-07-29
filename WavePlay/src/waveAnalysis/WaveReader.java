@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import javax.naming.InvalidNameException;
 
+import plotting.PlotGraph;
+import plotting.SignalGraph;
 import plotting.WavController;
 import riff.Chunk;
 import riff.InfoChunk;
@@ -57,13 +59,20 @@ public class WaveReader {
 		//s1 = Gen.pinkNoise(100000, -3, 44100, 16);
 		//s1 = Gain.changeGain(s1, 0);
 		//Signal s1 = Gen.silence(200000, 44100, 16);
-		Signal s1 = wr1.getSignals();
-		Wave wer = new Wave(s1);
-		
+
+		//Signal s1 = wr1.getSignals();
+		Signal s1 = Gen.sine(220, 4096, -6, 44100, 16);
 		//Signal s1 = wr1.getSignals();
 		//s1 = EQFilter.highPassFilter(s1, 120, 1);
 		//s1 = Gain.normalise(s1);
-
+		double[][] dct = DCT.getDCTAnalysis(s1);
+		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/dct.csv");
+		cd.writeArraytoFile(dct);
+		double[] s1gen = DCT.idct(dct[1]);
+		double[][] comps = new double[][]{s1.getSignal()[0], s1gen}; 
+		cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/comp.csv");
+		cd.writeArraytoFile(comps);
+		
 		
 		//4096 works well
 		FrameFFT fft = new FrameFFT(s1, 4096);
@@ -83,8 +92,8 @@ public class WaveReader {
 		//double[][] dd = FFTDifference.splitAndAverage(fft.table, 80);
 		//dd = ArrayStuff.flip(dd);
 		//fd.makeGraph();
-		CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
-		cd.writeArraytoFile(dd);
+		//CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/fft.csv");
+		//cd.writeArraytoFile(dd);
 		//dd = ArrayStuff.flip(dd);
 
 		//s1 = Gain.normalise(s1);

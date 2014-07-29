@@ -95,6 +95,15 @@ class Complex {
 		return cs;
 	}
 	
+	/**Get a subset of array **/
+	public static Complex[] getSubset(Complex[] object, int start, int end) {
+		Complex[] newBytes = new Complex[(end + 1) - start];
+		for (int i = 0; i <= (end - start); ++i) {
+			newBytes[i] = object[start + i];
+		}
+		return newBytes;
+	}
+	
 	/** return all reals of a complex array **/
 	public static double[] getReals(Complex[] values) {
 		double[] cs = new double[values.length];

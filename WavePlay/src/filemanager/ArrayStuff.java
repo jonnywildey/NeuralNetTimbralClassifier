@@ -3,6 +3,7 @@ package filemanager;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 public class ArrayStuff {
 	
 	/* public static ArrayList<Byte> addBytes(ArrayList<Byte> al, byte[] bytes) {
@@ -348,6 +349,8 @@ public class ArrayStuff {
 		}
 		return newBytes;
 	}
+	
+	
 	
 	/**Get a subset of array **/
 	public static double[] getSubset(double[] doubles, int start, int end) {

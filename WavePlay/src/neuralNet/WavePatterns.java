@@ -9,9 +9,11 @@ import filemanager.ArrayStuff;
 import filemanager.CSVString;
 import filemanager.Log;
 
-public class WavePatterns implements Serializable {
+/**Container object for multiple Wave Patterns **/
+public class WavePatterns extends TestPatterns implements Serializable {
 	
 	private static final long serialVersionUID = 8265438349914627431L;
+	
 	public Wave[] getWaves() {
 		return waves;
 	}
@@ -31,6 +33,7 @@ public class WavePatterns implements Serializable {
 	public Wave[] waves;
 	public WavePattern[] patterns;
 	
+	/**Converts double values to input shell objects **/
 	public static ArrayList<InputShell> doubleToInputShell(double[] values) {
 		ArrayList<InputShell> al = new ArrayList<InputShell>(values.length);
 		for (double value : values) {
@@ -39,6 +42,7 @@ public class WavePatterns implements Serializable {
 		return al;
 	}
 	
+	/** Reduces the size of all patterns input by 2^x **/
 	public void reduceScale(double twoToThePower) {
 		double val = Math.pow(2, twoToThePower);
 		for (WavePattern p : patterns) {
@@ -74,8 +78,9 @@ public class WavePatterns implements Serializable {
 		}
 		getOutputs(instrs);
 	}
-
-	public void getOutputs(String[] instrs) {
+	
+	
+	private void getOutputs(String[] instrs) {
 		// convert to bitarray
 		String[][] targets = NNUtilities.getCount(instrs, true);
 		double[][] bits = NNUtilities.createUniqueBits(targets.length);
@@ -89,6 +94,25 @@ public class WavePatterns implements Serializable {
 			}
 		}
 	}
+	
+	public String toString() {
+		if (hasPatterns()) {
+			StringBuilder sb = new StringBuilder(this.patterns.length * 200);
+			for (WavePattern wp : this.patterns) {
+				sb.append(wp.toString());
+			}
+			return sb.toString();
+		} else {
+			return null;
+		}
+		
+	}
+
+	private boolean hasPatterns() {
+		return (this.patterns != null);
+	}
+
+
 
 	public void removeWaves() {
 		this.waves = null;

@@ -100,7 +100,7 @@ public class Pitch {
 		double lowThreshold = 60; //or 40?
 		double highThreshold = 20000;
 		double fund = getFundamental(s);
-		Log.d("fund: " + fund);
+		//Log.d("fund: " + fund);
 		return (fund > lowThreshold & fund < highThreshold);
 	}
 
