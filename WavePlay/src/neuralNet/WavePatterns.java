@@ -9,53 +9,35 @@ import riff.Wave;
 import filemanager.ArrayStuff;
 import filemanager.CSVString;
 import filemanager.Log;
+import filemanager.Serialize;
 
 /**Container object for multiple Wave Patterns **/
-public class WavePatterns extends TestPatterns implements Serializable {
+public class WavePatterns implements Serializable {
 	
 	private static final long serialVersionUID = 8265438349914627431L;
+	public File filePath;
+	public WavePattern[] patterns;
+	private String[] instruments;
 	
-	public Wave[] getWaves() {
-		return waves;
+	public WavePatterns(File filePath) {
+		this.filePath = filePath;
 	}
+	
 
-	public void setWaves(Wave[] waves) {
-		this.waves = waves;
-	}
 
-	public Pattern[] getPatterns() {
+	public WavePattern[] getPatterns() {
 		return patterns;
 	}
 
-	public void setPatterns(Pattern[] patterns) {
+	public void setPatterns(WavePattern[] patterns) {
 		this.patterns = patterns;
 	}
 	
 	public void setPatterns(ArrayList<WavePattern> wavePatterns) {
-		this.patterns = arrayListToArray(wavePatterns);
+		this.patterns = WavePattern.arrayListToArray(wavePatterns);
 	}
 	
-	/**Convert arraylist of wave patterns to array of wave patterns **/
-	public static Pattern[] arrayListToArray
-	(ArrayList<WavePattern> wavePatterns) {
-		Pattern[] wp = new Pattern[wavePatterns.size()];
-		for (int i = 0; i < wp.length; ++i) {
-			wp[i] = wavePatterns.get(i);
-		}
-		return wp;
-	}
-
-	public Wave[] waves;
-	public Pattern[] patterns;
 	
-	/**Converts double values to input shell objects **/
-	public static ArrayList<InputShell> doubleToInputShell(double[] values) {
-		ArrayList<InputShell> al = new ArrayList<InputShell>(values.length);
-		for (double value : values) {
-			al.add(new InputShell(value));
-		}
-		return al;
-	}
 	
 	/** Reduces the size of all patterns input by 2^x **/
 	public void reduceScale(double twoToThePower) {
@@ -68,39 +50,76 @@ public class WavePatterns extends TestPatterns implements Serializable {
 		}
 	}
 	
-	/** turns a wav with metadata to a pattern **/
-	public void wavToPattern() {
-		//patterns
-		this.patterns = new WavePattern[waves.length];
-		String[] instrs = new String[waves.length];
-		for (int i = 0; i < waves.length; ++i) {
-			patterns[i] = new WavePattern(i, waves[i]); //make pattern
-			String str;
-			try {
-				//get inputs
-				str = new String(
-						waves[i].getSubChunk("LIST").getSubChunk("IAS7").getData(), "UTF-8");
-				CSVString s = new CSVString(str);
-				s.readFile();
-				patterns[i].inputArray = doubleToInputShell(
-						s.makeDoubleArray()[1]);
-				//get instrumental outputs
-				instrs[i] = new String(waves[i].getSubChunk("LIST").
-						getSubChunk("IAS8").getData(), "UTF-8");
-			} catch (Exception e) {
-				
-			}	
-		}
-		getOutputs(instrs);
+	protected File[] getFilesFromDirectory() {
+		return Serialize.getActualFiles(this.filePath);
 	}
 	
 	
-	private void getOutputs(String[] instrs) {
+	/** turns a set of waves with metadata to a pattern **/
+	public void wavMetaToPattern() {
+		//patterns
+		File[] files = getFilesFromDirectory();
+		this.patterns = new WavePattern[files.length];
+		String[] instrs = new String[files.length];
+		String str = "";
+		Wave wave = null;
+		for (int i = 0; i < files.length; ++i) {
+			wave = new Wave(files[i]);
+			patterns[i] = new WavePattern(i, wave); //make pattern
+			str = getDataChunk(wave);
+			patterns[i].inputArray = getInputs(str);
+			//get instrumental outputs
+			instrs[i] = getInstrumentalOutputs(wave);
+			patterns[i].instrument = instrs[i];
+		}
+		getOutputs(instrs, files);
+	}
+
+
+
+	protected ArrayList<InputShell> getInputs(String str) {
+		CSVString s = new CSVString(str);
+		s.readFile();
+		return Pattern.doubleToInputShell(
+				s.makeDoubleArray()[1]);
+	}
+
+
+
+	protected String getInstrumentalOutputs(Wave wave) {
+		try {
+		return new String(wave.getSubChunk("LIST").
+				getSubChunk("IAS8").getData(), "UTF-8");
+		} catch (Exception e) {
+			Log.d(e);
+			return null;
+		}
+	}
+
+
+
+	protected String getDataChunk(Wave wave) {
+		String str = "";
+		try {
+			//get inputs
+			str = new String(
+					wave.getSubChunk("LIST").getSubChunk("IAS7").getData(), "UTF-8");
+		}
+		catch(Exception e) {
+			Log.d(e);
+		}
+		return str;
+	}
+		
+	
+	/** get the outputs from the patterns **/
+	private void getOutputs(String[] instrs, File[] files) {
 		// convert to bitarray
 		String[][] targets = NNUtilities.getCount(instrs, true);
+		this.instruments = targets[0];
 		double[][] bits = NNUtilities.createUniqueBits(targets.length);
 		//convert back
-		for (int i = 0; i < waves.length; ++i) {
+		for (int i = 0; i < files.length; ++i) {
 			for (int j = 0; j < targets.length; ++j) {
 				if (instrs[i].equals(targets[j][0])) {
 					patterns[i].targetArray = ArrayStuff.doubleToArrayList(bits[j]);
@@ -110,6 +129,10 @@ public class WavePatterns extends TestPatterns implements Serializable {
 		}
 	}
 	
+	public String[] getInstruments() {
+		return instruments;
+	}
+
 	/** Get all the file names in a set a wave patterns **/
 	public static File[] getFileNames(Pattern[] patterns) {
 		File[] files = new File[patterns.length];
@@ -120,10 +143,19 @@ public class WavePatterns extends TestPatterns implements Serializable {
 		return files;
 	}
 	
+	/** Return all the filenames mentioned in patterns **/
 	public File[] getFileNames() {
 		return getFileNames(this.patterns);
 	}
 	
+	public File getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(File filePath) {
+		this.filePath = filePath;
+	}
+
 	public String toString() {
 		if (hasPatterns()) {
 			StringBuilder sb = new StringBuilder(this.patterns.length * 200);
@@ -136,19 +168,10 @@ public class WavePatterns extends TestPatterns implements Serializable {
 		}
 		
 	}
-
+	/** does this have any patterns? **/
 	private boolean hasPatterns() {
 		return (this.patterns != null);
 	}
 
-
-
-	public void removeWaves() {
-		this.waves = null;
-		for (Pattern p : this.patterns) {
-			WavePattern wp = (WavePattern)p;
-			wp.wave = null;
-		}
-	}
 
 }

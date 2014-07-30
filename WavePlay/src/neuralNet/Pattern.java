@@ -17,7 +17,7 @@ public class Pattern implements Serializable {
 	protected ArrayList<Double> targetArray;
 	protected ArrayList<Double> errorList;
 	protected Integer id;
-	public File filePath;
+	public File filePath; //if the pattern relates to some other object
 	
 	public Pattern(int id) {
 		this.id = id;
@@ -79,6 +79,15 @@ public class Pattern implements Serializable {
 
 	public void setFilePath(File filePath) {
 		this.filePath = filePath;
+	}
+
+	/**Converts double values to input shell objects **/
+	public static ArrayList<InputShell> doubleToInputShell(double[] values) {
+		ArrayList<InputShell> al = new ArrayList<InputShell>(values.length);
+		for (double value : values) {
+			al.add(new InputShell(value));
+		}
+		return al;
 	}
 	
 	

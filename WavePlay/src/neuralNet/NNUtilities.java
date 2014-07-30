@@ -240,7 +240,9 @@ public  class NNUtilities {
 		return createPatterns(array, false);
 	}
 	
-	/** **/
+	/** return a 2d array with the value and its count.
+	 * Can deal with multiples. Values will be in the same order as array (with 
+	 * subsequent duplicate values removed). **/
 	public static String[][] getCount(String[] array, boolean verbose) {
 		ArrayList<String[]> countArray = new ArrayList<String[]>();
 		double count = 0;
@@ -263,9 +265,8 @@ public  class NNUtilities {
 				countArray.add(new String[]{array[i], String.valueOf(count)});
 			}
 		}
-		Log.d(countArray);
+		//Log.d(countArray);
 		String[][] stringArray = new String[countArray.size()][];
-
 		stringArray = countArray.toArray(stringArray);
 		if (verbose){
 			System.out.println("Value and count of value:\n" + Arrays.deepToString(stringArray));
@@ -276,7 +277,7 @@ public  class NNUtilities {
 	
 	
 	/** return a 2d array with the value and its count.
-	 * Can deal with multiples. Values should be in the same order as array (with 
+	 * Can deal with multiples. Values will be in the same order as array (with 
 	 * subsequent duplicate values removed). **/
 	public static Double[][] getCount(double[] array, boolean verbose) {
 		ArrayList<Double[]> countArray = new ArrayList<Double[]>();

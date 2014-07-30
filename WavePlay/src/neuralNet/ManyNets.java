@@ -35,7 +35,7 @@ public class ManyNets {
 	public static MultiLayerNet[][] tryDifferentLayers(int runCount, TestPatterns testPatterns, 
 			boolean verbose) {
 		//int[] layerOneSize = new int[]{1,5,10,20,30,50,70,90,100,110,120,150,160,200};
-		int[] layerOneSize = new int[]{50};
+		int[] layerOneSize = new int[]{100};
 		MultiLayerNet[][] mlns = new MultiLayerNet[layerOneSize.length][runCount];
 		for (int i = 0; i < layerOneSize.length; ++i) {
 			mlns[i] = runNets(runCount, testPatterns, layerOneSize[i], verbose);

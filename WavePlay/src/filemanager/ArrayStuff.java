@@ -416,6 +416,24 @@ public class ArrayStuff {
 	}
 	
 	/** changes a 2d array to a long 1d array **/
+	public static String[] tableToLongRow(String[][] table) {
+		//get length
+		int l = 0;
+		for (String[] row : table) {
+			l += row.length;
+		}
+		String[] lr = new String[l];
+		int c = 0;
+		for (int i = 0; i < table.length; ++i) {
+			for (int j = 0; j < table[i].length; ++j) {
+				lr[c] = table[i][j];
+				c++;
+			}
+		}
+		return lr;
+	}
+	
+	/** changes a 2d array to a long 1d array **/
 	public static double[] tableToLongRow(double[][] table) {
 		//get length
 		int l = 0;

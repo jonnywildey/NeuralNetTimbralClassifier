@@ -1,13 +1,16 @@
 package waveProcess;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.regex.PatternSyntaxException;
 
 import javax.naming.InvalidNameException;
 
+import neuralNet.NNUtilities;
 import neuralNet.Pattern;
 import neuralNet.WavePattern;
 import neuralNet.WavePatterns;
@@ -19,13 +22,14 @@ import filemanager.Serialize;
 import riff.*;
 import waveAnalysis.FFTBox;
 import waveAnalysis.FrameFFT;
+import waveAnalysis.SampleRateException;
 
 /** Class for transforming samples and preparing them for neural net **/
 public class Samples {
 	
 	public static void batchFolder(File sampleDir, File newDir) {
 		String instrument = sampleDir.getName();
-		File[] files = getActualFiles(sampleDir);
+		File[] files = Serialize.getActualFiles(sampleDir);
 		Random pitchRand = new Random();
 		Random noiseRand = new Random();
 		Random hpRand = new Random();
@@ -54,22 +58,6 @@ public class Samples {
 	
 	
 	
-	public static File[] getActualFiles(File dir) {
-		if (dir.isDirectory()) {
-			File[] allFiles = dir.listFiles(new FilenameFilter(){
-				public boolean accept(File dir,
-			               String name) {
-					File f = new File(dir.getAbsolutePath() + "/" + name);
-					return (!name.startsWith(".") & !f.isDirectory());
-				}
-			});
-			return allFiles;
-		} else {
-			return null;
-		}
-		
-	}
-	
 	/**Applies a random pitch change to the file **/
 	public static Signal randomPitch(Signal s, double range, Random r) {
 		double semi = (range * r.nextDouble()) - (range * 0.5);
@@ -81,6 +69,7 @@ public class Samples {
 			return ns;
 		}
 	}
+	
 	
 	/**chance is a percentage. Normally 0.1 **/
 	public static Signal randomHP(Signal s, double chance, Random r) {
@@ -104,7 +93,7 @@ public class Samples {
 	
 	/** Get Waves **/
 	public static Wave[] getWavs(File dir) {
-		File[] files = getActualFiles(dir);
+		File[] files = Serialize.getActualFiles(dir);
 		Wave[] waves = new Wave[files.length];
 		for (int i = 0; i < files.length; ++i) {
 			waves[i] = new Wave(files[i]);
@@ -114,7 +103,7 @@ public class Samples {
 	
 	public static Signal addNoise(Signal s, Random nr) {
 		double nc = nr.nextDouble();
-		double maxLoud = -60;
+		double maxLoud = -90;
 		double loudness = maxLoud - (nr.nextDouble() * 12);
 		//Log.d(loudness);
 		try {
@@ -189,28 +178,150 @@ public class Samples {
 	}
 	
 	public static void main(String[] args) {
-		/*Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Cello"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Harp"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch"));
-		batchFolder(new File("/Users/Jonny/Documents/Timbre/Samples/Trombone"), 
-				new File("/Users/Jonny/Documents/Timbre/Samples/Batch")); */ 
+		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
+		File[] batchDirs = {new File("/Users/Jonny/Documents/Timbre/Samples/Cello"),
+				new File("/Users/Jonny/Documents/Timbre/Samples/Harp"),
+				new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"),
+				new File("/Users/Jonny/Documents/Timbre/Samples/Trombone")};
+		File batchFolder = new File("/Users/Jonny/Documents/Timbre/Samples/Batch");
+		File combineDir = new File("/Users/Jonny/Documents/Timbre/Samples/Combine");
+		//batchFromFolders(batchFolder, batchFiles); 
+		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WavePatterns.ser");
+		//WavePatterns wavePatterns = generatePatterns(batchFolder, waveSerial); 
+		WavePatterns wp = (WavePatterns) Serialize.getFromSerial(waveSerial.getAbsolutePath());
+		batchCombine(combineDir, batchDirs);
 		
-		Wave[] waves = getWavs(new File(
-				"/Users/Jonny/Documents/Timbre/Samples/Batch"));
-		WavePatterns wp = new WavePatterns();
-		wp.setWaves(waves);
-		wp.wavToPattern();
-		Log.d(wp.toString());
 		
-		Serialize.serialize(wp, "/Users/Jonny/Documents/Timbre/WavePatternsWithWaves.ser");
-		Log.d("serialised!"); 
+		
+	}
+	
 
-		Serialize.serialize(wp, "/Users/Jonny/Documents/Timbre/WavePatterns.ser");
-		
+
+
+	public static void batchFromFolders(File batch, File...files) {
+		for (File f : files) {
+			batchFolder(f, batch);
+		}
+	}
+	
+	public static class Combinator {
+		int types;
+		HashMap<String, Integer> map;
+		public Combinator(String...strings) {
+			map = new HashMap<String, Integer>();
+			for (int i = 0; i < strings.length; ++i) {
+				map.put(strings[i], i);
+			}
+		}
+		public boolean isOK(String s1, String s2) {
+			return map.get(s1) >= map.get(s2);
+		}
+	}
+	
+	public static void batchCombine(File dirToWriteTo, File...dirs) {
+		//get patterns from each of the dirs
+		WavePatterns[] wavePatterns = new WavePatterns[dirs.length];
+		String[] instruments = new String[dirs.length];
+		for (int i = 0; i < dirs.length; ++i) {
+			wavePatterns[i] = new WavePatterns(dirs[i]);
+			instruments[i] = dirs[i].getName();
+			//Log.d(dirs[i].getName());
+		}
+		//Log.d(Arrays.toString(instruments));
+		//start combining
+
+		WavePattern np = null;
+		Wave wWave = null;
+		Wave nWave = null;
+		//Combinator combinator = new Combinator(instrs);
+		for (int i = 0; i < dirs.length; ++i) {
+			//get all audio files in directory
+			File[] wFiles = Serialize.getActualFiles(dirs[i]); 
+			for (int j = 0; j < wFiles.length; ++j) {
+				wWave = getAndRead(wFiles[j]);
+				
+				for (int k = i; k < dirs.length; ++k) {
+					File[] nFiles = Serialize.getActualFiles(dirs[k]); 
+					for (int l = 0; l < nFiles.length; ++k) {
+						nWave = getAndRead(wFiles[l]);
+						//Modify and combine
+						combineWaves(dirToWriteTo, wWave, nWave);
+					}
+				}
+			}
+		}
+	}
+	
+	private static Wave getAndRead(File file) {
+		Wave w = new Wave(file);
+		w.readFile();
+		return w;
+	}
+
+
+
+	/**Combines and normalises waves from files **/
+	public static void combineWaves(File dir, Wave...waves) {
+		Random random = new Random();
+		Signal[] signals = new Signal[waves.length];
+		String newName = "";
+		String instrument = "";
+		String wName = "";
+		Wave wave = null;
+		for (int i = 0; i < waves.length; ++i) {
+			//get signals
+			wave = waves[i];
+			wave.readFile();
+			signals[i] = wave.getSignals();
+			signals[i] = randomPitch(signals[i], 12, random);
+			//get name of file
+			wName = waves[i].getFilePath().getParentFile().getName();
+			newName = renameCombine(newName, waves[i]);
+			//get instrument name
+			if (!wName.equals(instrument)) { //don't want cellocello
+				instrument = instrument.concat(wName);
+			}
+		}
+		sumAndWrite(dir, signals, newName, instrument);
+	}
+
+
+	private static String renameCombine(String str, Wave wave) {
+		if (str.length() == 0 | str == null) {
+			str = wave.getFilePath().getName();
+		} else {
+			str = str.substring(0, str.length() - 4).concat
+					(wave.getFilePath().getName());
+		}
+		return str;
+	}
+
+
+
+	/**sum a wave, write metadata and write signals **/
+	public static void sumAndWrite(File dir, Signal[] signals, String newName,
+			String instrument) {
+		Signal comb = null;
+		//write the file
+		try {
+			comb = Gain.sumMono(signals);
+			Wave newWave = addMetaData(comb, "IAS8", instrument);
+			newWave.writeFile(new File(dir.getAbsolutePath() + "/" + newName));
+		} catch (SampleRateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
+	/** generates and serialises and return wave patterns **/
+	public static WavePatterns generatePatterns(File batchFolder, File fileOut) {
+		WavePatterns wp = new WavePatterns(batchFolder);
+		wp.wavMetaToPattern();
+		Log.d(wp.toString());
+		Serialize.serialize(wp, fileOut.getAbsolutePath());
+		Log.d("serialised!");
+		return wp;
 	}
 	
 	

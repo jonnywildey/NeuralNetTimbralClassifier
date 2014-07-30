@@ -32,17 +32,16 @@ public class RunNetwork {
 		String serialPatterns = "/Users/Jonny/Documents/Timbre/WavePatterns.ser";
 		TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns);
 		
-		int runCount = 1;
+		int runCount = 15;
 		MultiLayerNet[][] nets = ManyNets.tryDifferentLayers(runCount, testPatterns,verbose);
 		//CoefficientLogger[][] cls = CoefficientLogger.getErrorsFromMultiLayer(nets);
 		//CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/comp.csv");
 		//cd.writeArraytoFile(CoefficientLogger.getMaxErrorFromCL(cls));
 		ArrayList<WavePattern> wps = nets[0][0].getProblemPatterns(testPatterns.getValidationPatterns());
-		File[] ps = WavePatterns.getFileNames(WavePatterns.arrayListToArray(wps));
+		File[] ps = WavePatterns.getFileNames(WavePattern.arrayListToArray(wps));
 		for (File f : ps) {
 			Log.d(f.getName());
 		}
-		
 		ManyNets.graphNets(nets);
 	}
 
@@ -72,7 +71,7 @@ public class RunNetwork {
 		nn.setAcceptableErrorRate(0.1d);
 		nn.setMaxEpoch(200);
 		nn.initialiseRandomWeights(seed2);
-		nn.setShuffleTrainingPatterns(true, seed3);
+		nn.setShuffleTrainingPatterns(false, seed3);
 		return nn;
 	}
 	
