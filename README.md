@@ -1,7 +1,7 @@
 TimbreWav
 =========
 
-Java implementation of A combination of a lightweight DSP library and an ANN for the purposes of timbre classification. 
+Java implementation of a combination of a lightweight DSP library and an ANN for the purposes of timbre classification. 
 ANN is very customisable, including modular layers, multiple selection functions, confusion matrices, 
 non-binary matthews coefficient calculation, pattern shuffling, pattern selection, batch runs and graphs.
 
@@ -37,4 +37,6 @@ Bit Rate Conversion
 Audio Generation:
 Generate Sine, Saw, Square, Triangle waves
 Generate white noise, pink noise, tape hiss
+
+Using Java 1.7, but easily modifable to earlier versions (basically just using the input...parameter)
 
