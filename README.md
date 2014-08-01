@@ -19,6 +19,8 @@ DCT: static DCT methods and methods for easy conversion from a signal to a DCT s
 
 Fundamental: detection of the fundamental of a sound. (Simple algorithm but works quite well).
 
+Pitch Shift
+
 Filter: Implementation of 2nd order filters in the forms of:
     High Pass:
     Low Pass:
