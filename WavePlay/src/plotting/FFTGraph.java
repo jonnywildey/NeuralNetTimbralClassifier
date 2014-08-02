@@ -9,7 +9,7 @@ import javax.swing.*;
 import riff.Signal;
 import waveAnalysis.FFT;
 import waveAnalysis.FrameFFT;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 /**Messy but somewhat functional FFT graph**/
@@ -31,7 +31,7 @@ public class FFTGraph extends PlotGraph {
 		wr = ((double)widthness / (double)values[0].length);
 		this.half = (int)((size.height - offsetSize.height) * 0.5);
 		maxBar = ((double)(heightness - (offsetSize.height )) 
-				/ ArrayStuff.getMaxAbs(values));
+				/ ArrayMethods.getMaxAbs(values));
 		//Log.d(ArrayStuff.getMaxAbs(values));
 	}
 	
@@ -45,7 +45,7 @@ public class FFTGraph extends PlotGraph {
 
 	
 	private String getHighFreq() {
-		return String.valueOf(Math.rint(Math.pow(2,ArrayStuff.getMax(this.values[0]))) + "hz");
+		return String.valueOf(Math.rint(Math.pow(2,ArrayMethods.getMax(this.values[0]))) + "hz");
 	}
 	
 	@Override

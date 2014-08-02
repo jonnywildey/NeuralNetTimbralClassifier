@@ -1,6 +1,6 @@
 package waveAnalysis;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import riff.Signal;
 
 /** Abstract class for various signal transform components like FFT and DCT **/
@@ -29,7 +29,7 @@ public abstract class TransformComponent {
 		} else {
 			int frameSize = (int) Math.pow(2,(Math.floor(
 					ls + 1)));
-			return ArrayStuff.extend(signals, frameSize);
+			return ArrayMethods.extend(signals, frameSize);
 		}
 	}
 
@@ -42,7 +42,7 @@ public abstract class TransformComponent {
 		} else {
 			this.frameSize = (int) Math.pow(2,(Math.floor(
 					ls + 1)));
-			this.amplitudes = ArrayStuff.extend(signals, (int) this.frameSize);
+			this.amplitudes = ArrayMethods.extend(signals, (int) this.frameSize);
 		}
 	}
 

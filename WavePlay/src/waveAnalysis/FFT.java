@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import plotting.FFTController;
 import plotting.SignalController;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 import riff.Signal;
 
@@ -37,7 +37,7 @@ public class FFT extends TransformComponent {
 	/**Using the inverse FFT create a new signal **/
 	public Signal invertFFTSignal() {
 		double[][] s = new double[][]{
-				ArrayStuff.getSubset(
+				ArrayMethods.getSubset(
 						Complex.getReals(FFT.icfft(this.cValues)), 
 						0, this.signal.getLength())
 				};

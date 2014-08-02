@@ -3,7 +3,7 @@ package waveAnalysis;
 import plotting.DCTController;
 import plotting.FFTController;
 import riff.Signal;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 public class DCT extends TransformComponent{
@@ -40,7 +40,7 @@ public class DCT extends TransformComponent{
 	@Override
 	public FFTBox analyse() {
 		double[] amps = FFT.getArrayToPowerOf2(signal.getSignal()[0]);
-		double[] freqRow = ArrayStuff.extend(DCT.getFreqRow(signal, amps.length), amps.length / 2);
+		double[] freqRow = ArrayMethods.extend(DCT.getFreqRow(signal, amps.length), amps.length / 2);
 		amps = dct(amps);
 		double[][] nd = new double[][]{freqRow, amps};
 		this.fftBox = new FFTBox(nd, signal);

@@ -21,7 +21,7 @@ import waveProcess.Gain;
 import waveProcess.Gen;
 import waveProcess.Noise;
 import waveProcess.Pitch;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.ByteReader;
 import filemanager.CSVWriter;
 import filemanager.HexByte;

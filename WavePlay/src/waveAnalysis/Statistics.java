@@ -3,7 +3,7 @@ package waveAnalysis;
 
 import java.util.Arrays;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 public class Statistics {
@@ -31,8 +31,8 @@ public class Statistics {
 			}
 			prev = now;
 		}
-		peaks = new double[][]{ArrayStuff.extend(peaks[0], counter - 1), 
-				ArrayStuff.extend(peaks[1], counter - 1)};
+		peaks = new double[][]{ArrayMethods.extend(peaks[0], counter - 1), 
+				ArrayMethods.extend(peaks[1], counter - 1)};
 		return peaks;
 	}
 	

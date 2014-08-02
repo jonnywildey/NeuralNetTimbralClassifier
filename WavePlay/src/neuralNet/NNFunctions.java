@@ -1,6 +1,6 @@
 package neuralNet;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 
 public class NNFunctions {
 
@@ -39,7 +39,7 @@ public class NNFunctions {
 	}
 	
 	public static double average(double[][] values) {
-		return average(ArrayStuff.tableToLongRow(values));
+		return average(ArrayMethods.tableToLongRow(values));
 	}
 	
 	public static double geoMean(double[] values) {
@@ -52,6 +52,6 @@ public class NNFunctions {
 	}
 	
 	public static double geoMean(double[][] values) {
-		return geoMean(ArrayStuff.tableToLongRow(values));
+		return geoMean(ArrayMethods.tableToLongRow(values));
 	}
 }

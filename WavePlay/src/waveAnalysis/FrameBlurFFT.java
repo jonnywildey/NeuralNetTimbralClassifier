@@ -3,7 +3,7 @@ package waveAnalysis;
 import java.util.Arrays;
 
 import riff.Signal;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 public class FrameBlurFFT extends FrameFFT{
@@ -32,12 +32,12 @@ public class FrameBlurFFT extends FrameFFT{
 			//last case we may have to extend the array
 			//Log.d(i + "  " + frameCount);
 			if (i + 2 >= frameCount) {
-				amps[i] = ArrayStuff.extend(
-						ArrayStuff.getSubset(
+				amps[i] = ArrayMethods.extend(
+						ArrayMethods.getSubset(
 								s.getSignal()[chan], i * frame / 2), 
 						frame / 2);
 			} else { //normal case
-				amps[i] = ArrayStuff.getSubset(s.getSignal()[chan], 
+				amps[i] = ArrayMethods.getSubset(s.getSignal()[chan], 
 						i * frame / 2, (((i + 1) * frame /2) - 1));
 			}
 		}

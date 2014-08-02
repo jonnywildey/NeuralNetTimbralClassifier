@@ -3,7 +3,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import riff.Signal;
 import waveAnalysis.FFT;
 import waveAnalysis.FFTBox;

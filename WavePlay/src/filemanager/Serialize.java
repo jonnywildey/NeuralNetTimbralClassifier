@@ -10,9 +10,10 @@ import java.io.ObjectOutputStream;
 
 import neuralNet.MultiLayerNet;
 
+/**Static methods for easy serialization **/
 public class Serialize {
 
-	/** make sure output is .ser **/
+	/**Serializes an object to the output path. make sure output is .ser **/
 	public static void serialize(Object mln, String output) {
 		// Serialization code
 	    try {
@@ -26,6 +27,12 @@ public class Serialize {
 	    }
 	}
 	
+	/**Serializes an object to the output path. make sure output is .ser **/
+	public static void serialize(Object mln, File output) {
+		serialize(mln, output.getAbsolutePath());
+	}
+	
+	/**Returns the serialized object from the filepath **/
 	public static Object getFromSerial(String file) {
 		Object mln = null;
         try {
@@ -35,7 +42,6 @@ public class Serialize {
             in.close();
             fileIn.close();
            // System.out.println(mln.toString());
-            
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } catch (ClassNotFoundException cnfe) {
@@ -43,7 +49,9 @@ public class Serialize {
         } 
         return mln;
 	}
-
+	
+	/** Receive only the visible files and non directories
+	 * in a path **/
 	public static File[] getActualFiles(File dir) {
 		if (dir.isDirectory()) {
 			File[] allFiles = dir.listFiles(new FilenameFilter(){

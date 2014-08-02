@@ -7,7 +7,7 @@ import java.util.Collections;
 import javax.swing.*;
 
 import riff.Signal;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 public class SignalGraph extends PlotGraph {

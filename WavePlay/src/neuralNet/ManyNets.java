@@ -1,5 +1,9 @@
 package neuralNet;
 
+import java.io.File;
+import java.util.concurrent.Callable;
+
+import filemanager.CSVWriter;
 import filemanager.Log;
 
 /** current dumping ground for any methods concerned
@@ -8,10 +12,26 @@ import filemanager.Log;
  * @author Jonny
  *
  */
-public class ManyNets {
+public class ManyNets implements Callable<MultiLayerNet[][]>{
+	
+	public boolean even;
+	public int runCount;
+	public TestPatterns testPatterns;
+	public boolean verbose;
+	public File name;
+	
+	public MultiLayerNet[][] call() {
+		
+		MultiLayerNet[][] nets = tryDifferentLayers(runCount, testPatterns,verbose, even);
+		CoefficientLogger[][] cls = CoefficientLogger.getErrorsFromMultiLayer(nets);
+		CSVWriter cd = new CSVWriter(name.getAbsolutePath());
+		cd.writeArraytoFile(CoefficientLogger.getMaxErrorFromCL(cls));
+		return nets;
+	}
+	
 	
 	/** Runs a network multiple times **/
-	public static MultiLayerNet[] runNets(int runCount, TestPatterns testPatterns, 
+	public MultiLayerNet[] runNets(int runCount, TestPatterns testPatterns, 
 											Integer neuronCount, boolean verbose) {
 		
 		MultiLayerNet[] nns = new MultiLayerNet[runCount];		
@@ -32,13 +52,20 @@ public class ManyNets {
 		return nns;		
 	}
 	
-	public static MultiLayerNet[][] tryDifferentLayers(int runCount, TestPatterns testPatterns, 
-			boolean verbose) {
-		//int[] layerOneSize = new int[]{1,5,10,20,30,50,70,90,100,110,120,150,160,200};
-		int[] layerOneSize = new int[]{100};
-		MultiLayerNet[][] mlns = new MultiLayerNet[layerOneSize.length][runCount];
-		for (int i = 0; i < layerOneSize.length; ++i) {
+	public MultiLayerNet[][] tryDifferentLayers(int runCount, TestPatterns testPatterns, 
+			boolean verbose, boolean even) {
+		int[] layerOneSize = new int[]{1,5,10,15,20,30,40,50,60,70,80,90,100,110,120,150,160,200,300,400};
+		//int[] layerOneSize = new int[]{80,90,100,110,120,150,160,200,300,400};
+		//int[] layerOneSize = new int[]{200};
+		MultiLayerNet[][] mlns = new MultiLayerNet[layerOneSize.length / 2][runCount];
+		if (even) {
+		for (int i = 0; i < layerOneSize.length; i += 2) {
 			mlns[i] = runNets(runCount, testPatterns, layerOneSize[i], verbose);
+		} 
+		}else {
+			for (int i = 1; i < layerOneSize.length; i += 2) {
+				mlns[i] = runNets(runCount, testPatterns, layerOneSize[i], verbose);
+			}
 		}
 		return mlns;
 	}

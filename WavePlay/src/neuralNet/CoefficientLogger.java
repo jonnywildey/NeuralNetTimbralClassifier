@@ -3,7 +3,7 @@ package neuralNet;
 import java.util.Arrays;
 
 import plotting.MatthewsChart;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 /** a little holder for errors **/
@@ -68,7 +68,7 @@ public class CoefficientLogger {
 	
 	/** Return the highest Matthews Coefficient logged **/
 	public double maxCoefficient() {
-		return ArrayStuff.getMax(this.errors);
+		return ArrayMethods.getMax(this.errors);
 	}
 	
 	public double[] getErrors() {

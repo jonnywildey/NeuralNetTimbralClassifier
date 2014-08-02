@@ -2,7 +2,7 @@ package riff;
 
 import javax.naming.InvalidNameException;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.HexByte;
 
 
@@ -55,10 +55,10 @@ public class InfoChunk extends Chunk{
 		data =  HexByte.roundUpBytes(data, 4);
 		this.bytes = new byte[data.length + 12];
 		//Should say list
-		bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes(this.name, 4), 0);
-		bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(data.length, 4), 4);
-		bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes("INFO", 4), 8);
-		bytes = ArrayStuff.addBytes(bytes, data, 12);	
+		bytes = ArrayMethods.addBytes(bytes, HexByte.stringToBytes(this.name, 4), 0);
+		bytes = ArrayMethods.addBytes(bytes, HexByte.longToLittleEndianBytes(data.length, 4), 4);
+		bytes = ArrayMethods.addBytes(bytes, HexByte.stringToBytes("INFO", 4), 8);
+		bytes = ArrayMethods.addBytes(bytes, data, 12);	
 	}
 
 	

@@ -6,13 +6,13 @@ import java.util.Collections;
 
 import javax.swing.*;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 
 public class WavGraph extends PlotGraph {
 	
 	public WavGraph(long[][] values, Dimension winSize, String[] axisLabels) {
 		super(values, winSize, axisLabels);
-		maxBar = (((heightness - offsetSize.height) / ArrayStuff.getMax(values)) * 0.5);
+		maxBar = (((heightness - offsetSize.height) / ArrayMethods.getMax(values)) * 0.5);
 	}
 	
 	

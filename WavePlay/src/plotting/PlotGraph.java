@@ -9,7 +9,7 @@ import java.awt.LayoutManager;
 import javax.swing.JPanel;
 
 import waveAnalysis.Statistics;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 public class PlotGraph extends JPanel {
@@ -44,7 +44,7 @@ public class PlotGraph extends JPanel {
 		widthness = size.width - (offsetSize.width * 2);
 		heightness = size.height - (offsetSize.height * 2);
 		//get bar value - height of chart ratio (so biggest value is at top of chart)
-		max = ArrayStuff.getMax(values);
+		max = ArrayMethods.getMax(values);
 		maxBar = ((heightness - offsetSize.height) / max);
 		//System.out.println("max b " + maxBar);
 		rColors = colorArray(values.length);

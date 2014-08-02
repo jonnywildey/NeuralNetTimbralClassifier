@@ -3,7 +3,7 @@ package waveProcess;
 import riff.Signal;
 import waveAnalysis.FFT;
 import waveAnalysis.Statistics;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 public class Pitch {
@@ -17,7 +17,7 @@ public class Pitch {
 		//Log.bad(os[0].length + " " + ns[0].length);
 		for (int i = 0; i < ns.length;++i) {
 			for (int j = 0; j < ns[i].length;++j) {
-				ns[i][j] = ArrayStuff.linearApproximate(os[i], j * factor);  
+				ns[i][j] = ArrayMethods.linearApproximate(os[i], j * factor);  
 				
 			}
 		}
@@ -48,6 +48,14 @@ public class Pitch {
 		double[] nt = new double[freqRow.length];
 		for (int i = 0; i < freqRow.length;++i) {
 			nt[i] = freqToBark(freqRow[i]);
+		}
+		return nt;
+	}
+	/** converts frequency row to subdivided Bark. so 0.5 in factor will return half barks. **/
+	public static double[] freqToBark(double[] freqRow, double factor) {
+		double[] nt = new double[freqRow.length];
+		for (int i = 0; i < freqRow.length;++i) {
+			nt[i] = freqToBark(freqRow[i]) / factor;
 		}
 		return nt;
 	}

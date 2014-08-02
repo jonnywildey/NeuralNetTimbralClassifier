@@ -1,6 +1,6 @@
 package waveProcess;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 import riff.Signal;
 import waveAnalysis.SampleRateException;
@@ -243,7 +243,7 @@ public class Gain {
 		double[][] os = signal.getSignal();
 		double[][] ns = new double[os.length][os[0].length];
 		double maxAmp = signal.getMaxAmplitude() * decibelToAmplitude(dbBelowFloor);
-		double signalMax = ArrayStuff.getMaxAbs(os);
+		double signalMax = ArrayMethods.getMaxAbs(os);
 		double factor = maxAmp / signalMax;
 		for (int i = 0; i < os.length;++i) {
 			for (int j = 0; j < os[0].length;++j) {

@@ -3,7 +3,7 @@ package waveAnalysis;
 import riff.Signal;
 import waveProcess.Gain;
 import waveProcess.Pitch;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 /** Object for representing the data from Fourier Transforms. Would have called
@@ -142,29 +142,25 @@ public class FFTBox {
 
 	/** returns the table as bark subset **/
 	public static FFTBox getBarkedSubset(FFTBox fftBox) {
-		return getHiResBarkedSubset(fftBox, 0, 1);
+		return getHiResBarkedSubset(fftBox, 1);
 	}
 
 	/** returns the table as bark subset with extra half measurements in the first x **/
-	public static FFTBox getHiResBarkedSubset(FFTBox fftBox, int x, double div) {
+	public static FFTBox getHiResBarkedSubset(FFTBox fftBox, double div) {
 		double[][] table = fftBox.getTable();
 		//get tables 
 		int to = 0; //holder for array index
 		int from = 0; //holder for array index
-		int b = 20 + x; //how many barks max
+		int b = (int) (20 * (1 / div)); //how many barks max
 		double lim = 0; //for determining cutoff
 		double[][] nt = new double[table.length][b]; //new array
-		table[0] = Pitch.freqToBark(table[0]);
+		table[0] = Pitch.freqToBark(table[0], div);
 		double bCount = 1;
 		for (int i = 0;i < b; ++i) { //for each bark
 			nt[0][i] = bCount;
-			if (i < x) {
-				bCount += div;
-				lim = i + div;
-			} else {
+
 				lim = i + 1;
 				bCount += 1;
-			}
 			
 			for (int j = to; j < table[0].length; ++j) { //cycle through from last
 				if (table[0][j] > lim | 
@@ -174,7 +170,7 @@ public class FFTBox {
 					from = to; // set to new
 					to = j; //set to new
 					for (int k = 1; k < table.length; ++k) { //input into new array
-						nt[k][i] = ArrayStuff.getAverageOfSubset(table[k], from, to);
+						nt[k][i] = ArrayMethods.getAverageOfSubset(table[k], from, to);
 					}
 					break; //and out to i loop
 				}
@@ -210,7 +206,7 @@ public class FFTBox {
 	public static FFTBox logarithmicFreq(FFTBox fftBox, double power) {
 		double[][] table = fftBox.getTable();
 		//double min = ArrayStuff.getMin(table[0]);
-		double[][] nt = ArrayStuff.copy(table);
+		double[][] nt = ArrayMethods.copy(table);
 		double mlog = Math.log(power);
 		for (int i = 0; i < table[0].length; ++i) {
 			nt[0][i] = Math.log(table[0][i])	/ mlog;		
@@ -332,7 +328,7 @@ public class FFTBox {
 		//make new table
 		double[][] newt = new double[table.length][];
 		for (int i = 0; i < newt.length; ++i) {
-			newt[i] = ArrayStuff.getSubset(table[i], min, max);
+			newt[i] = ArrayMethods.getSubset(table[i], min, max);
 			
 		}
 		return new FFTBox(newt, fftBox);

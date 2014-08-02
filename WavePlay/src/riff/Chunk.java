@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import javax.naming.InvalidNameException;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.HexByte;
 import filemanager.Log;
 
@@ -49,7 +49,7 @@ public class Chunk implements Serializable {
 			for (int i = 0; i < this.chunks.size(); ++i) {
 				tb[i] = this.chunks.get(i).generateByteChunk();
 			}
-			this.setData(ArrayStuff.tableToLongRow(tb));
+			this.setData(ArrayMethods.tableToLongRow(tb));
 		} 
 		return bytes;
 	}
@@ -59,7 +59,7 @@ public class Chunk implements Serializable {
 		if (hasBytes()) {
 			sb.append("\nName: " + name);
 			sb.append("\tData Length: " + (this.bytes.length - dataOffset));
-			sb.append("\tData: " + new String(ArrayStuff.getSubset(bytes, dataOffset)));
+			sb.append("\tData: " + new String(ArrayMethods.getSubset(bytes, dataOffset)));
 		}
 		return sb.toString();
 	}
@@ -211,7 +211,7 @@ public class Chunk implements Serializable {
 	}
 	
 	public byte[] getData() {
-		return ArrayStuff.getSubset(bytes, 8);
+		return ArrayMethods.getSubset(bytes, 8);
 	}
 	
 	
@@ -230,7 +230,7 @@ public class Chunk implements Serializable {
 		byteName = HexByte.roundUpBytes(byteName, 4);
 		this.name = new String(byteName);
 		if (this.bytes != null) {
-			this.bytes = ArrayStuff.addBytes(this.bytes, byteName, 0);
+			this.bytes = ArrayMethods.addBytes(this.bytes, byteName, 0);
 		}
 	}
 	
@@ -287,9 +287,9 @@ public class Chunk implements Serializable {
 	public void setData(byte[] data) {
 		data =  HexByte.roundUpBytes(data, 4);
 		this.bytes = new byte[data.length + 8];
-		bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes(this.name, 4), 0);
-		bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(data.length, 4), 4);
-		bytes = ArrayStuff.addBytes(bytes, data, 8);	
+		bytes = ArrayMethods.addBytes(bytes, HexByte.stringToBytes(this.name, 4), 0);
+		bytes = ArrayMethods.addBytes(bytes, HexByte.longToLittleEndianBytes(data.length, 4), 4);
+		bytes = ArrayMethods.addBytes(bytes, data, 8);	
 	}
 	
 	public void setData(String str) {

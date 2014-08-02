@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import plotting.FFTController;
 import riff.Signal;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 
 
 /**Bunch of FFTS and some utility functions for them **/
@@ -37,12 +37,12 @@ public class FrameFFT extends TransformComponent{
 		for (int i = 0; i < frameCount; ++i) {
 			//last case we may have to extend the array
 			if (i + 1 == frameCount) {
-				amps[i] = ArrayStuff.extend(
-						ArrayStuff.getSubset(
+				amps[i] = ArrayMethods.extend(
+						ArrayMethods.getSubset(
 								s.getSignal()[chan], i * frame), 
 						frame);
 			} else { //normal case
-				amps[i] = ArrayStuff.getSubset(s.getSignal()[chan], 
+				amps[i] = ArrayMethods.getSubset(s.getSignal()[chan], 
 						i * frame, ((i + 1) * frame - 1));
 			}
 		}
@@ -105,7 +105,7 @@ public class FrameFFT extends TransformComponent{
 	public double getLoudestFreq(FFTBox fftBox) {
 		//sum each
 		double[][] nt = FFTBox.getSumFFTBox(fftBox).getTable();
-		return ArrayStuff.getMax(nt[1]);
+		return ArrayMethods.getMax(nt[1]);
 	}
 	
 	/** Filters the FFTFrame's FFTBox **/

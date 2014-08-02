@@ -144,7 +144,7 @@ public class HexByte {
 	
 	
 	public static byte[] getSubset(byte[] bytes, int start, int end) {
-		return ArrayStuff.getSubset(bytes, start, end);
+		return ArrayMethods.getSubset(bytes, start, end);
 	}
 	
 	/** returns Little Endian (reversed) subset of bytes **/
@@ -162,11 +162,11 @@ public class HexByte {
 	}
 
 	public static byte[] getOffsetSubset(byte[] bytes, int offset, long count) {
-		return ArrayStuff.getSubset(bytes, offset, (int) (offset + count - 1));
+		return ArrayMethods.getSubset(bytes, offset, (int) (offset + count - 1));
 	}
 
 	public static byte[] getSubset(byte[] bytes, long offset, long length) {
-		return ArrayStuff.getSubset(bytes, (int)offset, (int)length);
+		return ArrayMethods.getSubset(bytes, (int)offset, (int)length);
 	}
 	
 	/** returns the position of bytes if within, null if not found **/

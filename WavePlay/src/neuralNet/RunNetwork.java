@@ -6,13 +6,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import plotting.MatthewsChart;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.CSVReader;
 import filemanager.CSVWriter;
 import filemanager.Log;
@@ -21,7 +25,7 @@ import filemanager.Serialize;
 /**Run time part of NN **/
 public class RunNetwork {
 
-	
+		
 	public static void main(String[] args) {
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/RunNN.Log"));
 		//Make Iris data
@@ -29,20 +33,51 @@ public class RunNetwork {
 		long seed = System.currentTimeMillis();
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
-		String serialPatterns = "/Users/Jonny/Documents/Timbre/WavePatterns.ser";
+		String serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombPatterns.ser";
 		TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns);
+		int runCount = 3;
 		
-		int runCount = 15;
-		MultiLayerNet[][] nets = ManyNets.tryDifferentLayers(runCount, testPatterns,verbose);
-		//CoefficientLogger[][] cls = CoefficientLogger.getErrorsFromMultiLayer(nets);
-		//CSVWriter cd = new CSVWriter("/Users/Jonny/Documents/Timbre/Logs/comp.csv");
-		//cd.writeArraytoFile(CoefficientLogger.getMaxErrorFromCL(cls));
-		ArrayList<WavePattern> wps = nets[0][0].getProblemPatterns(testPatterns.getValidationPatterns());
-		File[] ps = WavePatterns.getFileNames(WavePattern.arrayListToArray(wps));
-		for (File f : ps) {
-			Log.d(f.getName());
+		ManyNets evenNet = new ManyNets();
+		evenNet.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp20evens.csv");
+		evenNet.runCount = runCount;
+		evenNet.testPatterns = testPatterns;
+		evenNet.verbose = true;
+		
+		ManyNets oddNet = new ManyNets();
+		oddNet.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp20odds.csv");
+		oddNet.runCount = runCount;
+		oddNet.testPatterns = testPatterns;
+		oddNet.verbose = true;
+		
+		serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombExtraBarkPatterns.ser";
+		TestPatterns test40Patterns = getWavePatternsSerial(seed, serialPatterns);
+		
+		ManyNets even40Net = new ManyNets();
+		even40Net.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp40evens.csv");
+		even40Net.runCount = runCount;
+		even40Net.testPatterns = test40Patterns;
+		even40Net.verbose = true;
+		
+		ManyNets odd40Net = new ManyNets();
+		odd40Net.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp40odds.csv");
+		odd40Net.runCount = runCount;
+		odd40Net.testPatterns = test40Patterns;
+		odd40Net.verbose = true;
+		
+		ManyNets[] mn = new ManyNets[]{evenNet, oddNet, even40Net, odd40Net};
+
+		
+		ExecutorService threadPool = Executors.newFixedThreadPool(4);
+		// define your jobs somehow
+		for (ManyNets job : mn) {
+		    // under the covers this creates a FutureTask instance
+		    Future future = threadPool.submit(job);
+		    // save the future if necessary in a collection or something
 		}
-		ManyNets.graphNets(nets);
+		// once we have submitted all jobs to the thread pool, it should be shutdown
+		threadPool.shutdown();
+		
+		
 	}
 
 	/**Get Wave Patterns from a serialised file **/
@@ -50,7 +85,7 @@ public class RunNetwork {
 			String serialPatterns) {
 		WavePatterns wavePatterns = (WavePatterns) Serialize.getFromSerial(
 				serialPatterns);
-		wavePatterns.reduceScale(1); //added
+		wavePatterns.reduceScale(2); //added
 		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
 		return testPatterns;
 	}
@@ -62,6 +97,7 @@ public class RunNetwork {
 		if (neuronCount != null) {
 			ls.addHiddenLayer(neuronCount);
 		}
+		
 		nn.setTrainingRate(0.1d);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
@@ -71,7 +107,7 @@ public class RunNetwork {
 		nn.setAcceptableErrorRate(0.1d);
 		nn.setMaxEpoch(200);
 		nn.initialiseRandomWeights(seed2);
-		nn.setShuffleTrainingPatterns(false, seed3);
+		nn.setShuffleTrainingPatterns(true, seed3);
 		return nn;
 	}
 	

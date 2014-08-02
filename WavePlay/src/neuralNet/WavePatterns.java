@@ -5,8 +5,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import riff.Signal;
 import riff.Wave;
-import filemanager.ArrayStuff;
+import waveAnalysis.FFTBox;
+import waveAnalysis.FrameFFT;
+import filemanager.ArrayMethods;
 import filemanager.CSVString;
 import filemanager.Log;
 import filemanager.Serialize;
@@ -42,11 +45,12 @@ public class WavePatterns implements Serializable {
 	/** Reduces the size of all patterns input by 2^x **/
 	public void reduceScale(double twoToThePower) {
 		double val = Math.pow(2, twoToThePower);
-		for (Pattern p : patterns) {
+		for (WavePattern p : patterns) {
 			for (InputShell is : p.inputArray) {
 				is.value /=  val;
 			}
 			Log.d(p.toString());
+			Log.d(p.getInstrument());
 		}
 	}
 	
@@ -73,6 +77,40 @@ public class WavePatterns implements Serializable {
 			patterns[i].instrument = instrs[i];
 		}
 		getOutputs(instrs, files);
+	}
+	
+	/** turns a set of waves with metadata to a pattern. This also redoes the FFT (input analysis) **/
+	public void wavReFFTPattern() {
+		//patterns
+		File[] files = getFilesFromDirectory();
+		this.patterns = new WavePattern[files.length];
+		String[] instrs = new String[files.length];
+		Wave wave = null;
+		for (int i = 0; i < files.length; ++i) {
+			wave = new Wave(files[i]);
+			patterns[i] = new WavePattern(i, wave); //make pattern
+			patterns[i].inputArray = reFFT(wave.getSignals());
+			//get instrumental outputs
+			instrs[i] = getInstrumentalOutputs(wave);
+			patterns[i].instrument = instrs[i];
+		}
+		getOutputs(instrs, files);
+	}
+
+
+
+	private ArrayList<InputShell> reFFT(Signal signals) {
+		FrameFFT fft = new FrameFFT(signals, 4096);
+		FFTBox dd = fft.analyse(20, 20000);
+		//fft.makeGraph();
+		//dd = FrameFFT.getExponentTable(dd, 0.78); //rate
+		dd = FFTBox.getSumTable(dd, 10);
+		
+		dd = FFTBox.getHiResBarkedSubset(dd, 0.5);
+		
+		//Log.d(ArrayStuff.arrayToString(dd));
+		dd = FFTBox.normaliseTable(dd, 10);
+		return Pattern.doubleToInputShell(dd.getValues()[0]);
 	}
 
 
@@ -122,7 +160,7 @@ public class WavePatterns implements Serializable {
 		for (int i = 0; i < files.length; ++i) {
 			for (int j = 0; j < targets.length; ++j) {
 				if (instrs[i].equals(targets[j][0])) {
-					patterns[i].targetArray = ArrayStuff.doubleToArrayList(bits[j]);
+					patterns[i].targetArray = ArrayMethods.doubleToArrayList(bits[j]);
 					
 				}
 			}

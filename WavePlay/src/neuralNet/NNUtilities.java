@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 
@@ -173,9 +173,9 @@ public  class NNUtilities {
 	
 	/** gets target Conversion from .csv style array **/
 	public static double[][][] createTargetConversionTable(double[][] array, boolean verbose) {
-		array = ArrayStuff.flip(array); //flip table to make sense
+		array = ArrayMethods.flip(array); //flip table to make sense
 		Double[][] nc = getCount(array[array.length - 1], verbose); //assumes the target is the last column in array
-		return createConversionTable(ArrayStuff.flip(Doubletodouble(nc))[0], verbose);
+		return createConversionTable(ArrayMethods.flip(Doubletodouble(nc))[0], verbose);
 	}
 	
 	

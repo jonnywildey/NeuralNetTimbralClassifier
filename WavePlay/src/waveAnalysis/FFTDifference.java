@@ -1,6 +1,6 @@
 package waveAnalysis;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 import plotting.FFTController;
 import plotting.FFTDifferenceController;
@@ -46,7 +46,7 @@ public class FFTDifference extends TransformComponent{
 		//get averages
 		for (int i = 1; i < nb.length; ++i) {
 			for (int j = 0; j < bands; ++j) {
-				nb[i][j] = ArrayStuff.getAverageOfSubset(table[i], j * bw, (j + 1) * bw);
+				nb[i][j] = ArrayMethods.getAverageOfSubset(table[i], j * bw, (j + 1) * bw);
 			}
 		}
 		return nb;

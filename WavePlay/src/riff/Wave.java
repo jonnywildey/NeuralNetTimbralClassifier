@@ -3,7 +3,7 @@ package riff;
 import java.io.File;
 import java.util.ArrayList;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.ByteReader;
 import filemanager.HexByte;
 import filemanager.Log;
@@ -91,11 +91,11 @@ public class Wave extends Chunk{
 		int fmtl = (int) fmt.getBytesLength();
 		int dcl = (int) dc.getBytesLength();
 		this.bytes = new byte[(int) (12 + fmtl + dcl)];
-		this.bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes("RIFF", 4), 0);
-		this.bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(fmtl + dcl, 4), 4);
-		this.bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes("WAVE", 4), 8);
-		this.bytes = ArrayStuff.addBytes(bytes, fmt.getBytes(), 12);
-		this.bytes =  ArrayStuff.addBytes(bytes, dc.getBytes(), 12 + fmtl);
+		this.bytes = ArrayMethods.addBytes(bytes, HexByte.stringToBytes("RIFF", 4), 0);
+		this.bytes = ArrayMethods.addBytes(bytes, HexByte.longToLittleEndianBytes(fmtl + dcl, 4), 4);
+		this.bytes = ArrayMethods.addBytes(bytes, HexByte.stringToBytes("WAVE", 4), 8);
+		this.bytes = ArrayMethods.addBytes(bytes, fmt.getBytes(), 12);
+		this.bytes =  ArrayMethods.addBytes(bytes, dc.getBytes(), 12 + fmtl);
 
 	}
 	
@@ -108,7 +108,7 @@ public class Wave extends Chunk{
 	@Override
 	/** Adds an infoChunk **/
 	public void addChunk(Chunk chunk) {
-		this.bytes = ArrayStuff.concat(this.bytes, chunk.bytes);
+		this.bytes = ArrayMethods.concat(this.bytes, chunk.bytes);
 		//this.bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(
 		//		this.bytes.length - 8, 4), 4);
 		
@@ -165,12 +165,12 @@ public class Wave extends Chunk{
 	
 	/** Return a semireadable header **/
 	public String getHexHeader() {
-		return HexByte.byteToHexString(ArrayStuff.getSubset(this.bytes, 0, 44));
+		return HexByte.byteToHexString(ArrayMethods.getSubset(this.bytes, 0, 44));
 	}
 	
 	/** Return the first x of the file in a semireadable format **/
 	public String getHex(int x) {
-		return HexByte.byteToHexString(ArrayStuff.getSubset(this.bytes, 0, x - 1));
+		return HexByte.byteToHexString(ArrayMethods.getSubset(this.bytes, 0, x - 1));
 	}
 	
 	public String getHex() {
@@ -199,7 +199,7 @@ public class Wave extends Chunk{
 	/** get the bitwise hamming distance between the signals
 	 * of waves. correlation above 0.9 suggests waves are VERY similar **/
 	public double compareTo(Wave wave) {
-		return ArrayStuff.byteSimilarity(this.getData(), wave.getData());
+		return ArrayMethods.byteSimilarity(this.getData(), wave.getData());
 	}
 	
 	/** Returns the length of the signal data. A bit 

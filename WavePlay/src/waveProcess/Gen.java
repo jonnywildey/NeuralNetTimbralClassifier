@@ -2,7 +2,7 @@ package waveProcess;
 
 import java.util.Random;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 import riff.Signal;
 import waveAnalysis.SampleRateException;

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import javax.swing.*;
 
 import waveAnalysis.Statistics;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.Log;
 
 

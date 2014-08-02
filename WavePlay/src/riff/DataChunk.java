@@ -1,6 +1,6 @@
 package riff;
 
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.HexByte;
 import filemanager.Log;
 
@@ -27,7 +27,7 @@ public class DataChunk extends Chunk{
 		for (int i = 0; i < s[0].length; ++i) {
 			for (int j = 0; j < channels; ++j) {
 				//Log.d(i + " " + s[j][i]);
-				nb = ArrayStuff.addBytes(nb, 
+				nb = ArrayMethods.addBytes(nb, 
 						HexByte.doubleToLittleEndianBytes( //need to make this work for floats
 								s[j][i], bj), (i*jump) + (j*bj));
 			}
@@ -38,9 +38,9 @@ public class DataChunk extends Chunk{
 	
 	private void doHeader(byte[] data) {
 		this.bytes = new byte[data.length + 8];
-		this.bytes = ArrayStuff.addBytes(bytes, HexByte.stringToBytes("data", 4), 0);
-		this.bytes = ArrayStuff.addBytes(bytes, HexByte.longToLittleEndianBytes(data.length, 4), 4);
-		this.bytes = ArrayStuff.addBytes(bytes, data, 8);	
+		this.bytes = ArrayMethods.addBytes(bytes, HexByte.stringToBytes("data", 4), 0);
+		this.bytes = ArrayMethods.addBytes(bytes, HexByte.longToLittleEndianBytes(data.length, 4), 4);
+		this.bytes = ArrayMethods.addBytes(bytes, data, 8);	
 		this.name = new String(HexByte.getSubset(bytes, 0, 3));
 	}
 

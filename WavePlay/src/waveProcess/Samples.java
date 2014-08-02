@@ -12,9 +12,10 @@ import javax.naming.InvalidNameException;
 
 import neuralNet.NNUtilities;
 import neuralNet.Pattern;
+import neuralNet.RunNetwork;
 import neuralNet.WavePattern;
 import neuralNet.WavePatterns;
-import filemanager.ArrayStuff;
+import filemanager.ArrayMethods;
 import filemanager.CSVString;
 import filemanager.HexByte;
 import filemanager.Log;
@@ -27,6 +28,7 @@ import waveAnalysis.SampleRateException;
 /** Class for transforming samples and preparing them for neural net **/
 public class Samples {
 	
+	/** Performs batch processing of all the audio files in a directory **/
 	public static void batchFolder(File sampleDir, File newDir) {
 		String instrument = sampleDir.getName();
 		File[] files = Serialize.getActualFiles(sampleDir);
@@ -39,21 +41,29 @@ public class Samples {
 			for (int i = 0; i < 15; ++i) {	
 				Wave nw = new Wave(nf);
 				Signal s1 = nw.getSignals();
-				s1 = Gain.getMid(s1);
-				s1 = randomPitch(s1, 12, pitchRand);
-				s1 = Gain.volume(s1, -6);
-				s1 = addNoise(s1, noiseRand);
-				s1 = randomHP(s1, 0.1, hpRand);
-				s1 = randomLP(s1, 0.1, lpRand);
-				s1 = EQFilter.highPassFilter(s1, 40, 0.72);
-				s1 = EQFilter.lowPassFilter(s1, 20000, 0.72);
-				s1 = Gain.normalise(s1);
+				s1 = processSignalChain(pitchRand, noiseRand, hpRand, lpRand,
+						s1);
 				Wave newWave = addMetaData(s1, "IAS8", instrument);			
 				newWave.writeFile(new File(newDir.getAbsolutePath() + 
 						"/" + instrument + i + nf.getName()));
 			}
-			
 		}
+	}
+
+
+	/** Performs the audio processing of a file **/
+	protected static Signal processSignalChain(Random pitchRand,
+			Random noiseRand, Random hpRand, Random lpRand, Signal s1) {
+		s1 = Gain.getMid(s1);
+		s1 = randomPitch(s1, 12, pitchRand);
+		s1 = Gain.volume(s1, -6);
+		s1 = addNoise(s1, noiseRand);
+		s1 = randomHP(s1, 0.1, hpRand);
+		s1 = randomLP(s1, 0.1, lpRand);
+		s1 = EQFilter.highPassFilter(s1, 40, 0.72);
+		s1 = EQFilter.lowPassFilter(s1, 20000, 0.72);
+		s1 = Gain.normalise(s1);
+		return s1;
 	}
 	
 	
@@ -101,6 +111,7 @@ public class Samples {
 		return waves;
 	}
 	
+	/** Adds random noise to a signal **/
 	public static Signal addNoise(Signal s, Random nr) {
 		double nc = nr.nextDouble();
 		double maxLoud = -90;
@@ -159,13 +170,14 @@ public class Samples {
 		try {
 			FrameFFT fft = new FrameFFT(s, 4096);
 			FFTBox dd = fft.analyse(20, 20000);
+			//fft.makeGraph();
 			//dd = FrameFFT.getExponentTable(dd, 0.78); //rate
 			dd = FFTBox.getSumTable(dd, 10);
 			dd = FFTBox.getBarkedSubset(dd);
 			//Log.d(ArrayStuff.arrayToString(dd));
 			dd = FFTBox.normaliseTable(dd, 10);
 			//dd = FrameFFT.convertTableToDecibels(fft.signal, dd, fft.frameSize);
-			String str = ArrayStuff.arrayToString(dd.getTable());
+			String str = ArrayMethods.toString(dd.getTable());
 			//Log.d(str);
 			Chunk chunk = new Chunk();
 			chunk.setName("IAS7");
@@ -177,6 +189,10 @@ public class Samples {
 		return null;
 	}
 	
+	
+	
+	
+	
 	public static void main(String[] args) {
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
 		File[] batchDirs = {new File("/Users/Jonny/Documents/Timbre/Samples/Cello"),
@@ -184,85 +200,60 @@ public class Samples {
 				new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"),
 				new File("/Users/Jonny/Documents/Timbre/Samples/Trombone")};
 		File batchFolder = new File("/Users/Jonny/Documents/Timbre/Samples/Batch");
-		File combineDir = new File("/Users/Jonny/Documents/Timbre/Samples/Combine");
+		File combineDir = new File("/Volumes/Rickay/Timbre/Combine");
 		//batchFromFolders(batchFolder, batchFiles); 
-		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WavePatterns.ser");
-		//WavePatterns wavePatterns = generatePatterns(batchFolder, waveSerial); 
-		WavePatterns wp = (WavePatterns) Serialize.getFromSerial(waveSerial.getAbsolutePath());
-		batchCombine(combineDir, batchDirs);
-		
-		
+		//batchCombine(combineDir, batchDirs);
+		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WaveCombExtraBarkPatterns.ser");
+		WavePatterns wavePatterns = regeneratePatterns(combineDir, waveSerial);
+		RunNetwork.main(new String[]{""});
 		
 	}
 	
 
 
-
+	/**Batch process the given files to the batch folder **/
 	public static void batchFromFolders(File batch, File...files) {
 		for (File f : files) {
 			batchFolder(f, batch);
 		}
 	}
 	
-	public static class Combinator {
-		int types;
-		HashMap<String, Integer> map;
-		public Combinator(String...strings) {
-			map = new HashMap<String, Integer>();
-			for (int i = 0; i < strings.length; ++i) {
-				map.put(strings[i], i);
-			}
-		}
-		public boolean isOK(String s1, String s2) {
-			return map.get(s1) >= map.get(s2);
-		}
-	}
-	
+	/** processes and then mixes 2 audio files **/
 	public static void batchCombine(File dirToWriteTo, File...dirs) {
+		Random pitchRand = new Random();
+		Random noiseRand = new Random();
+		Random hpRand = new Random();
+		Random lpRand = new Random();
 		//get patterns from each of the dirs
-		WavePatterns[] wavePatterns = new WavePatterns[dirs.length];
 		String[] instruments = new String[dirs.length];
 		for (int i = 0; i < dirs.length; ++i) {
-			wavePatterns[i] = new WavePatterns(dirs[i]);
 			instruments[i] = dirs[i].getName();
-			//Log.d(dirs[i].getName());
 		}
-		//Log.d(Arrays.toString(instruments));
 		//start combining
-
-		WavePattern np = null;
 		Wave wWave = null;
 		Wave nWave = null;
-		//Combinator combinator = new Combinator(instrs);
 		for (int i = 0; i < dirs.length; ++i) {
 			//get all audio files in directory
 			File[] wFiles = Serialize.getActualFiles(dirs[i]); 
 			for (int j = 0; j < wFiles.length; ++j) {
-				wWave = getAndRead(wFiles[j]);
-				
+				wWave = new Wave(wFiles[j]);
 				for (int k = i; k < dirs.length; ++k) {
 					File[] nFiles = Serialize.getActualFiles(dirs[k]); 
-					for (int l = 0; l < nFiles.length; ++k) {
-						nWave = getAndRead(wFiles[l]);
+					for (int l = 0; l < nFiles.length; ++l) {
+						nWave = new Wave(nFiles[l]);
 						//Modify and combine
-						combineWaves(dirToWriteTo, wWave, nWave);
+						combineWaves(pitchRand, noiseRand, hpRand, lpRand, 
+								dirToWriteTo, wWave, nWave);
 					}
 				}
 			}
 		}
 	}
 	
-	private static Wave getAndRead(File file) {
-		Wave w = new Wave(file);
-		w.readFile();
-		return w;
-	}
-
-
 
 	/**Combines and normalises waves from files **/
-	public static void combineWaves(File dir, Wave...waves) {
-		Random random = new Random();
+	public static void combineWaves(Random pitchRand,
+			Random noiseRand, Random hpRand, Random lpRand, File dir, Wave...waves) {
 		Signal[] signals = new Signal[waves.length];
 		String newName = "";
 		String instrument = "";
@@ -271,9 +262,9 @@ public class Samples {
 		for (int i = 0; i < waves.length; ++i) {
 			//get signals
 			wave = waves[i];
-			wave.readFile();
 			signals[i] = wave.getSignals();
-			signals[i] = randomPitch(signals[i], 12, random);
+			signals[i] = processSignalChain(pitchRand,
+					noiseRand, hpRand, lpRand, signals[i]);
 			//get name of file
 			wName = waves[i].getFilePath().getParentFile().getName();
 			newName = renameCombine(newName, waves[i]);
@@ -285,7 +276,7 @@ public class Samples {
 		sumAndWrite(dir, signals, newName, instrument);
 	}
 
-
+	/** Renames a combined file in a logical way **/
 	private static String renameCombine(String str, Wave wave) {
 		if (str.length() == 0 | str == null) {
 			str = wave.getFilePath().getName();
@@ -305,6 +296,7 @@ public class Samples {
 		//write the file
 		try {
 			comb = Gain.sumMono(signals);
+			comb = Gain.normalise(comb);
 			Wave newWave = addMetaData(comb, "IAS8", instrument);
 			newWave.writeFile(new File(dir.getAbsolutePath() + "/" + newName));
 		} catch (SampleRateException e) {
@@ -318,6 +310,16 @@ public class Samples {
 	public static WavePatterns generatePatterns(File batchFolder, File fileOut) {
 		WavePatterns wp = new WavePatterns(batchFolder);
 		wp.wavMetaToPattern();
+		Log.d(wp.toString());
+		Serialize.serialize(wp, fileOut.getAbsolutePath());
+		Log.d("serialised!");
+		return wp;
+	}
+	
+	/** generates and serialises and return wave patterns **/
+	public static WavePatterns regeneratePatterns(File batchFolder, File fileOut) {
+		WavePatterns wp = new WavePatterns(batchFolder);
+		wp.wavReFFTPattern();
 		Log.d(wp.toString());
 		Serialize.serialize(wp, fileOut.getAbsolutePath());
 		Log.d("serialised!");

@@ -3,15 +3,11 @@ package filemanager;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import waveAnalysis.Statistics;
 
-public class ArrayStuff {
+/** Useful static methods for manipulating arrays **/
+public class ArrayMethods {
 	
-	/* public static ArrayList<Byte> addBytes(ArrayList<Byte> al, byte[] bytes) {
-		for (byte b : bytes) {
-			al.add(b);
-		}
-		return al;
-	} */
 	
 	/**Add bytes to an array from another **/
 	public static byte[] addBytes(byte[] addTo, byte[] from, int offset) {
@@ -21,7 +17,15 @@ public class ArrayStuff {
 		return addTo;
 	}
 	
-	/** **/
+	/**Add doubles to an array from another **/
+	public static double[] addDoubles(double[] addTo, double[] from, int offset) {
+		for (int i = offset; i < from.length + offset; ++i) {
+			addTo[i] = from[i - offset];
+		}
+		return addTo;
+	}
+	
+	/**Converts an array of strings to an array of doubles **/
 	public static double[] stringToDouble(String[] strings) {
 		double[] doubles = new double[strings.length];
 		for (int i = 0; i < doubles.length; ++i) {
@@ -29,7 +33,6 @@ public class ArrayStuff {
 		}
 		return doubles;
 	}
-	
 	
 	/**Convert Byte ArrayList to byte array **/
 	public static byte[] arrayListToByte(ArrayList<Byte> bList) {
@@ -54,10 +57,10 @@ public class ArrayStuff {
 	 */
 	public static double byteSimilarity(byte[] byte1, byte[] byte2) {
 		if (byte1.length < byte2.length) {
-			byte1 = ArrayStuff.extend(byte1, byte2.length);
+			byte1 = ArrayMethods.extend(byte1, byte2.length);
 		}
 		if (byte2.length < byte1.length) {
-			byte2 = ArrayStuff.extend(byte2, byte1.length);
+			byte2 = ArrayMethods.extend(byte2, byte1.length);
 		}
 		
 		//get total
@@ -65,7 +68,7 @@ public class ArrayStuff {
 		return  compareBytesHamm(byte1, byte2) / total;
 	}
 	
-	/**Convert byte to a bit char array (e.g. 00100000) **/
+	/**Convert byte to a bit char array (e.g. 32 -> 00100000) **/
 	public static char[] byteToBitChars(byte b) {
 		char[] str = new char[8];
 		boolean negative = b < 0;
@@ -83,7 +86,6 @@ public class ArrayStuff {
 				str[i] = (str[i] == '0') ? '1':'0';
 			}
 		}
-		//Log.d(Arrays.toString(str));
 		return str;
 	}
 	
@@ -92,6 +94,7 @@ public class ArrayStuff {
 		return String.valueOf(byteToBitString(b));
 	}
 	
+	/**Converts a double array to an arraylist **/
 	public static ArrayList<Double> doubleToArrayList(double[] array) {
 		ArrayList<Double> al = new ArrayList<Double>(array.length);
 		for (double d : array) {
@@ -482,7 +485,7 @@ public class ArrayStuff {
 
 
 
-
+	/**Copies a 2d double table **/
 	public static double[][] copy(double[][] table) {
 		double[][] nt = new double[table.length][];
 		for (int i = 0; i < table.length; ++i) {
@@ -495,7 +498,7 @@ public class ArrayStuff {
 		return nt;
 	}
 
-
+	/** Generates one long array of all input arrays **/
 	public static byte[] concat(byte[]...bytes) {
 		//get length
 		int length = 0;
@@ -513,8 +516,40 @@ public class ArrayStuff {
 		return newBytes;
 	}
 
-
-	public static String arrayToString(double[][] dd) {
+	/**Represent 2d array as String **/
+	public static String toString(double[][] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * dd[0].length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+			for (int j = 0; j < dd[i].length; ++j) {
+				sb.append(Statistics.round(dd[i][j], 4));
+				if (j != dd[i].length - 1) {
+					sb.append(",");
+				}
+				
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	/**Represent array as String **/
+	public static String toString(double[] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+				sb.append(dd[i]);
+				if (i != dd.length - 1) {
+					sb.append(",");
+				}
+			//sb.append("}");
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	/**Represent 2d array as String **/
+	public static String toString(int[][] dd) {
 		StringBuilder sb = new StringBuilder(dd.length * dd[0].length * 15);
 		for (int i = 0; i < dd.length; ++i) {
 			//sb.append("{");
@@ -525,13 +560,77 @@ public class ArrayStuff {
 				}
 				
 			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	/**Represent array as String **/
+	public static String toString(int[] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+				sb.append(dd[i]);
+				if (i != dd.length - 1) {
+					sb.append(",");
+				}
 			//sb.append("}");
 			sb.append("\n");
 		}
 		return sb.toString();
 	}
 	
-	public static String arrayToString(double[] dd) {
+	/**Represent 2d array as String **/
+	public static String toString(byte[][] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * dd[0].length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+			for (int j = 0; j < dd[i].length; ++j) {
+				sb.append(dd[i][j]);
+				if (j != dd[i].length - 1) {
+					sb.append(",");
+				}
+				
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	/**Represent array as String **/
+	public static String toString(byte[] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+				sb.append(dd[i]);
+				if (i != dd.length - 1) {
+					sb.append(",");
+				}
+			//sb.append("}");
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	/**Represent 2d array as String **/
+	public static String toString(char[][] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * dd[0].length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+			for (int j = 0; j < dd[i].length; ++j) {
+				sb.append(dd[i][j]);
+				if (j != dd[i].length - 1) {
+					sb.append(",");
+				}
+				
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	/**Represent array as String **/
+	public static String toString(char[] dd) {
 		StringBuilder sb = new StringBuilder(dd.length * 15);
 		for (int i = 0; i < dd.length; ++i) {
 			//sb.append("{");
@@ -545,7 +644,37 @@ public class ArrayStuff {
 		return sb.toString();
 	}
 
+	/**Represent 2d array as String **/
+	public static String toString(long[][] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * dd[0].length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+			for (int j = 0; j < dd[i].length; ++j) {
+				sb.append(dd[i][j]);
+				if (j != dd[i].length - 1) {
+					sb.append(",");
+				}
+				
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 	
+	/**Represent array as String **/
+	public static String toString(long[] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+				sb.append(dd[i]);
+				if (i != dd.length - 1) {
+					sb.append(",");
+				}
+			//sb.append("}");
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 
 
 
