@@ -1,24 +1,11 @@
 package neuralNet;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-
-import plotting.MatthewsChart;
-import filemanager.ArrayMethods;
 import filemanager.CSVReader;
-import filemanager.CSVWriter;
 import filemanager.Log;
 import filemanager.Serialize;
 
@@ -39,6 +26,7 @@ public class RunNetwork {
 		
 		ManyNets evenNet = new ManyNets();
 		evenNet.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp20evens.csv");
+		evenNet.even = true;
 		evenNet.runCount = runCount;
 		evenNet.testPatterns = testPatterns;
 		evenNet.verbose = true;
@@ -46,6 +34,7 @@ public class RunNetwork {
 		ManyNets oddNet = new ManyNets();
 		oddNet.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp20odds.csv");
 		oddNet.runCount = runCount;
+		oddNet.even = false;
 		oddNet.testPatterns = testPatterns;
 		oddNet.verbose = true;
 		
@@ -55,12 +44,14 @@ public class RunNetwork {
 		ManyNets even40Net = new ManyNets();
 		even40Net.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp40evens.csv");
 		even40Net.runCount = runCount;
+		even40Net.even = true;
 		even40Net.testPatterns = test40Patterns;
 		even40Net.verbose = true;
 		
 		ManyNets odd40Net = new ManyNets();
 		odd40Net.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp40odds.csv");
 		odd40Net.runCount = runCount;
+		odd40Net.even = false;
 		odd40Net.testPatterns = test40Patterns;
 		odd40Net.verbose = true;
 		

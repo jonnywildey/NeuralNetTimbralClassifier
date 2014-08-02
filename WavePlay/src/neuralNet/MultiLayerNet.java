@@ -69,8 +69,8 @@ public class MultiLayerNet  implements Serializable{
 			if (this.shuffleTrainingPatterns) {
 				e.shuffleTrainingPatterns();
 				}
-			if (verbose){Log.d("\n******** EPOCH " + (i + 1) + " " + this.layerStructure.getLayerCount(0)
-					+ " " + this.inputCount + "********\n");}
+			if (verbose){Log.d("\n******** EPOCH " + (i + 1) + " Hidden Neurons: " + this.layerStructure.getLayerCount(0)
+					+ " inputs: " + this.inputCount + "********\n");}
 			e.runEpoch();
 			if (debug) {Log.d(e.toString());}
 			e.runValidationEpoch();
