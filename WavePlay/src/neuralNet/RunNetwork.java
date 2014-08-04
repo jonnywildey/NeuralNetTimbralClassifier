@@ -22,7 +22,7 @@ public class RunNetwork {
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
 		String serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombPatterns.ser";
 		TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns);
-		int runCount = 3;
+		int runCount = 1;
 		
 		ManyNets evenNet = new ManyNets();
 		evenNet.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp20evens.csv");
@@ -96,7 +96,12 @@ public class RunNetwork {
 		nn.initialiseNeurons();
 		nn.setVerbose(verbose);
 		nn.setAcceptableErrorRate(0.1d);
-		nn.setMaxEpoch(200);
+		if (neuronCount > 100) {
+			nn.setMaxEpoch(100);
+		} else {
+			nn.setMaxEpoch(200);
+		}
+		
 		nn.initialiseRandomWeights(seed2);
 		nn.setShuffleTrainingPatterns(true, seed3);
 		return nn;

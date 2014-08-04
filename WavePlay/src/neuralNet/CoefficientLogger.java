@@ -61,7 +61,9 @@ public class CoefficientLogger {
 	public static double[][] getMaxErrorFromCL(CoefficientLogger[][] cls) {
 		double[][] errors = new double[cls.length][];
 		for (int i = 0; i < cls.length; ++i) {
-			errors[i] = getMaxErrorFromCL(cls[i]);
+			if (cls[i] != null) {
+				errors[i] = getMaxErrorFromCL(cls[i]);
+			}
 		}
 		return errors;
 	}
@@ -86,7 +88,9 @@ public class CoefficientLogger {
 	public static CoefficientLogger[] getErrorsFromMultiLayer(MultiLayerNet[] nets) {
 		CoefficientLogger[] mBox = new CoefficientLogger[nets.length];
 		for (int i = 0; i < nets.length; ++i) {
+			if (nets[i] != null) {
 				mBox[i] = nets[i].getErrorBox();
+			}
 		}
 		return mBox;
 	}

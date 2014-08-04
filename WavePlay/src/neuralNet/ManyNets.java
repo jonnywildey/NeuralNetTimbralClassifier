@@ -24,7 +24,7 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 		
 		MultiLayerNet[][] nets = tryDifferentLayers(runCount, testPatterns,verbose, even);
 		CoefficientLogger[][] cls = CoefficientLogger.getErrorsFromMultiLayer(nets);
-		CSVWriter cd = new CSVWriter(name.getAbsolutePath());
+		CSVWriter cd = new CSVWriter(this.name.getAbsolutePath());
 		cd.writeArraytoFile(CoefficientLogger.getMaxErrorFromCL(cls));
 		return nets;
 	}
@@ -56,15 +56,14 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 			boolean verbose, boolean even) {
 		int[] layerOneSize = new int[]{1,5,10,15,20,30,40,50,60,70,80,90,100,110,120,150,160,200,300,400};
 		//int[] layerOneSize = new int[]{80,90,100,110,120,150,160,200,300,400};
-		//int[] layerOneSize = new int[]{200};
 		MultiLayerNet[][] mlns = new MultiLayerNet[layerOneSize.length / 2][runCount];
 		if (even) {
-		for (int i = 0; i < layerOneSize.length; i += 2) {
-			mlns[i] = runNets(runCount, testPatterns, layerOneSize[i], verbose);
+		for (int i = 0; i < mlns.length; i++) {
+			mlns[i] = runNets(runCount, testPatterns, layerOneSize[(i * 2)], verbose);
 		} 
 		}else {
-			for (int i = 1; i < layerOneSize.length; i += 2) {
-				mlns[i] = runNets(runCount, testPatterns, layerOneSize[i], verbose);
+			for (int i = 0; i < mlns.length; i++) {
+				mlns[i] = runNets(runCount, testPatterns, layerOneSize[(i * 2) + 1], verbose);
 			}
 		}
 		return mlns;
