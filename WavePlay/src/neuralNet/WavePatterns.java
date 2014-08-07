@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import riff.Signal;
 import riff.Wave;
 import waveAnalysis.FFTBox;
 import waveAnalysis.FrameFFT;
+import waveProcess.Samples;
 import filemanager.ArrayMethods;
 import filemanager.CSVString;
 import filemanager.Log;
@@ -96,6 +98,35 @@ public class WavePatterns implements Serializable {
 		}
 		getOutputs(instrs, files);
 	}
+	
+	/** turns a set of waves with metadata to a pattern. This also redoes the FFT (input analysis) **/
+	public void wavReFFTBatchPattern(int count) {
+		//randoms
+		Random pitchRand = new Random();
+		Random noiseRand = new Random();
+		Random hpRand = new Random();
+		Random lpRand = new Random();
+		//patterns
+		File[] files = getFilesFromDirectory();
+		this.patterns = new WavePattern[files.length * count];
+		String[] instrs = new String[files.length * count];
+		Wave wave = null;
+		Signal signal = null;
+		for (int i = 0; i < files.length; ++i) {
+			//read
+			wave = new Wave(files[i]);
+			signal = wave.getSignals();
+			for (int j = 0; j < count; ++j) {
+				patterns[i * count + j] = new WavePattern(i, wave); //make pattern
+				patterns[i * count + j].inputArray = reFFT(
+						Samples.processSignalChain(pitchRand, noiseRand, hpRand, lpRand, signal));
+				//get instrumental outputs
+				instrs[i * count + j] = getInstrumentalOutputs(wave);
+				patterns[i * count + j].instrument = instrs[i];
+			}
+		}
+		getOutputs(instrs, files);
+	}
 
 
 
@@ -106,9 +137,9 @@ public class WavePatterns implements Serializable {
 		//dd = FrameFFT.getExponentTable(dd, 0.78); //rate
 		dd = FFTBox.getSumTable(dd, 10);
 		
-		dd = FFTBox.getHiResBarkedSubset(dd, 0.5);
+		dd = FFTBox.getHiResBarkedSubset(dd, 0.1);
 		
-		//Log.d(ArrayStuff.arrayToString(dd));
+		//Log.d((dd.toString()));
 		dd = FFTBox.normaliseTable(dd, 10);
 		return Pattern.doubleToInputShell(dd.getValues()[0]);
 	}

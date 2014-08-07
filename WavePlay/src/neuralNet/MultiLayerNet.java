@@ -55,6 +55,20 @@ public class MultiLayerNet  implements Serializable{
 	public long initialiseRandomWeights(long seed) {
 		return neuronLayers.setInitialWeights(testPatterns.getTrainingPatterns().get(0), seed);
 	}
+	
+	
+	/** Runs a single pattern returning the output. Does not know whether correct **/
+	public int runSinglePatternUnsupervised(Pattern p) {
+		Epoch e = new Epoch(null, null, neuronLayers, trainingRate, verbose, debug);
+		e.runPattern(p);
+		return e.getMaxId();
+	}
+	/** Runs patterns returning the output. Does not know whether correct **/
+	public int[] runPatternsUnsupervised(Pattern[] patterns) {
+		Epoch e = new Epoch(null, null, neuronLayers, trainingRate, verbose, debug);
+		return e.runPatternsGetMax(patterns);
+	}
+	
 
 	public  void runEpoch() throws Exception {
 		ready();
@@ -170,6 +184,10 @@ public class MultiLayerNet  implements Serializable{
 
 	public  Double getTrainingRate() {
 		return trainingRate;
+	}
+
+	public LayerList getNeuronLayers() {
+		return neuronLayers;
 	}
 
 	public TestPatterns getTestPatterns() {

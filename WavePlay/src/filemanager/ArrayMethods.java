@@ -9,6 +9,27 @@ import waveAnalysis.Statistics;
 public class ArrayMethods {
 	
 	
+	public static double[] getAverageOfRow(double[][] table) {
+		double[] d = new double[table.length];
+		for (int i = 0; i < table.length; ++i) {
+			d[i] = getAverage(table[i]);
+		}
+		return d;
+	}
+	
+	public static double[] getAverageOfColumn(double[][] table) {
+		return getAverageOfRow(flip(table));
+	}
+	
+	public static double getAverage(double[] array) {
+		double d = 0;
+		//Log.d("length " + array.length);
+		for (int i = 0; i < array.length; ++i) {
+			d += array[i];
+		}
+		return d / array.length;
+	}
+	
 	/**Add bytes to an array from another **/
 	public static byte[] addBytes(byte[] addTo, byte[] from, int offset) {
 		for (int i = offset; i < from.length + offset; ++i) {

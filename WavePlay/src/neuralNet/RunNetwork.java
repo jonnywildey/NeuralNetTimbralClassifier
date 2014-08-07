@@ -20,36 +20,46 @@ public class RunNetwork {
 		long seed = System.currentTimeMillis();
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
-		String serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombPatterns.ser";
+		//String serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombPatterns.ser";
+		//TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns);
+		String serialPatterns = "/Users/Jonny/Documents/Timbre/WavePatterns90.ser";
 		TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns);
-		int runCount = 1;
+		int runCount = 20;
+		MultiLayerNet[] nets = ManyNets.runNets(runCount, testPatterns, 100, verbose);
+		Committee com = new Committee();
+		com.setNets(nets);
+		Committee.testPatterns(nets, testPatterns.getTestingPatterns());
 		
+	}
+	
+
+	protected static void runThreadedNets(TestPatterns test40Patterns,
+			TestPatterns testPatterns, int runCount) {
 		ManyNets evenNet = new ManyNets();
-		evenNet.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp20evens.csv");
+		evenNet.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp20extraevens.csv");
 		evenNet.even = true;
 		evenNet.runCount = runCount;
 		evenNet.testPatterns = testPatterns;
 		evenNet.verbose = true;
 		
 		ManyNets oddNet = new ManyNets();
-		oddNet.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp20odds.csv");
+		oddNet.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp20extraodds.csv");
 		oddNet.runCount = runCount;
 		oddNet.even = false;
 		oddNet.testPatterns = testPatterns;
 		oddNet.verbose = true;
 		
-		serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombExtraBarkPatterns.ser";
-		TestPatterns test40Patterns = getWavePatternsSerial(seed, serialPatterns);
+		
 		
 		ManyNets even40Net = new ManyNets();
-		even40Net.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp40evens.csv");
+		even40Net.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp40bigevens.csv");
 		even40Net.runCount = runCount;
 		even40Net.even = true;
 		even40Net.testPatterns = test40Patterns;
 		even40Net.verbose = true;
 		
 		ManyNets odd40Net = new ManyNets();
-		odd40Net.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp40odds.csv");
+		odd40Net.name = new File("/Users/Jonny/Documents/Timbre/Logs/comp40bigodds.csv");
 		odd40Net.runCount = runCount;
 		odd40Net.even = false;
 		odd40Net.testPatterns = test40Patterns;
@@ -67,8 +77,6 @@ public class RunNetwork {
 		}
 		// once we have submitted all jobs to the thread pool, it should be shutdown
 		threadPool.shutdown();
-		
-		
 	}
 
 	/**Get Wave Patterns from a serialised file **/
@@ -87,8 +95,7 @@ public class RunNetwork {
 		LayerStructure ls = new LayerStructure(testPatterns);
 		if (neuronCount != null) {
 			ls.addHiddenLayer(neuronCount);
-		}
-		
+		}		
 		nn.setTrainingRate(0.1d);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
@@ -96,11 +103,7 @@ public class RunNetwork {
 		nn.initialiseNeurons();
 		nn.setVerbose(verbose);
 		nn.setAcceptableErrorRate(0.1d);
-		if (neuronCount > 100) {
-			nn.setMaxEpoch(100);
-		} else {
-			nn.setMaxEpoch(200);
-		}
+		nn.setMaxEpoch(500);
 		
 		nn.initialiseRandomWeights(seed2);
 		nn.setShuffleTrainingPatterns(true, seed3);

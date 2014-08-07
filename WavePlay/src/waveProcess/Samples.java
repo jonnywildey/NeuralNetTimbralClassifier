@@ -52,7 +52,7 @@ public class Samples {
 
 
 	/** Performs the audio processing of a file **/
-	protected static Signal processSignalChain(Random pitchRand,
+	public static Signal processSignalChain(Random pitchRand,
 			Random noiseRand, Random hpRand, Random lpRand, Signal s1) {
 		s1 = Gain.getMid(s1);
 		s1 = randomPitch(s1, 12, pitchRand);
@@ -203,7 +203,7 @@ public class Samples {
 		File combineDir = new File("/Volumes/Rickay/Timbre/Combine");
 		//batchFromFolders(batchFolder, batchFiles); 
 		//batchCombine(combineDir, batchDirs);
-		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WaveCombExtraBarkPatterns.ser");
+		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WaveCombLoadsBarkPatterns.ser");
 		WavePatterns wavePatterns = regeneratePatterns(combineDir, waveSerial);
 		RunNetwork.main(new String[]{""});
 		

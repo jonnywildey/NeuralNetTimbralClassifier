@@ -90,6 +90,57 @@ public class Epoch {
 		this.trainingRate = trainingRate;
 	}
 	
+	public double[] runPattern(Pattern p) {
+		neurons.setLearning(false);
+		for (int i = 0; i < neurons.getLayerCount(); ++i) {
+			NeuralLayer l = neurons.getLayer(i);
+			l.process(p);
+		}
+		return getOutputs();
+	}
+	
+	public double[] getOutputs() {
+		double[] d = new double[this.neurons.getOutputCount()];
+		for (int i = 0; i < d.length; ++i) {
+			d[i] = this.neurons.getLastLayer().neurons.get(i).output;
+		}
+		return d;
+	}
+	
+	public double[][] runPatterns(Pattern[] patterns) {
+		double[][] ds = new double[patterns.length][];
+		for (int i = 0; i < ds.length; ++i) {
+			ds[i] = runPattern(patterns[i]);
+		}
+		return ds;
+	}
+	
+	public double[][] runPatterns(ArrayList<Pattern> patterns) {
+		double[][] ds = new double[patterns.size()][];
+		for (int i = 0; i < ds.length; ++i) {
+			ds[i] = runPattern(patterns.get(i));
+		}
+		return ds;
+	}
+	
+	public int[] runPatternsGetMax(ArrayList<Pattern> patterns) {
+		int[] ds = new int[patterns.size()];
+		for (int i = 0; i < ds.length; ++i) {
+			runPattern(patterns.get(i));
+			ds[i] = getMaxId();
+		}
+		return ds;
+	}
+	
+	public int[] runPatternsGetMax(Pattern[] patterns) {
+		int[] ds = new int[patterns.length];
+		for (int i = 0; i < ds.length; ++i) {
+			runPattern(patterns[i]);
+			ds[i] = getMaxId();
+		}
+		return ds;
+	}
+	
 	public ConfusionMatrix runValidationEpoch() {
 		testConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount());
 		neurons.setLearning(false);
@@ -98,7 +149,7 @@ public class Epoch {
 			//forward pass
 			for (int i = 0; i < neurons.getLayerCount(); ++i) {
 				NeuralLayer l = neurons.getLayer(i);
-				l.setTrainingRate(trainingRate);
+				//l.setTrainingRate(trainingRate);
 				l.process(p);
 			}
 			if (addMaxOutputNeuron) {
@@ -144,6 +195,11 @@ public class Epoch {
 	}
 	
 	public void addMax(Pattern p, ConfusionMatrix cm) {
+		int nid = getMaxId();
+		cm.addToCell(nid, p.getTargetNumber());
+		//Neuron Row, Class Column
+	}
+	public int getMaxId() {
 		double max = 0;
 		int nid = 0;
 		for (Neuron n : neurons.getLastLayer().neurons) {
@@ -152,9 +208,9 @@ public class Epoch {
 					nid = n.id;
 			}
 		}
-		cm.addToCell(nid, p.getTargetNumber());
-		//Neuron Row, Class Column
+		return nid;
 	}
+	
 	
 	public boolean isRight(Pattern p) {
 		double max = 0;

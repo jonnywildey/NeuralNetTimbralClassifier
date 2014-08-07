@@ -50,6 +50,14 @@ public class TestPatterns implements Serializable {
 		return nwp;
 	}
 	
+	public static Pattern[] convertPatterns(ArrayList<Pattern> patterns) {
+		Pattern[] pat = new Pattern[patterns.size()];
+		for (int i = 0; i < pat.length; ++i) {
+			pat[i] = patterns.get(i);
+		}
+		return pat;
+	}
+	
 	/** separates training pattern sets, testing pattern sets and validation pattern sets **/
 	public void separatePatterns(ArrayList<Pattern> patterns) {
 		//shuffle
