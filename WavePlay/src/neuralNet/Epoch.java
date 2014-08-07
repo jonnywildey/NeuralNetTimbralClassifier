@@ -142,7 +142,7 @@ public class Epoch {
 	}
 	
 	public ConfusionMatrix runValidationEpoch() {
-		testConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount());
+		testConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount(), verbose);
 		neurons.setLearning(false);
 		for (Pattern p: this.testingPatterns) {
 			//input pattern inputs
@@ -229,7 +229,7 @@ public class Epoch {
 	
 	
 	public void runEpoch() {
-		trainingConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount());
+		trainingConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount(), verbose);
 		Double patternErrors = 0d;
 		//Load Pattern
 		neurons.setLearning(true);

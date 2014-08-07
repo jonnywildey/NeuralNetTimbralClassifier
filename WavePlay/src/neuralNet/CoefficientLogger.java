@@ -1,5 +1,6 @@
 package neuralNet;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import plotting.MatthewsChart;
@@ -7,7 +8,7 @@ import filemanager.ArrayMethods;
 import filemanager.Log;
 
 /** a little holder for errors **/
-public class CoefficientLogger {
+public class CoefficientLogger implements Serializable {
 	private double[] errors;
 	private int iterator;
 	public CoefficientLogger(int epochs) {

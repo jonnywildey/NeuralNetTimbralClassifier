@@ -91,8 +91,10 @@ public class MultiLayerNet  implements Serializable{
 			er = calculateMatthews(this.testPatterns.getTestingPatterns(), e);
 			this.errorBox.add(er);
 			if(er > currentMaxMC) { //Should maybe be >
-				Log.d("Previous highest validation MC: " + Statistics.round(currentMaxMC, 4));
-				Log.d("Increase in MC!");
+				if (verbose) {
+					Log.d("Previous highest validation MC: " + Statistics.round(currentMaxMC, 4));
+					Log.d("Increase in MC!");
+				}
 				currentMaxMC = er;
 				tally = new LayerList(this.neuronLayers);
 				tally.setEpoch(i + 1);

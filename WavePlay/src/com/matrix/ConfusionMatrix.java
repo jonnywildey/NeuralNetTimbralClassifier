@@ -13,6 +13,11 @@ public class ConfusionMatrix extends Matrix {
 		this.initValue(new Integer(0));
 	}
 	
+	public ConfusionMatrix(int size, boolean verbose) {
+		this(size);
+		this.verbose = verbose;
+	}
+	
 	/** get maximum value of matrix **/
 	public int getMax() {
 		Integer max = 0;
@@ -71,7 +76,10 @@ public class ConfusionMatrix extends Matrix {
 		double[] ms = new double[array.length];
 		for (int i = 0; i < array.length; ++i) {
 			ms[i] = matthewsCoefficient(i);
-			Log.d("MC" + i + ": " + Statistics.round(ms[i], 4));
+			if (this.verbose) {
+				Log.d("MC" + i + ": " + Statistics.round(ms[i], 4));
+			}
+			
 		}
 		return NNFunctions.average(ms);
 	}

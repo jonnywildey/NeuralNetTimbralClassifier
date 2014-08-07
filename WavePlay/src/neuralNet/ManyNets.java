@@ -9,6 +9,8 @@ import filemanager.Log;
 /** current dumping ground for any methods concerned
  * with running lots of nets at the same time
  * (needs more work)
+ *ALSO
+ *Threadable MLP
  * @author Jonny
  *
  */
@@ -19,13 +21,32 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 	public TestPatterns testPatterns;
 	public boolean verbose;
 	public File name;
+	public int id;
 	
+	
+	
+	public ManyNets() {
+		super();
+	}
+
+
+	public ManyNets(File name, int runCount, int id, TestPatterns testPatterns,
+			boolean verbose) {
+		super();
+		this.name = name;
+		this.runCount = runCount;
+		this.id = id;
+		this.testPatterns = testPatterns;
+		this.verbose = verbose;
+	}
+
+
 	public MultiLayerNet[][] call() {
 		
 		MultiLayerNet[][] nets = tryDifferentLayers(runCount, testPatterns,verbose, even);
-		CoefficientLogger[][] cls = CoefficientLogger.getErrorsFromMultiLayer(nets);
-		CSVWriter cd = new CSVWriter(this.name.getAbsolutePath());
-		cd.writeArraytoFile(CoefficientLogger.getMaxErrorFromCL(cls));
+		//CoefficientLogger[][] cls = CoefficientLogger.getErrorsFromMultiLayer(nets);
+		//CSVWriter cd = new CSVWriter(this.name.getAbsolutePath());
+		//cd.writeArraytoFile(CoefficientLogger.getMaxErrorFromCL(cls));
 		return nets;
 	}
 	
@@ -55,7 +76,7 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 		//int[] layerOneSize = new int[]{1,5,10,15,20,30,40,50,60,70,80,90,100,110,120,150,160,200,300,400};
 		//int[] layerOneSize = new int[]{40,50,60};
 		//int[] layerOneSize = new int[]{400,800,1600, 3200};
-		int[] layerOneSize = new int[]{50};
+		int[] layerOneSize = new int[]{50, 60};
 		MultiLayerNet[][] mlns = new MultiLayerNet[layerOneSize.length / 2][runCount];
 		if (even) {
 		for (int i = 0; i < mlns.length; i++) {

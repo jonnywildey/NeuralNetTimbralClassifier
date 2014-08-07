@@ -8,6 +8,7 @@ public class  Matrix  {
 	
 protected int size;
 protected Object[][] array;
+protected boolean verbose;
 
 
 	public Matrix(int size) {

@@ -28,6 +28,25 @@ import waveAnalysis.SampleRateException;
 /** Class for transforming samples and preparing them for neural net **/
 public class Samples {
 	
+	public static void main(String[] args) {
+		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
+		Long start = System.currentTimeMillis();
+		File[] batchDirs = {new File("/Users/Jonny/Documents/Timbre/Samples/Cello"),
+				new File("/Users/Jonny/Documents/Timbre/Samples/Harp"),
+				new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"),
+				new File("/Users/Jonny/Documents/Timbre/Samples/Trombone")};
+		File batchFolder = new File("/Users/Jonny/Documents/Timbre/Samples/Batch");
+		File combineDir = new File("/Volumes/Rickay/Timbre/Combine");
+		//batchFromFolders(batchFolder, batchFiles); 
+		//batchCombine(combineDir, batchDirs);
+		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WaveComb40ExpPatterns.ser");
+		WavePatterns wp = new WavePatterns(new File("/Users/Jonny/Documents/Timbre/Samples/Test"));
+		WavePatterns wavePatterns = regenerateAndBatchPatterns(wp, waveSerial);
+		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds");
+		//RunNetwork.main(new String[]{""});
+		
+	}
+	
 	/** Performs batch processing of all the audio files in a directory **/
 	public static void batchFolder(File sampleDir, File newDir) {
 		String instrument = sampleDir.getName();
@@ -193,21 +212,7 @@ public class Samples {
 	
 	
 	
-	public static void main(String[] args) {
-		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
-		File[] batchDirs = {new File("/Users/Jonny/Documents/Timbre/Samples/Cello"),
-				new File("/Users/Jonny/Documents/Timbre/Samples/Harp"),
-				new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"),
-				new File("/Users/Jonny/Documents/Timbre/Samples/Trombone")};
-		File batchFolder = new File("/Users/Jonny/Documents/Timbre/Samples/Batch");
-		File combineDir = new File("/Volumes/Rickay/Timbre/Combine");
-		//batchFromFolders(batchFolder, batchFiles); 
-		//batchCombine(combineDir, batchDirs);
-		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WaveCombLoadsBarkPatterns.ser");
-		WavePatterns wavePatterns = regeneratePatterns(combineDir, waveSerial);
-		RunNetwork.main(new String[]{""});
-		
-	}
+	
 	
 
 
@@ -322,6 +327,25 @@ public class Samples {
 		wp.wavReFFTPattern();
 		Log.d(wp.toString());
 		Serialize.serialize(wp, fileOut.getAbsolutePath());
+		Log.d("serialised!");
+		return wp;
+	}
+	
+	/** generates and serialises and return wave patterns **/
+	public static WavePatterns regenerateAndBatchPatterns(File batchFolder, File fileOut) {
+		WavePatterns wp = new WavePatterns(batchFolder);
+		WavePatterns.genWaves(wp, 4);
+		Log.d(wp.toString());
+		Serialize.serialize(wp, fileOut.getAbsolutePath());
+		Log.d("serialised!");
+		return wp;
+	}
+	
+	/** generates and serialises and return wave patterns **/
+	public static WavePatterns regenerateAndBatchPatterns(WavePatterns wp, File fileOut) {
+		WavePatterns np = WavePatterns.genWaves(wp, 4);
+		Log.d(np.toString());
+		Serialize.serialize(np, fileOut.getAbsolutePath());
 		Log.d("serialised!");
 		return wp;
 	}

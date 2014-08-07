@@ -1,5 +1,6 @@
 package neuralNet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.matrix.ConfusionMatrix;
@@ -8,8 +9,12 @@ import filemanager.ArrayMethods;
 import filemanager.Log;
 
 /** Class for combining multiple nets **/
-public class Committee {
+public class Committee implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3435279964711381310L;
 	private MultiLayerNet[] nets;
 	
 	
@@ -62,6 +67,7 @@ public class Committee {
 		for (int i = 0; i < patterns.length; ++i) {
 			cm.addToCell(outputs[i], patterns[i].getTargetNumber());
 		}
+		Log.d("\n*****COMMITTEE*****\n");
 		Log.d(cm.toString());
 		Log.d("MC for Committee: " + cm.matthewsCoefficient());
 		return cm;
@@ -77,6 +83,10 @@ public class Committee {
 
 	public void setNets(MultiLayerNet[] nets) {
 		this.nets = nets;
+	}
+
+	public ConfusionMatrix testPatterns(ArrayList<Pattern> trainingPatterns) {
+		return testPatterns(this.nets, trainingPatterns);
 	}
 	
 }
