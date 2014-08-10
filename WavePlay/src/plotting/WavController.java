@@ -2,7 +2,7 @@ package plotting;
 import java.awt.*;
 import javax.swing.*;
 
-
+/** Controller for WavGraph **/
 public class WavController {
 	
 	private Dimension size;

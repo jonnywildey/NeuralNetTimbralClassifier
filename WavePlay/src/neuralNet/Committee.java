@@ -8,22 +8,29 @@ import com.matrix.ConfusionMatrix;
 import filemanager.ArrayMethods;
 import filemanager.Log;
 
-/** Class for combining multiple nets **/
+/** Class for combining multiple nets. Cannot be used for training **/
 public class Committee implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3435279964711381310L;
 	private MultiLayerNet[] nets;
 	
 	
+	/** run a single pattern against the committee **/
 	public static int runPattern(MultiLayerNet[] nets, Pattern p) {
-		
-		
-		return 0;
+		return runPatterns(nets, new Pattern[]{p})[0];
 	}
 	
+	/** run a single pattern against the committee **/
+	public int runPattern(Pattern p) {
+		return runPattern(this.nets, p);
+	}
+	
+	/** Run patterns against the committee **/
+	public int[] runPatterns(Pattern[] p) {
+		return runPatterns(this.nets, p);
+	}
+	
+	/** Run patterns against the committee **/
 	public static int[] runPatterns(MultiLayerNet[] nets, Pattern[] patterns) {
 		double[][][] vals = new double[nets.length][][];
 		Epoch e = null;
@@ -32,7 +39,6 @@ public class Committee implements Serializable {
 			e = new Epoch(null, null, nets[i].getNeuronLayers(), 0d, nets[i].isVerbose(), nets[i].isDebug());
 			vals[i] = e.runPatterns(patterns);
 		}
-		
 		double[][][] nv = new double[patterns.length][nets.length][patterns[0].getOutputCount()];
 		int[] outputs = new int[patterns.length];
 		for (int i = 0; i < patterns.length; ++i) {
@@ -61,6 +67,20 @@ public class Committee implements Serializable {
 		return index;
 	}
 	
+	/** Run patterns against the committee and return a confusion
+	 * Matrix of results */
+	public ConfusionMatrix testPatterns(Pattern[] patterns) {
+		return testPatterns(this.nets, patterns);
+	}
+	
+	/** Run patterns against the committee and return a confusion
+	 * Matrix of results */
+	public ConfusionMatrix testPatterns(ArrayList<Pattern> patterns) {
+		return testPatterns(this.nets, patterns);
+	}
+	
+	/** Run patterns against the committee and return a confusion
+	 * Matrix of results */
 	public static ConfusionMatrix testPatterns(MultiLayerNet[] nets, Pattern[] patterns) {
 		int[] outputs = runPatterns(nets, patterns);
 		ConfusionMatrix cm = new ConfusionMatrix(patterns[0].getOutputCount());
@@ -73,6 +93,8 @@ public class Committee implements Serializable {
 		return cm;
 	}
 	
+	/** Run patterns against the committee and return a confusion
+	 * Matrix of results */
 	public static ConfusionMatrix testPatterns(MultiLayerNet[] nets, ArrayList<Pattern> patterns) {
 		return testPatterns(nets, TestPatterns.convertPatterns(patterns));
 	}
@@ -85,8 +107,5 @@ public class Committee implements Serializable {
 		this.nets = nets;
 	}
 
-	public ConfusionMatrix testPatterns(ArrayList<Pattern> trainingPatterns) {
-		return testPatterns(this.nets, trainingPatterns);
-	}
 	
 }

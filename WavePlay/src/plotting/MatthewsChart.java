@@ -8,7 +8,7 @@ import waveAnalysis.Statistics;
 import filemanager.ArrayMethods;
 import filemanager.Log;
 
-
+/** Create a plot graph of Matthews coefficients **/
 public class MatthewsChart {
 	
 	private Dimension size;
@@ -33,7 +33,7 @@ public class MatthewsChart {
 		});
 	}
 	
-	
+	/** Make the chart **/
 	private void createChart(double[][] values, Dimension winSize) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

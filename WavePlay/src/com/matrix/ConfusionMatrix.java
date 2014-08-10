@@ -2,10 +2,13 @@ package com.matrix;
 
 import java.util.Arrays;
 
+import plotting.ConfusionMatrixController;
 import waveAnalysis.Statistics;
 import filemanager.Log;
 import neuralNet.NNFunctions;
 
+/** Matrix for mapping classifications. Typically classification is row,
+ * correct output is column **/
 public class ConfusionMatrix extends Matrix {
 
 	public ConfusionMatrix(int size) {
@@ -31,6 +34,7 @@ public class ConfusionMatrix extends Matrix {
 		return max.intValue();
 	}
 	
+	/** get overall count of matrix **/
 	public int getCount() {
 		Integer count = 0;
 		for (int i = 0; i < size; ++i) {
@@ -56,6 +60,7 @@ public class ConfusionMatrix extends Matrix {
 		this.array[column][row] = (Integer)this.array[column][row] + 1;
 	}
 	
+	/** calculate Matthews coefficient for individual column **/
 	public double matthewsCoefficient(int col) {
 		double truePos = (Integer)array[col][col];
 		double trueNeg = getCount() - truePos;
@@ -72,6 +77,30 @@ public class ConfusionMatrix extends Matrix {
 		return mat;
 	}
 	
+	/** Return the total number of correct and incorrect classifications **/
+	public int getTotalForCell(int col, int row) {
+		return sumColumn(col) + sumRow(row);
+	}
+	
+	/** Get the sum of a column **/
+	public int sumColumn(int column) {
+		int sum = 0;
+		for (int i = 0; i < size; ++i) {
+			sum += (Integer)array[column][i];
+		}
+		return sum;
+	}
+	
+	/** Get the sum of a row **/
+	public int sumRow(int row) {
+		int sum = 0;
+		for (int i = 0; i < size; ++i) {
+			sum += (Integer)array[i][row];
+		}
+		return sum;
+	}
+	
+	/** Calculate average Matthews Coefficient **/
 	public double matthewsCoefficient() {
 		double[] ms = new double[array.length];
 		for (int i = 0; i < array.length; ++i) {
@@ -84,6 +113,7 @@ public class ConfusionMatrix extends Matrix {
 		return NNFunctions.average(ms);
 	}
 	
+	/** Return all false positives in a column **/
 	private int getFalsePositives(int col) {
 		int total = 0;
 		for (int i = 0; i < array.length; ++i) {
@@ -94,6 +124,7 @@ public class ConfusionMatrix extends Matrix {
 		return total;
 	}
 	
+	/** Return all false negatives in a column **/
 	private int getFalseNegatives(int col) {
 		int total = 0;
 		for (int i = 0; i < array.length; ++i) {
@@ -117,17 +148,15 @@ public class ConfusionMatrix extends Matrix {
 						}
 					}
 			}
-		
 		if (rightCount + wrongCount < total) {
 			return (total / rightCount) - 1;
 		} else {
 			
 			return wrongCount / rightCount;
 		}
-		
-		
 	}
 	
+	/** Useful ASCII representation of matrix **/
 	public String toString() {
 		//get max
 		int max = this.getMax();
@@ -147,6 +176,11 @@ public class ConfusionMatrix extends Matrix {
 		}
 		//System.out.println(Arrays.deepToString(array));
 		return mainString;
+	}
+	
+	public void makeGraph() {
+		ConfusionMatrixController cmc = new ConfusionMatrixController(this);
+		cmc.makeChart();
 	}
 	
 

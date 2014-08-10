@@ -8,7 +8,7 @@ import waveAnalysis.FFT;
 import waveAnalysis.FFTBox;
 import waveAnalysis.FrameFFT;
 
-
+/** Controller for the FFT graph **/
 public class FFTController {
 	
 	private Dimension size;

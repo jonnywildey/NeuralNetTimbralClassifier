@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.matrix.ConfusionMatrix;
+
 import filemanager.CSVReader;
 import filemanager.Log;
 import filemanager.Serialize;
@@ -29,15 +31,13 @@ public class RunNetwork {
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
 		//String serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombPatterns.ser";
 		//TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns);
-		String serialPatterns = "/Users/Jonny/Documents/Timbre/WaveComb40ExpPatterns.ser";
-		File outputSerial = new File("/Users/Jonny/Documents/Timbre/Serial/Committee/CommO4R16N100E400.ser");
+		String serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombExtraBarkPatterns.ser";
+		File outputSerial = new File("/Users/Jonny/Documents/Timbre/Serial/Committee/Comm10R4N100E300.ser");
 		TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns, verbose);
-		int runCount = 16;
-		Committee committee = createCommittee(testPatterns, runCount, 100, 400, verbose);
-		
-		committee.testPatterns(testPatterns.getTrainingPatterns());
-		committee.testPatterns(testPatterns.getTestingPatterns());
-		committee.testPatterns(testPatterns.getValidationPatterns());
+		int runCount = 4;
+		Committee committee = createCommittee(testPatterns, runCount, 100, 300, verbose);
+		ConfusionMatrix cm = committee.testPatterns(testPatterns.getTrainingPatterns());
+		cm.makeGraph();
 		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds");
 		Serialize.serialize(committee, outputSerial);
 		

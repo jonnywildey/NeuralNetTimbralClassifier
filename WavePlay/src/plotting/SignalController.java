@@ -5,7 +5,7 @@ import javax.swing.*;
 
 import riff.Signal;
 
-
+/**Controller for plotting wave signals **/
 public class SignalController {
 	
 	private Dimension size;

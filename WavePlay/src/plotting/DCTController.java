@@ -9,7 +9,7 @@ import waveAnalysis.FFT;
 import waveAnalysis.FFTBox;
 import waveAnalysis.FrameFFT;
 
-
+/** Controller for generating usable DCT graphs **/
 public class DCTController {
 	
 	private Dimension size;
@@ -54,7 +54,6 @@ public class DCTController {
 		frame.setBounds(winSize.width, 0, winSize.width, winSize.height);
 		frame.setSize(winSize);
 		//Variables
-		//String[] names = new String{""}; 
 		String[] axisLabels = {"DB", "Frequency (log2)"};
 		frame.getContentPane().add(new DCTGraph(table, winSize, axisLabels));
 		//frame.pack();
