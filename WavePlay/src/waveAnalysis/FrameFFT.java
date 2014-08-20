@@ -82,12 +82,23 @@ public class FrameFFT extends TransformComponent{
 	public void makeGraph() {
 		makeGraph(40, 20000, 600, 400);
 	}
+	
+	/**Quick normalised frequency response graph **/
+	public static void makeGraph(FFTBox fftbox, Signal signal) {
+		makeGraph(fftbox, signal, 40, 20000, 600, 400);
+	}
+	
 	/**Quick normalised frequency response graph with filter options**/
 	public void makeGraph(int filterFrom, int filterTo, int width, int height) {
-		
-		FFTController sc = new FFTController(FFTBox.logarithmicFreq(FFTBox.filter(
-						FFTBox.convertTableToDecibels(this.signal, this.fftBox), 
-						filterFrom, filterTo)), width, height);
+		FrameFFT.makeGraph(this.getFFTBox(), this.signal, filterFrom, filterTo, width, height);
+	}
+	
+	/**Quick normalised frequency response graph with filter options**/
+	public static void makeGraph(FFTBox fftbox, Signal signal, int filterFrom, int filterTo, int width, int height) {
+		FFTBox nb = FFTBox.convertTableToDecibels(signal, fftbox);
+		nb = FFTBox.filter(nb, filterFrom, filterTo);
+		nb = FFTBox.logarithmicFreq(nb);
+		FFTController sc = new FFTController(nb, width, height);
 		sc.makeChart();
 	}
 

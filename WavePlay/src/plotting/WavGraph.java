@@ -29,6 +29,7 @@ public class WavGraph extends PlotGraph {
 	@Override
 	/**Main draw Method **/
 	public void drawBar(Graphics2D g2d) {
+		whiteBackground(g2d);
 		drawLines(g2d);
 		// the wavs
 		// System.out.println("widthness" + widthness);

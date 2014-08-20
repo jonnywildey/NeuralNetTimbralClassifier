@@ -554,6 +554,34 @@ public class ArrayMethods {
 		return sb.toString();
 	}
 	
+	/**Represent 2d array as String **/
+	public static String toString(String[][] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * dd[0].length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+			//sb.append("{");
+			for (int j = 0; j < dd[i].length; ++j) {
+				sb.append(dd[i][j]);
+				if (j != dd[i].length - 1) {
+					sb.append(",");
+				}
+				
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+	
+	/**Represent 2d array as String **/
+	public static String toString(String[] dd) {
+		StringBuilder sb = new StringBuilder(dd.length * dd.length * 15);
+		for (int i = 0; i < dd.length; ++i) {
+				sb.append(dd[i]);
+				sb.append(",");
+		}
+		sb.append("\n");
+		return sb.toString();
+	}
+	
 	/**Represent array as String **/
 	public static String toString(double[] dd) {
 		StringBuilder sb = new StringBuilder(dd.length * 15);
@@ -695,6 +723,14 @@ public class ArrayMethods {
 			sb.append("\n");
 		}
 		return sb.toString();
+	}
+
+	public static String[] reverse(String[] strings) {
+		String[] ns = new String[strings.length];
+		for (int i = 0; i < strings.length; ++i) {
+			ns[i] = strings[strings.length - 1 - i];
+		}
+		return ns;
 	}
 
 

@@ -48,12 +48,25 @@ public class WaveReader {
 		
 		
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/log.txt"));
-		String f1 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeGuit.wav";
-		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeWav/PracticeSil.wav";
+		String f1 = "/Users/Jonny/Documents/Timbre/Samples/Marimba/Marimba3Vel90FSharp1.wav";
+		//f1 = "/Users/Jonny/Documents/Timbre/Samples/Combine/Comb5/Cello2Vel120FSharp1Harp2Vel120C4.wav";
+		String f2 = "/Users/Jonny/Documents/Timbre/Samples/Marimba/Marimba3Vel90C1.wav";
+		String f3 = "/Users/Jonny/Documents/Timbre/Samples/Marimba/Marimba3Vel90FSharp2.wav";
+		String f4 = "/Users/Jonny/Documents/Timbre/Samples/Marimba/Marimba3Vel90C2.wav";
+		String f5 = "/Users/Jonny/Documents/Timbre/Samples/Marimba/Marimba3Vel90FSharp3.wav";
+		String f6 = "/Users/Jonny/Documents/Timbre/Samples/Marimba/Marimba3Vel90C3.wav";
+		String f7 = "/Users/Jonny/Documents/Timbre/Samples/Marimba/Marimba3Vel90FSharp4.wav";
+		String f8 = "/Users/Jonny/Documents/Timbre/Samples/Marimba/Marimba3Vel90C4.wav";
+
+		String[] strings = new String[]{f1,f2,f3,f4, f5, f6, f7, f8};
 		//String f2 = "/Users/Jonny/Documents/Timbre/PracticeANorm.wav";
-		Wave wr1 = new Wave(f1);
+		Wave wr1 = null;
+		Signal s1 = null;
+		Signal s2 = null;
+		int num = 50;
+		double[][] vals = new double[strings.length * num][];
 		//WaveChunk wr2 = new WaveChunk(f2);
-		Log.d(wr1.toStringRecursive());
+		
 		//Log.d(wr2.toStringRecursive());
 		//Signal s1 = Gen.sineSweep(200, 500, 100000, -3, 44100, 16);
 		//s1 = Gen.pinkNoise(100000, -3, 44100, 16);
@@ -61,11 +74,41 @@ public class WaveReader {
 		//Signal s1 = Gen.silence(200000, 44100, 16);
 
 		//Signal s1 = wr1.getSignals();
-		Signal s1 = wr1.getSignals();
-		DCT ft = new DCT(s1);
-		ft.analyse();
+		for (int i = 0; i < strings.length; ++i) {
+			wr1 = new Wave(strings[i]);
+			s1 = wr1.getSignals();
+			for (double j = 0; j < num; ++j) {
+				s2 = Pitch.pitchShift(s1, j / 5);
+				//s2 = Gain.volume(s2, ((i * num) + j) * -1 );
+				vals[(int) ((num * i) + j)] = s2.getSignal()[0];
+			}
+		}
+		Signal s5 = new Signal(vals, 24, 44100);
+		FFT ft = new FFT(s5, 8192);
+		FFTBox fb = ft.analyseMultiChannel();
+		fb = FFTBox.filter(fb, 40, 20000);
+		ft.makeGraph(40, 20000, 1200, 600);
+		
+		s1 = wr1.getSignals();
+		FrameFFT fft = new FrameFFT(s1, 4096);
+		FFTBox dd = fft.analyse(20, 20000);
+		fft.makeGraph(40, 20000, 800, 600);
+		s1 = Gain.normalise(s1);
+		s1 = Gain.getMid(s1);
+		s1.makeGraph();
+		
+		dd = FFTBox.getSumTable(dd, 10);
+		dd.exportToCSV(new File("/Users/Jonny/Documents/Timbre/sumtable.csv"));
+		dd = FFTBox.getBarkedSubset(dd);
+		dd.exportToCSV(new File("/Users/Jonny/Documents/Timbre/barkedtable.csv"));
+		//Log.d(ArrayStuff.arrayToString(dd));
+		dd = FFTBox.normaliseTable(dd, 10);
+		fb.exportToCSV(new File("/Users/Jonny/Documents/Timbre/lotsofocts.csv"));
+		
+		//FrameFFT.makeGraph(fb, s1, 80, 20000, 800, 600);
+		
+		//fb = fb.getSumTable(fb, 7);
 
-		ft.makeGraph(80, 20000, 800, 600);
 		//Signal s1 = wr1.getSignals();
 		//s1 = EQFilter.highPassFilter(s1, 120, 1);
 		//s1 = Gain.normalise(s1);
@@ -79,7 +122,7 @@ public class WaveReader {
 		
 		
 		//4096 works well
-		FrameFFT fft = new FrameFFT(s1, 4096);
+		//FrameFFT fft = new FrameFFT(s1, 4096);
 
 		//dd = FrameFFT.getSumTable(dd);
 		//wer.writeFile(new File("/Users/Jonny/Documents/Timbre/PracticeWav/PA.wav"));

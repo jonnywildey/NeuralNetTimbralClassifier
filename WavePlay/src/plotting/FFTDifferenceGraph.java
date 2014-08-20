@@ -50,6 +50,7 @@ public class FFTDifferenceGraph extends PlotGraph {
 	
 	@Override
 	public void drawBar(Graphics2D g2d) {
+		whiteBackground(g2d);
 		//Y axis
 		g2d.drawLine(offsetSize.width, heightness, offsetSize.width, offsetSize.height);
 		//X axis

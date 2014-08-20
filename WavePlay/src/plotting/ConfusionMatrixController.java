@@ -18,7 +18,7 @@ public class ConfusionMatrixController {
 	private ConfusionMatrix confusionMatrix;
 	
 	public ConfusionMatrixController(ConfusionMatrix confusionMatrix) {
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.size = new Dimension(600, 560);
 		this.confusionMatrix = confusionMatrix;
 	}

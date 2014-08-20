@@ -54,6 +54,25 @@ public class FFT extends TransformComponent {
 		return this.fftBox;
 	}
 	
+	/** For multi-channel implementation **/
+	private FFTBox analyse(double[] amplitudes) {
+		this.cValues = cfft(Complex.doubleToComplex(ArrayMethods.extend(
+				amplitudes, (int) this.frameSize)));
+		makeFromValues();
+		return this.fftBox;
+	}
+	
+	/** Multi-channel implementation of FFT analysis**/
+	public FFTBox analyseMultiChannel() {
+		double[][] vals = this.signal.getSignal();
+		FFTBox[] fb = new FFTBox[vals.length];
+		for (int i = 0;i < fb.length; ++i) {
+			fb[i] = analyse(vals[i]);
+		}
+		this.fftBox = FFTBox.combine(fb);
+		return this.fftBox;
+	}
+	
 	/** updates magnitudes etc. from cValues **/
 	protected void makeFromValues() {
 		this.fftBox = new FFTBox(

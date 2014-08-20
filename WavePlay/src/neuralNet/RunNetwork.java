@@ -1,6 +1,9 @@
 package neuralNet;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,9 +14,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import com.matrix.ConfusionMatrix;
 
 import filemanager.CSVReader;
+import filemanager.HTML;
 import filemanager.Log;
 import filemanager.Serialize;
 
@@ -25,22 +32,56 @@ public class RunNetwork {
 		double start = System.currentTimeMillis();
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/RunNN.Log"));
 		//Make Iris data
-		boolean verbose = false;
+		boolean verbose = true;
 		long seed = System.currentTimeMillis();
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/iris.float.txt", verbose, seed);
 		//TestPatterns testPatterns = getTestPatterns("/Users/Jonny/Documents/Timbre/NN/2BitXOR.txt", verbose, seed);
 		//String serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombPatterns.ser";
 		//TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns);
 		String serialPatterns = "/Users/Jonny/Documents/Timbre/WaveCombExtraBarkPatterns.ser";
-		File outputSerial = new File("/Users/Jonny/Documents/Timbre/Serial/Committee/Comm10R4N100E300.ser");
-		TestPatterns testPatterns = getWavePatternsSerial(seed, serialPatterns, verbose);
-		int runCount = 4;
-		Committee committee = createCommittee(testPatterns, runCount, 100, 300, verbose);
+		File outputSerial = new File("/Users/Jonny/Documents/Timbre/Serial/MultipleNeurons/10Multiple.ser");
+		WavePatterns wavePatterns = getWavePatterns();
+		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
+		//TestPatterns testPatterns = getWavePatternsSerial(System.currentTimeMillis(), serialPatterns,verbose);
+		//wavePatterns = null;
+		int runCount = 1;
+		MultiLayerNet mn = config(new MultiLayerNet(), testPatterns, 400, verbose, 1256l, 65488l);
+		try {
+			mn.runEpoch();
+			mn.runTestPatterns();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds");
+	}
+
+	protected static void testCommittee(TestPatterns testPatterns,
+			Committee committee) {
 		ConfusionMatrix cm = committee.testPatterns(testPatterns.getTrainingPatterns());
 		cm.makeGraph();
-		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds");
-		Serialize.serialize(committee, outputSerial);
-		
+		cm = committee.testPatterns(testPatterns.getValidationPatterns());
+		cm.makeGraph();
+		cm = committee.testPatterns(testPatterns.getTestingPatterns());
+		cm.makeGraph();
+	}
+
+	protected static void runMultipleNeuron(TestPatterns testPatterns,
+			int runCount, boolean verbose) {
+		ManyNets mN1 = new ManyNets(null, runCount, 1, testPatterns, verbose);
+		mN1.even = true;
+		ManyNets mN2 = new ManyNets(null, runCount, 2, testPatterns, verbose);
+		mN2.even = false;
+		ManyNets[] mn = new ManyNets[]{mN1, mN2};
+		ExecutorService threadPool = Executors.newFixedThreadPool(4);
+		// define your jobs somehow
+		for (ManyNets job : mn) {
+		    // under the covers this creates a FutureTask instance
+		    Future future = threadPool.submit(job);
+		    // save the future if necessary in a collection or something
+		}
+		// once we have submitted all jobs to the thread pool, it should be shutdown
+		threadPool.shutdown();
 	}
 	
 	/** MultiThreaded committee generation. generates a thread for every single run count, 
@@ -163,12 +204,30 @@ public class RunNetwork {
 			String serialPatterns, boolean verbose) {
 		WavePatterns wavePatterns = (WavePatterns) Serialize.getFromSerial(
 				serialPatterns);
-		wavePatterns.reduceScale(2); //added
+		//wavePatterns.reduceScale(2); //added
 		if (verbose) {
 			Log.d("Pattern size: " + wavePatterns.patterns.length);
 		}
 		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
 		return testPatterns;
+	}
+	
+	public static WavePatterns getWavePatterns() {
+		WavePatterns wp1 = (WavePatterns) Serialize.getFromSerial("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS1.ser");
+		Log.d("serialised");
+		Log.d(wp1.patterns.length + " " + wp1.patterns[0].getInputCount());
+		WavePatterns wp2 = (WavePatterns) Serialize.getFromSerial("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS2.ser");
+		Log.d("serialised");
+		Log.d(wp2.patterns.length + " " + wp2.patterns[0].getInputCount());
+		WavePatterns wp3 = (WavePatterns) Serialize.getFromSerial("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS3.ser");
+		Log.d("serialised");
+		Log.d(wp3.patterns.length + " " + wp3.patterns[0].getInputCount());
+		WavePatterns wp4 = (WavePatterns) Serialize.getFromSerial("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS4.ser");
+		Log.d("serialised");
+		Log.d(wp4.patterns.length + " " + wp4.patterns[0].getInputCount());
+		
+		WavePatterns wp = WavePatterns.combinePatterns(wp1,wp2,wp3,wp4);
+		return wp;
 	}
 	
 	/**Config settings for MLN **/
@@ -185,7 +244,7 @@ public class RunNetwork {
 		nn.initialiseNeurons();
 		nn.setVerbose(verbose);
 		nn.setAcceptableErrorRate(0.1d);
-		nn.setMaxEpoch(500);
+		nn.setMaxEpoch(100);
 		
 		nn.initialiseRandomWeights(seed2);
 		nn.setShuffleTrainingPatterns(true, seed3);

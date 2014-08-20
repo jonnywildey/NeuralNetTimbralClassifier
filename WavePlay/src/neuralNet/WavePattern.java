@@ -1,6 +1,7 @@
 package neuralNet;
 
 import java.io.File;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ import riff.Wave;
  * pattern to the Wave file it came from
  *
  */
-public class WavePattern extends Pattern{
+public class WavePattern extends Pattern implements Serializable{
 	
 	private static final long serialVersionUID = -1749577429354984802L;
 	public String instrument;

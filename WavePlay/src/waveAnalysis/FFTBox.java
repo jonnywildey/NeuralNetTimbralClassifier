@@ -1,9 +1,12 @@
 package waveAnalysis;
 
+import java.io.File;
+
 import riff.Signal;
 import waveProcess.Gain;
 import waveProcess.Pitch;
 import filemanager.ArrayMethods;
+import filemanager.CSVWriter;
 import filemanager.Log;
 
 /** Object for representing the data from Fourier Transforms. Would have called
@@ -122,13 +125,15 @@ public class FFTBox {
 	public static FFTBox convertTableToDecibels(Signal s, FFTBox fftBox) {
 		double[][] table = fftBox.getTable();
 		double max = Gain.amplitudeToDecibel(s.getMaxAmplitude());
-		//Log.d(max);
 		double[][] nt = new double[table.length][table[0].length];
+		double min = Gain.amplitudeToDecibel(s.findSmallestAmplitude());
 		nt[0] = table[0]; //freqrrow
 		for (int i = 1; i < table.length; ++i) { //skip first column
 			for (int j = 0; j < table[i].length; ++j) {
 				nt[i][j] = Gain.amplitudeToDecibel(table[i][j]) - max;
-				//Log.d(table[i][j]);
+				if (nt[i][j] == Double.NEGATIVE_INFINITY) {
+					nt[i][j] = min - max;
+				}
 			}
 		}
 		return new FFTBox(nt);
@@ -335,13 +340,38 @@ public class FFTBox {
 	}
 	
 	/** Combines the frequency row and values into one table **/
-	protected static double[][] combine(double[] freqRow, double[][] values) {
+	protected static double[][] combineFreqRowAndValues(double[] freqRow, double[][] values) {
 		double[][] nt = new double[values.length + 1][];
 		nt[0] = freqRow;
 		for (int i = 1; i < nt.length; ++i) {
 			nt[i] = values[i - 1];
 		}
 		return nt;
+	}
+	
+	/** Combines multiple FFT boxes into one. Assumes freq row is the same for all.
+	 * **/
+	protected static FFTBox combine(FFTBox... fftBoxes) {
+		// get overall values length
+		int length = 0;
+		for (int i = 0; i < fftBoxes.length; ++i) {
+			length += fftBoxes[i].getValues().length;
+		}
+		//insert values
+		double[][] values = new double[length + 1][];
+		//freqRow. Assume first freqBox is good
+		values[0] = fftBoxes[0].getFreqRow();
+		double[][] row = null;
+		int c = 1;
+		for (int i = 0; i < fftBoxes.length; ++i) {
+			row = fftBoxes[i].getValues();
+			for (int j = 0; j < row.length; ++j) {
+				values[c] = row[j];
+				c++;
+			}
+		}
+		FFTBox fb = new FFTBox(values);
+		return fb;
 	}
 
 	/** basic noise cancelling. Also removes first one of array 
@@ -357,6 +387,14 @@ public class FFTBox {
 		}
 		//Log.d(Arrays.deepToString(nt));
 		return new FFTBox(nt, fftBox);
+	}
+	
+	public void exportToCSV(File file) {
+		CSVWriter csvWriter = new CSVWriter(file.getAbsolutePath());
+		if (this.getValues() != null) {
+			//flip so excel doesn't complain
+			csvWriter.writeArraytoFile(ArrayMethods.flip(this.getTable()));
+		}
 	}
 	
 	public String toString() {

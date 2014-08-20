@@ -58,6 +58,7 @@ public class SignalGraph extends PlotGraph {
 	@Override
 	/** Main draw function **/
 	public void drawBar(Graphics2D g2d) {
+		whiteBackground(g2d);
 		drawLines(g2d);
 		// the wavs
 		drawValues(g2d);

@@ -2,6 +2,7 @@ package plotting;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -100,16 +101,22 @@ public class ConfusionMatrixGraph extends JPanel {
 		int heightAlign = (int) (((double) (height)) / 2d);
 		g2d.drawString(str, x + widthAlign, y + heightAlign);
 	}
+	
+	protected void whiteBackground(Graphics2D g2d) {
+		g2d.setFont(new Font("Helvetica", Font.BOLD,  22));
+		g2d.setBackground(Color.WHITE);
+		g2d.clearRect(0, 0, this.size.width, this.size.height);
+	}
 
 	/** Draw the actual matrix **/
 	public void drawMatrix(Graphics2D g2d) {
+		whiteBackground(g2d);
 		int squareWidth = genSquareWidth();
 		int squareHeight = genSquareHeight();
 		int xStart = 0;
 		int yStart = 0;
 		Color backCol = backgroundColor();
 		//
-		g2d.setFont(g2d.getFont().deriveFont(14f));
 
 		for (int i = 0; i < confusionMatrix.getSize(); ++i) {
 			for (int j = 0; j < confusionMatrix.getSize(); ++j) {

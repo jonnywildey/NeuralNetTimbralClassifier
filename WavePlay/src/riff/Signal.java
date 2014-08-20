@@ -1,5 +1,6 @@
 package riff;
 
+import filemanager.Log;
 import plotting.SignalController;
 import plotting.WavController;
 
@@ -9,6 +10,7 @@ public class Signal {
 	public int bit;
 	private int sampleRate;
 	
+	/**Construct signal with amplitudes, bitrate and sample rate **/
 	public Signal(double[][] signal, int bit, int sampleRate) {
 		this.signal = signal;
 		this.bit = bit;
@@ -27,6 +29,21 @@ public class Signal {
 	 */
 	public double getMinAmplitude() {
 		return  Math.pow(2, this.bit - 1) * -1;
+	}
+	
+	/** Find smallest value of signal (that isn't 0) **/
+	public double findSmallestAmplitude() {
+		double min = Double.MAX_VALUE;
+		double abVal = 0;
+		for (double[] row : this.signal) {
+			for (double val : row) {
+				abVal = Math.abs(val);
+				if (abVal < min & abVal != 0) {
+					min = abVal;
+				}
+			}
+		}
+		return min;
 	}
 	
 	public void makeGraph() {

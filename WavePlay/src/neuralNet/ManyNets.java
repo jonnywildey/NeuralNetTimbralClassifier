@@ -73,10 +73,10 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 	
 	public MultiLayerNet[][] tryDifferentLayers(int runCount, TestPatterns testPatterns, 
 			boolean verbose, boolean even) {
-		//int[] layerOneSize = new int[]{1,5,10,15,20,30,40,50,60,70,80,90,100,110,120,150,160,200,300,400};
+		int[] layerOneSize = new int[]{1,5,10,15,20,30,40,50,60,70,80,90,100,110,120,150,160,200,300,400};
 		//int[] layerOneSize = new int[]{40,50,60};
 		//int[] layerOneSize = new int[]{400,800,1600, 3200};
-		int[] layerOneSize = new int[]{50, 60};
+		//int[] layerOneSize = new int[]{50, 60};
 		MultiLayerNet[][] mlns = new MultiLayerNet[layerOneSize.length / 2][runCount];
 		if (even) {
 		for (int i = 0; i < mlns.length; i++) {

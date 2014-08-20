@@ -1,5 +1,6 @@
 package filemanager;
 
+import java.awt.Dialog;
 import java.io.File;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -48,6 +49,14 @@ public class Log {
 			logger.fine(str);;
 		}
 		System.out.println(str);
+	}
+	
+	/**Generate popup of message **/
+	public static void popUp(String str) {
+		if (init) {
+			logger.fine(str);;
+		}
+		HTML.winDisplay(str);
 	}
 	
 	/**Standard debug log **/

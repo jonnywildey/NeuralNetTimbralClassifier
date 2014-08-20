@@ -1,23 +1,31 @@
 package waveProcess;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.regex.PatternSyntaxException;
 
 import javax.naming.InvalidNameException;
 
-import neuralNet.NNUtilities;
+
+
+
+
+
+
+
+
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Output;
+
 import neuralNet.Pattern;
 import neuralNet.RunNetwork;
 import neuralNet.WavePattern;
 import neuralNet.WavePatterns;
 import filemanager.ArrayMethods;
-import filemanager.CSVString;
-import filemanager.HexByte;
 import filemanager.Log;
 import filemanager.Serialize;
 import riff.*;
@@ -26,24 +34,71 @@ import waveAnalysis.FrameFFT;
 import waveAnalysis.SampleRateException;
 
 /** Class for transforming samples and preparing them for neural net **/
-public class Samples {
+public class Conversion {
 	
 	public static void main(String[] args) {
-		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
+		/** Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
 		Long start = System.currentTimeMillis();
 		File[] batchDirs = {new File("/Users/Jonny/Documents/Timbre/Samples/Cello"),
 				new File("/Users/Jonny/Documents/Timbre/Samples/Harp"),
 				new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"),
 				new File("/Users/Jonny/Documents/Timbre/Samples/Trombone")};
 		File batchFolder = new File("/Users/Jonny/Documents/Timbre/Samples/Batch");
-		File combineDir = new File("/Volumes/Rickay/Timbre/Combine");
+		File combineDir = new File("/Users/Jonny/Documents/Timbre/Samples/Comb1");
 		//batchFromFolders(batchFolder, batchFiles); 
 		//batchCombine(combineDir, batchDirs);
-		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WaveComb40ExpPatterns.ser");
-		WavePatterns wp = new WavePatterns(new File("/Users/Jonny/Documents/Timbre/Samples/Test"));
+		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS5.ser");
+		WavePatterns wp = new WavePatterns(new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb5"));
 		WavePatterns wavePatterns = regenerateAndBatchPatterns(wp, waveSerial);
-		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds");
-		//RunNetwork.main(new String[]{""});
+		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds"); **/
+		
+		
+		WavePatterns wp1 = (WavePatterns) Serialize.getFromSerial("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS1.ser");
+		Log.d("serialised");
+		WavePatterns wp2 = (WavePatterns) Serialize.getFromSerial("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS2.ser");
+		Log.d("serialised");
+		WavePatterns wp3 = (WavePatterns) Serialize.getFromSerial("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS3.ser");
+		Log.d("serialised");
+		WavePatterns wp4 = (WavePatterns) Serialize.getFromSerial("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS4.ser");
+		Log.d("serialised");
+		WavePatterns wp5 = (WavePatterns) Serialize.getFromSerial("/Users/Jonny/Documents/Timbre/WaveLOADSLOADS5.ser");
+		Log.d("serialised");
+		WavePatterns wp = WavePatterns.combinePatterns(wp1,wp2,wp3,wp4,wp5);
+		
+		Output buffer;
+		try {
+			Kryo kryo = new Kryo();
+			kryo.register(WavePatterns.class);
+			kryo.register(WavePattern.class);
+			buffer = new Output(new FileOutputStream("/Users/Jonny/Documents/Timbre/WaveLOADSLOADSComb.kser"));
+			kryo.writeObject(buffer, wp);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+
+		// ...
+		
+		// ...
+		//SomeClass someObject = kryo.readObject(buffer, SomeClass.class);
+		//Serialize.serialize(wp, new File("/Users/Jonny/Documents/Timbre/WaveLOADSLOADSComb.ser"));
+		
+		/**Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
+		Long start = System.currentTimeMillis();
+		File[] batchDirs = {new File("/Users/Jonny/Documents/Timbre/Samples/Cello"),
+				new File("/Users/Jonny/Documents/Timbre/Samples/Harp"),
+				new File("/Users/Jonny/Documents/Timbre/Samples/Marimba"),
+				new File("/Users/Jonny/Documents/Timbre/Samples/Trombone")};
+		File batchFolder = new File("/Volumes/KINGSTON/Timbre/Samples/Batch");
+		File combineDir = new File("/Users/Jonny/Documents/Timbre/Samples/Comb1");
+
+		File waveSerial = new File("/Users/Jonny/Documents/Timbre/WavePatternsTest2.ser");
+		generatePatterns(batchFolder, waveSerial);
+
+		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds");  **/
+		
 		
 	}
 	
@@ -182,6 +237,17 @@ public class Samples {
 		return wav;
 	}
 	
+	public static Pattern signalToPatternMono(Signal s) {
+		FrameFFT fft = new FrameFFT(s, 4096);
+		FFTBox dd = fft.analyse(20, 20000);
+		dd = FFTBox.getSumTable(dd, 10);
+		dd = FFTBox.getBarkedSubset(dd);
+		dd = FFTBox.normaliseTable(dd, 10);
+		double[] arr = {0,0,0,1};
+		Pattern p = new Pattern(ArrayMethods.doubleToArrayList(dd.getValues()[0]), ArrayMethods.doubleToArrayList(arr), 1);
+		return p;
+	}
+	
 	
 	/** Performs FFT analysis and attaches to a data chunk **/
 	public static Chunk getFFTData(Signal s) {
@@ -315,7 +381,7 @@ public class Samples {
 	public static WavePatterns generatePatterns(File batchFolder, File fileOut) {
 		WavePatterns wp = new WavePatterns(batchFolder);
 		wp.wavMetaToPattern();
-		Log.d(wp.toString());
+		//Log.d(wp.toString());
 		Serialize.serialize(wp, fileOut.getAbsolutePath());
 		Log.d("serialised!");
 		return wp;
@@ -344,7 +410,7 @@ public class Samples {
 	/** generates and serialises and return wave patterns **/
 	public static WavePatterns regenerateAndBatchPatterns(WavePatterns wp, File fileOut) {
 		WavePatterns np = WavePatterns.genWaves(wp, 4);
-		Log.d(np.toString());
+		//Log.d(np.toString());
 		Serialize.serialize(np, fileOut.getAbsolutePath());
 		Log.d("serialised!");
 		return wp;

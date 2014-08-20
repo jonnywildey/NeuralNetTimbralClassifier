@@ -1,7 +1,12 @@
 package neuralNet;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import riff.Signal;
+import riff.Wave;
+import waveProcess.Conversion;
 
 import com.matrix.ConfusionMatrix;
 
@@ -28,6 +33,47 @@ public class Committee implements Serializable {
 	/** Run patterns against the committee **/
 	public int[] runPatterns(Pattern[] p) {
 		return runPatterns(this.nets, p);
+	}
+	
+	/** Runs a wave through the committee **/
+	public int runWave(File file) {
+		Wave wave = new Wave(file);
+		return runSignal(wave.getSignals());
+	}
+	
+	/** Runs a wave through the Committee **/
+	public int runWave(Wave wave) {
+		return runSignal(wave.getSignals());
+	}
+	
+	/** Runs a signal through the Committee **/
+	public int runSignal(Signal s) {
+		//find out input amount
+		int input = this.nets[0].getTestPatterns().getTestingPatterns().get(0).inputArray.size();
+		Pattern p = Conversion.signalToPatternMono(s);
+		int answer = this.runPattern(p);
+		return answer;
+	}
+	
+	/** Runs a wave through the committee **/
+	public String runWave(File file, WavePatterns wp) {
+		Wave wave = new Wave(file);
+		return runSignal(wave.getSignals(), wp);
+	}
+	
+	/** Runs a wave through the Committee **/
+	public String runWave(Wave wave, WavePatterns wp) {
+		return runSignal(wave.getSignals(), wp);
+	}
+	
+	/** Runs a signal through the Committee **/
+	public String runSignal(Signal s, WavePatterns wp) {
+		//find out input amount
+		Pattern p = Conversion.signalToPatternMono(s);
+		int answer = this.runPattern(p);
+		//Log.d(answer);
+		String ans = wp.getInstrumentFromTargetNumber(answer);
+		return ans;
 	}
 	
 	/** Run patterns against the committee **/

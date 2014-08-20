@@ -89,14 +89,14 @@ public class HTML {
 	  public static void makeFrame(JScrollPane window) {
 		//Create and set up the window.
 	        JFrame frame = new JFrame(window.getName());
-	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 	        //Add content to the window.
 	        frame.add(window);
 	        frame.setLocationRelativeTo(null);
 	        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	        //frame.setBounds((int)(screenSize.getWidth() / 6), ((int)screenSize.getHeight() / 6), (int)(screenSize.getWidth() * 0.6), (int)(screenSize.getHeight() * 0.6));
-	      frame.setBounds((int)(screenSize.getWidth() / 20), ((int)screenSize.getHeight() / 20), (int)(screenSize.getHeight() * 0.5), (int)(screenSize.getHeight() * 0.5));
+	      frame.setBounds((int)(screenSize.getWidth() / 40), ((int)screenSize.getHeight() / 60), (int)(screenSize.getHeight() * 0.5), (int)(screenSize.getHeight() * 0.5));
 	        //Display the window.
 	        
 	        frame.setVisible(true);

@@ -96,6 +96,7 @@ public class MatthewsChart {
 
 		
 		public void drawBar(Graphics2D g2d) {
+			whiteBackground(g2d);
 			drawLines(g2d);
 			drawGuides(g2d, 5);
 			int c = 0;

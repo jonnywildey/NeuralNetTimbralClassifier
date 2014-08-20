@@ -72,6 +72,7 @@ public class FFTGraph extends PlotGraph {
 	@Override
 	/** Main drawing method **/
 	public void drawBar(Graphics2D g2d) {
+		whiteBackground(g2d);
 		double max = values[0][values[0].length - 1];
 		double min = values[0][0];
 		double num = max - min;

@@ -23,6 +23,7 @@ public class Pattern implements Serializable {
 		this.id = id;
 	}
 	
+	
 	public Pattern(ArrayList<Double> DoubleArray, ArrayList<Double> targetArray, Integer id) {
 		inputArray = new ArrayList<InputShell>();
 		for (Double f: DoubleArray) { //set inputshell array

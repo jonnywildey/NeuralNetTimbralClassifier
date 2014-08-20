@@ -18,7 +18,7 @@ import riff.Signal;
 import riff.Wave;
 import waveAnalysis.FFTBox;
 import waveAnalysis.FrameFFT;
-import waveProcess.Samples;
+import waveProcess.Conversion;
 import filemanager.ArrayMethods;
 import filemanager.CSVString;
 import filemanager.Log;
@@ -31,7 +31,6 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 	public File filePath;
 	public WavePattern[] patterns;
 	private String[] instruments;
-	//
 	public File[] files;
 	public String[] instrs;
 	
@@ -53,7 +52,17 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 		this.patterns = WavePattern.arrayListToArray(wavePatterns);
 	}
 	
-	
+	public String getInstrumentFromTargetNumber(int num) {
+		String ans = "";
+		//Log.d(ArrayMethods.toString(this.instruments));
+		for (int i = 0; i < this.instruments.length; ++i) {
+			if (num == i) {
+				ans = this.instruments[i];
+				break;
+			}
+		}
+		return ans;
+	}
 	
 	/** Reduces the size of all patterns input by 2^x **/
 	public void reduceScale(double twoToThePower) {
@@ -129,7 +138,7 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 			for (int j = 0; j < count; ++j) {
 				patterns[i * count + j] = new WavePattern(i, wave); //make pattern
 				patterns[i * count + j].inputArray = reFFT(
-						Samples.processSignalChain(pitchRand, noiseRand, hpRand, lpRand, signal));
+						Conversion.processSignalChain(pitchRand, noiseRand, hpRand, lpRand, signal));
 				//get instrumental outputs
 				instrs[i * count + j] = getInstrumentalOutputs(wave);
 				patterns[i * count + j].instrument = instrs[i * count + j];
@@ -145,15 +154,13 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 		FrameFFT fft = new FrameFFT(signals, 4096);
 		FFTBox dd = fft.analyse(20, 20000);
 		//fft.makeGraph();
-		//dd = FrameFFT.getExponentTable(dd, 0.78); //rate
 		dd = FFTBox.getSumTable(dd, 7);
 		dd = FFTBox.getHiResBarkedSubset(dd, 0.5);
-		//Log.d((dd.toString()));
+		//dd = FFTBox.getHiResBarkedSubset(dd, 0.5);
 		dd = FFTBox.normaliseTable(dd, 10);
 		return Pattern.doubleToInputShell(dd.getValues()[0]);
 	}
-
-
+	
 
 	protected ArrayList<InputShell> getInputs(String str) {
 		CSVString s = new CSVString(str);
@@ -194,13 +201,12 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 	private void getOutputs(String[] instrs) {
 		// convert to bitarray
 		String[][] targets = NNUtilities.getCount(instrs, true);
-		this.instruments = targets[0];
+		this.instruments = ArrayMethods.reverse(ArrayMethods.flip(targets)[0]);
 		double[][] bits = NNUtilities.createUniqueBits(targets.length);
 		//convert back
 		for (int i = 0; i < this.patterns.length; ++i) {
 			for (int j = 0; j < targets.length; ++j) {
 				if (instrs[i].equals(targets[j][0])) {
-					
 					patterns[i].targetArray = ArrayMethods.doubleToArrayList(bits[j]);
 					//Log.d(patterns[i].toString());
 				}
@@ -358,7 +364,6 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 		try {
 			threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		WavePatterns comb = WavePatterns.combinePatterns(newWP);

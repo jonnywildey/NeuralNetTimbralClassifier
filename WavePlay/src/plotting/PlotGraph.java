@@ -158,6 +158,7 @@ public class PlotGraph extends JPanel {
 
 	/** draw values **/
 	public void drawBar(Graphics2D g2d) {
+		whiteBackground(g2d);
 		drawLines(g2d);
 		int c = 0;
 		for (long[] av : values) {
@@ -170,6 +171,12 @@ public class PlotGraph extends JPanel {
 			}
 			++c;
 		}
+	}
+
+	protected void whiteBackground(Graphics2D g2d) {
+		g2d.setBackground(Color.white);
+		g2d.clearRect(0, 0, this.size.width, this.size.height);
+		g2d.setColor(Color.black);
 	}
 
 }

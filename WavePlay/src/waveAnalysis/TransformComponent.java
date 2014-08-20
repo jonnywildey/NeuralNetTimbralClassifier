@@ -1,5 +1,7 @@
 package waveAnalysis;
 
+import java.io.File;
+
 import filemanager.ArrayMethods;
 import riff.Signal;
 
@@ -54,6 +56,8 @@ public abstract class TransformComponent {
 			return this.fftBox.toString();
 		}
 	}
+	
+	
 
 	public boolean hasAnalysed() {
 		return false;
