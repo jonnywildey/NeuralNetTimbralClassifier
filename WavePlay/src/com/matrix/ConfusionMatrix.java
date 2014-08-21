@@ -2,10 +2,10 @@ package com.matrix;
 
 import java.util.Arrays;
 
-import plotting.ConfusionMatrixController;
-import waveAnalysis.Statistics;
-import filemanager.Log;
-import neuralNet.NNFunctions;
+import com.filemanager.Log;
+import com.neuralNet.NNFunctions;
+import com.plotting.ConfusionMatrixController;
+import com.waveAnalysis.Statistics;
 
 /** Matrix for mapping classifications. Typically classification is row,
  * correct output is column **/
