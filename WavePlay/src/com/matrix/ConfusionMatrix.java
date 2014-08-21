@@ -2,9 +2,9 @@ package com.matrix;
 
 import java.util.Arrays;
 
-import com.filemanager.Log;
 import com.neuralNet.NNFunctions;
 import com.plotting.ConfusionMatrixController;
+import com.util.Log;
 import com.waveAnalysis.Statistics;
 
 /** Matrix for mapping classifications. Typically classification is row,

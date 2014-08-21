@@ -1,6 +1,6 @@
 package com.waveAnalysis;
 
-import com.filemanager.Log;
+import com.util.Log;
 
 class Complex {
 	public double re;

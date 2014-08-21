@@ -3,9 +3,9 @@ package com.neuralNet;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.plotting.MatthewsChart;
+import com.util.ArrayMethods;
+import com.util.Log;
 
 /** a little holder for errors **/
 public class CoefficientLogger implements Serializable {

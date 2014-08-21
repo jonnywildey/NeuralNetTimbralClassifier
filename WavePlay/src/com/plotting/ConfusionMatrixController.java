@@ -3,9 +3,9 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import com.filemanager.ArrayMethods;
 import com.matrix.ConfusionMatrix;
 import com.riff.Signal;
+import com.util.ArrayMethods;
 import com.waveAnalysis.FFT;
 import com.waveAnalysis.FFTBox;
 import com.waveAnalysis.FrameFFT;

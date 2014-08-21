@@ -1,6 +1,6 @@
 package com.neuralNet;
 
-import com.filemanager.ArrayMethods;
+import com.util.ArrayMethods;
 
 public class NNFunctions {
 

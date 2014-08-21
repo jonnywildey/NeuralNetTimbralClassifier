@@ -4,8 +4,8 @@ import java.util.Arrays;
 
 import javax.swing.*;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
+import com.util.ArrayMethods;
+import com.util.Log;
 import com.waveAnalysis.Statistics;
 
 /** Create a plot graph of Matthews coefficients **/

@@ -4,14 +4,14 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.matrix.ConfusionMatrix;
 import com.neuralNet.pattern.Pattern;
 import com.neuralNet.pattern.TestPatterns;
 import com.neuralNet.pattern.WavePatterns;
 import com.riff.Signal;
 import com.riff.Wave;
+import com.util.ArrayMethods;
+import com.util.Log;
 import com.waveProcess.Conversion;
 
 /** Class for combining multiple nets. Cannot be used for training **/

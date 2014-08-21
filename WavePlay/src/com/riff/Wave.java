@@ -3,11 +3,11 @@ package com.riff;
 import java.io.File;
 import java.util.ArrayList;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.ByteReader;
-import com.filemanager.HexByte;
-import com.filemanager.Log;
 import com.plotting.WavController;
+import com.util.ArrayMethods;
+import com.util.HexByte;
+import com.util.Log;
+import com.util.fileReading.ByteReader;
 
 public class Wave extends Chunk{
 	

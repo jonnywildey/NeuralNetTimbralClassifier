@@ -1,5 +1,8 @@
 package com.neuralNet;
 
+import com.neuralNet.layers.NeuralComponent;
+import com.neuralNet.layers.Neuron;
+
 /** Traversing Neurons became too complicated in multilayers */
 public class NeuronShell extends NeuralComponent {
 
@@ -14,7 +17,7 @@ public class NeuronShell extends NeuralComponent {
 	protected Neuron neuron;
 	
 	public Double getValue() {
-		return neuron.output;
+		return neuron.getOutput();
 	}
 	public Neuron getNeuron() {
 		return neuron;

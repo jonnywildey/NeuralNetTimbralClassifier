@@ -2,8 +2,8 @@ package com.riff;
 
 import javax.naming.InvalidNameException;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.HexByte;
+import com.util.ArrayMethods;
+import com.util.HexByte;
 
 
 /**A class for determining what information there is in an INFO chunk 

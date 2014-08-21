@@ -1,7 +1,11 @@
 package com.waveProcess;
 
-import com.filemanager.Log;
 import com.riff.Signal;
+import com.util.Log;
+import com.waveProcess.filters.BandPass;
+import com.waveProcess.filters.HighPass;
+import com.waveProcess.filters.LowPass;
+import com.waveProcess.filters.PeakEQ;
 
 public class EQFilter {
 

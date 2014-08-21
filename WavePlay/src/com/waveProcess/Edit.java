@@ -1,7 +1,7 @@
 package com.waveProcess;
 
-import com.filemanager.Log;
 import com.riff.Signal;
+import com.util.Log;
 import com.waveAnalysis.SampleRateException;
 
 public class Edit {

@@ -1,5 +1,7 @@
 package com.waveProcess;
 
+import com.waveProcess.filters.Filter;
+
 
 public class Notch extends Filter{
 	

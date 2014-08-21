@@ -1,10 +1,10 @@
 package com.waveAnalysis;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.plotting.DCTController;
 import com.plotting.FFTController;
 import com.riff.Signal;
+import com.util.ArrayMethods;
+import com.util.Log;
 
 public class DCT extends TransformComponent{
 	

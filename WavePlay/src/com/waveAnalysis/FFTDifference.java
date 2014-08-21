@@ -1,9 +1,9 @@
 package com.waveAnalysis;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.plotting.FFTController;
 import com.plotting.FFTDifferenceController;
+import com.util.ArrayMethods;
+import com.util.Log;
 
 /** Object for analysing the difference in values between
  * successive FFT windows

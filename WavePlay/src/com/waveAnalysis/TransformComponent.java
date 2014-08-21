@@ -2,8 +2,8 @@ package com.waveAnalysis;
 
 import java.io.File;
 
-import com.filemanager.ArrayMethods;
 import com.riff.Signal;
+import com.util.ArrayMethods;
 
 /** Abstract class for various signal transform components like FFT and DCT **/
 public abstract class TransformComponent {

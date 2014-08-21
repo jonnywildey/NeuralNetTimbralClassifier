@@ -6,9 +6,9 @@ import java.util.Collections;
 
 import javax.swing.*;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.riff.Signal;
+import com.util.ArrayMethods;
+import com.util.Log;
 import com.waveAnalysis.FFT;
 import com.waveAnalysis.FrameFFT;
 

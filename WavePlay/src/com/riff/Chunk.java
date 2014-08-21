@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 import javax.naming.InvalidNameException;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.HexByte;
-import com.filemanager.Log;
+import com.util.ArrayMethods;
+import com.util.HexByte;
+import com.util.Log;
 
 
 /** Basic RIFF type chunk object. In order to stop the whole thing being horribly confusing

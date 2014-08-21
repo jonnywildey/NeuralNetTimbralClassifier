@@ -19,8 +19,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="com.neuralNet.LayerStructure" project="WavePlay" 
-    file="/WavePlay/src/com/neuralNet/LayerStructure.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="com.neuralNet.layers.LayerStructure" project="WavePlay" 
+    file="/WavePlay/src/com/neuralNet/layers/LayerStructure.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="497" y="-422"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -28,8 +28,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="com.neuralNet.LayerList" project="WavePlay" 
-    file="/WavePlay/src/com/neuralNet/LayerList.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="com.neuralNet.layers.LayerList" project="WavePlay" 
+    file="/WavePlay/src/com/neuralNet/layers/LayerList.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="379" y="-323"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -37,8 +37,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="com.neuralNet.Neuron" project="WavePlay" 
-    file="/WavePlay/src/com/neuralNet/Neuron.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="5" language="java" name="com.neuralNet.layers.Neuron" project="WavePlay" 
+    file="/WavePlay/src/com/neuralNet/layers/Neuron.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="580" y="-210"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -64,8 +64,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="com.neuralNet.NeuralLayer" project="WavePlay" 
-    file="/WavePlay/src/com/neuralNet/NeuralLayer.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="com.neuralNet.layers.NeuralLayer" project="WavePlay" 
+    file="/WavePlay/src/com/neuralNet/layers/NeuralLayer.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="581" y="-320"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -82,8 +82,8 @@
       <operations public="false" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="com.neuralNet.InputShell" project="WavePlay" 
-    file="/WavePlay/src/com/neuralNet/InputShell.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="10" language="java" name="com.neuralNet.layers.InputShell" project="WavePlay" 
+    file="/WavePlay/src/com/neuralNet/layers/InputShell.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="306" y="-148"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" accessors="true" 
       visibility="true">      

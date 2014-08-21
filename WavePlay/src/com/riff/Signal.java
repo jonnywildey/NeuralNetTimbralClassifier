@@ -1,8 +1,8 @@
 package com.riff;
 
-import com.filemanager.Log;
 import com.plotting.SignalController;
 import com.plotting.WavController;
+import com.util.Log;
 
 /**Basic data holder for signals **/
 public class Signal {

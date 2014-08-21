@@ -2,9 +2,9 @@ package com.waveAnalysis;
 
 import java.util.Arrays;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.riff.Signal;
+import com.util.ArrayMethods;
+import com.util.Log;
 
 public class FrameBlurFFT extends FrameFFT{
 	

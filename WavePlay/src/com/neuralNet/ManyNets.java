@@ -3,9 +3,9 @@ package com.neuralNet;
 import java.io.File;
 import java.util.concurrent.Callable;
 
-import com.filemanager.CSVWriter;
-import com.filemanager.Log;
 import com.neuralNet.pattern.TestPatterns;
+import com.util.Log;
+import com.util.fileReading.CSVWriter;
 
 /** current dumping ground for any methods concerned
  * with running lots of nets at the same time

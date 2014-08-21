@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.neuralNet.pattern.Pattern;
+import com.util.ArrayMethods;
+import com.util.Log;
 
 
 /** Various utilities for helping to use data in Neural Networks **/

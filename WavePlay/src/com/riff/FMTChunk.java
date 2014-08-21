@@ -1,7 +1,7 @@
 package com.riff;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.HexByte;
+import com.util.ArrayMethods;
+import com.util.HexByte;
 
 /** Essentially the header chunk for the Wave file
  * Contains lots of format stuff **/

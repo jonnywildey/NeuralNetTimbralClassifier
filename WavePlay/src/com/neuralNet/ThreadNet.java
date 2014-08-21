@@ -3,8 +3,9 @@ package com.neuralNet;
 import java.io.File;
 import java.util.concurrent.Callable;
 
-import com.filemanager.Log;
+import com.neuralNet.layers.LayerStructure;
 import com.neuralNet.pattern.TestPatterns;
+import com.util.Log;
 
 /**Threadable MultiLayerNet **/
 public class ThreadNet implements Callable<MultiLayerNet> {

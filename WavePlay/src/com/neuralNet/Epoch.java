@@ -3,10 +3,13 @@ package com.neuralNet;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.filemanager.Log;
 import com.matrix.ConfusionMatrix;
+import com.neuralNet.layers.LayerList;
+import com.neuralNet.layers.NeuralLayer;
+import com.neuralNet.layers.Neuron;
 import com.neuralNet.pattern.Pattern;
 import com.neuralNet.pattern.WavePattern;
+import com.util.Log;
 
 public class Epoch {
 	protected ArrayList<Pattern> trainingPatterns;
@@ -103,7 +106,7 @@ public class Epoch {
 	public double[] getOutputs() {
 		double[] d = new double[this.neurons.getOutputCount()];
 		for (int i = 0; i < d.length; ++i) {
-			d[i] = this.neurons.getLastLayer().neurons.get(i).output;
+			d[i] = this.neurons.getLastLayer().neurons.get(i).getOutput();
 		}
 		return d;
 	}
@@ -187,9 +190,9 @@ public class Epoch {
 	/** add neuron outputs > 0.5 **/
 	public void addRounded(Pattern p, ConfusionMatrix cm) {
 		for (Neuron n : neurons.getLastLayer().neurons) {
-			int roundedOut = (int)Math.rint(n.output);
+			int roundedOut = (int)Math.rint(n.getOutput());
 			if (roundedOut == 1) {
-				cm.addToCell(n.id, p.getTargetNumber()); 
+				cm.addToCell(n.getId(), p.getTargetNumber()); 
 				//Neuron Row, Class Column
 			}
 		}
@@ -204,9 +207,9 @@ public class Epoch {
 		double max = 0;
 		int nid = 0;
 		for (Neuron n : neurons.getLastLayer().neurons) {
-			if (n.output > max) {
-					max = n.output;
-					nid = n.id;
+			if (n.getOutput() > max) {
+					max = n.getOutput();
+					nid = n.getId();
 			}
 		}
 		return nid;
@@ -217,9 +220,9 @@ public class Epoch {
 		double max = 0;
 		int nid = 0;
 		for (Neuron n : neurons.getLastLayer().neurons) {
-			if (n.output > max) {
-					max = n.output;
-					nid = n.id;
+			if (n.getOutput() > max) {
+					max = n.getOutput();
+					nid = n.getId();
 			}
 		}
 		return nid == p.getTargetNumber();

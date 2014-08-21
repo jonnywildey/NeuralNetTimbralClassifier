@@ -4,35 +4,41 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.filemanager.Log;
-import com.neuralNet.InputShell;
-import com.neuralNet.NeuralComponent;
+import com.neuralNet.layers.InputShell;
+import com.neuralNet.layers.NeuralComponent;
+import com.util.Log;
 import com.waveAnalysis.Statistics;
 
+/**Basic pattern for neural networks. Principally an input array and a target array **/
 public class Pattern implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1620481621127344275L;
-	//protected ArrayList<Double> inputArray;
 	private ArrayList<InputShell> inputArray;
-	protected ArrayList<Double> targetArray;
-	protected ArrayList<Double> errorList;
-	protected Integer id;
+	private ArrayList<Double> targetArray;
+	protected ArrayList<Double> errorList; 
+	protected Integer id; 
 	public File filePath; //if the pattern relates to some other object
 	
+	/** Default constructor. Not recommended **/
+	public Pattern() {
+		super();
+		this.id = -1;
+	}
+	
+	/** id constructor **/
 	public Pattern(int id) {
 		this.id = id;
 	}
 	
-	
-	public Pattern(ArrayList<Double> DoubleArray, ArrayList<Double> targetArray, Integer id) {
+	/** full parameter constructor. input, output, id **/
+	public Pattern(ArrayList<Double> doubleArray, ArrayList<Double> targetArray, Integer id) {
 		setInputArray(new ArrayList<InputShell>());
-		for (Double f: DoubleArray) { //set inputshell array
+		for (Double f: doubleArray) { //set inputshell array
 			getInputArray().add(new InputShell(f));
 		}
-		
-		this.targetArray = new ArrayList<Double>(targetArray);
+		this.setTargetArray(new ArrayList<Double>(targetArray));
 		this.errorList = new ArrayList<Double>();
 		this.id = id;
 	}
@@ -44,14 +50,16 @@ public class Pattern implements Serializable {
 	
 	/** return the target count **/
 	public int getOutputCount() {
-		return this.targetArray.size();
+		return this.getTargetArray().size();
 	}
 	
+	
+	/** return the target as an int rather than as an array. 
+	 * Only works with bit arrays **/
 	public int getTargetNumber() {
 		int answer = 999;
 		for (int i = 0; i < this.getInputArray().size(); ++i) {
-			if (targetArray.get(i) == 1) {
-				//System.out.println(i + " " + this.targetArray.toString());
+			if (getTargetArray().get(i) == 1) {
 				answer = i;
 				break;
 			}
@@ -59,16 +67,34 @@ public class Pattern implements Serializable {
 		return answer;
 	}
 	
+	/** Is there a target array? **/
+	public boolean isTargetArray() {
+		return (this.targetArray != null);
+	}
+	
+	/** Is there an input array? **/
+	public boolean isInputArray() {
+		return (this.inputArray != null);
+	}
+	
 	/**Comprehensible String representation of pattern.**/
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\nTraining Pattern id: " + this.id + "\ninputs:\n");
-		for (NeuralComponent i: getInputArray()) {
-			sb.append(Statistics.round(i.getValue(), 4) + "\t");
+		if (this.isInputArray()) {
+			for (NeuralComponent i: getInputArray()) {
+				sb.append(Statistics.round(i.getValue(), 4) + "\t");
+			}
+		} else {
+			sb.append("No input array!");
 		}
 		sb.append("\nTarget\n" );
-		for (Double i: targetArray) {
-			sb.append(Statistics.round(i, 4) + "\t"); //rounded
+		if (this.isTargetArray()) {
+			for (Double i: getTargetArray()) {
+				sb.append(Statistics.round(i, 4) + "\t"); //rounded
+			}
+		} else {
+			sb.append("No Target Array!");
 		}
 		sb.append("Number: ");
 		sb.append(getTargetNumber());
@@ -93,14 +119,24 @@ public class Pattern implements Serializable {
 		return al;
 	}
 
-
+	/** Return an arraylist of the input array **/
 	public ArrayList<InputShell> getInputArray() {
 		return inputArray;
 	}
 
-
+	/** Set the input array **/
 	public void setInputArray(ArrayList<InputShell> inputArray) {
 		this.inputArray = inputArray;
+	}
+
+	/** Get target array **/
+	public ArrayList<Double> getTargetArray() {
+		return targetArray;
+	}
+
+	/**Set target array **/
+	public void setTargetArray(ArrayList<Double> targetArray) {
+		this.targetArray = targetArray;
 	}
 	
 	

@@ -2,9 +2,9 @@ package com.waveAnalysis;
 
 import java.util.Arrays;
 
-import com.filemanager.ArrayMethods;
 import com.plotting.FFTController;
 import com.riff.Signal;
+import com.util.ArrayMethods;
 
 
 /**Bunch of FFTS and some utility functions for them **/

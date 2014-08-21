@@ -8,11 +8,6 @@ import java.util.Arrays;
 
 import javax.naming.InvalidNameException;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.ByteReader;
-import com.filemanager.CSVWriter;
-import com.filemanager.HexByte;
-import com.filemanager.Log;
 import com.plotting.PlotGraph;
 import com.plotting.SignalGraph;
 import com.plotting.WavController;
@@ -20,6 +15,11 @@ import com.riff.Chunk;
 import com.riff.InfoChunk;
 import com.riff.Signal;
 import com.riff.Wave;
+import com.util.ArrayMethods;
+import com.util.HexByte;
+import com.util.Log;
+import com.util.fileReading.ByteReader;
+import com.util.fileReading.CSVWriter;
 import com.waveProcess.EQFilter;
 import com.waveProcess.Edit;
 import com.waveProcess.Gain;

@@ -14,49 +14,59 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.CSVString;
-import com.filemanager.Log;
-import com.filemanager.Serialize;
-import com.neuralNet.InputShell;
 import com.neuralNet.NNUtilities;
+import com.neuralNet.layers.InputShell;
 import com.riff.Signal;
 import com.riff.Wave;
+import com.util.ArrayMethods;
+import com.util.Log;
+import com.util.Serialize;
 import com.waveAnalysis.FFTBox;
 import com.waveAnalysis.FrameFFT;
-import com.waveProcess.Conversion;
+import com.waveProcess.FFTChain;
+import com.waveProcess.SignalChain;
 
-/**Container object for multiple Wave Patterns **/
+/**Container object for multiple Wave Patterns. Allows for multithreaded generation
+ * of patterns from a folder of Waves, regeneration of patterns from metadata in waves,
+ * batch processing and some other useful methods. See sub classes for other multi
+ * threaded operations **/
 public class WavePatterns implements Serializable, Callable<WavePatterns> {
 	
 	private static final long serialVersionUID = 8265438349914627431L;
-	public File filePath;
-	public WavePattern[] patterns;
-	private String[] instruments;
-	public File[] files;
-	public String[] instrs;
+	public File filePath; //Where to find Waves
+	public WavePattern[] patterns; //Group of patterns
+	private String[] instruments; // all instruments of WavePatterns
+	public File[] files; // Files of Waves
+	public String[] instrs; // For output analysis
 	
-	
+	/** Default constructor **/
 	public WavePatterns() {
 		super();
 	}
-
+	
+	/** FilePath Constructor **/
 	public WavePatterns(File filePath) {
 		this.filePath = filePath;
 	}
-
+	
+	/** Return Patterns **/
 	public WavePattern[] getPatterns() {
 		return patterns;
 	}
-
+	
+	/**Set Patterns **/
 	public void setPatterns(WavePattern[] patterns) {
 		this.patterns = patterns;
 	}
 	
+	/**Set patterns. Converts arraylist to array, so be careful with
+	 * large arraylists 
+	 */
 	public void setPatterns(ArrayList<WavePattern> wavePatterns) {
 		this.patterns = WavePattern.arrayListToArray(wavePatterns);
 	}
 	
+	/** Return the name of the instrument based on the target number **/
 	public String getInstrumentFromTargetNumber(int num) {
 		String ans = "";
 		//Log.d(ArrayMethods.toString(this.instruments));
@@ -69,10 +79,10 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 		return ans;
 	}
 	
-	/** Reduces the size of all patterns input by 2^x **/
+	/** Reduces the size of all patterns input by 2^x. 
+	 * Useful if amplitudes were not normalised **/
 	public void reduceScale(double twoToThePower) {
 		double val = Math.pow(2, twoToThePower);
-		
 		for (WavePattern p : patterns) {
 			for (InputShell is : p.getInputArray()) {
 				is.setValue(is.getValue() / val);
@@ -81,13 +91,14 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 		}
 	}
 	
+	/** Get the files from the directory **/
 	protected File[] getFilesFromDirectory() {
 		return Serialize.getActualFiles(this.filePath);
 	}
 	
 	
 	/** turns a set of waves with metadata to a pattern **/
-	public void wavMetaToPattern() {
+	public void wavMetaToPattern(File[] files) {
 		//patterns
 		this.files = getFilesFromDirectory();
 		this.patterns = new WavePattern[files.length];
@@ -97,124 +108,41 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 		for (int i = 0; i < files.length; ++i) {
 			wave = new Wave(files[i]);
 			patterns[i] = new WavePattern(i, wave); //make pattern
-			str = getDataChunk(wave);
-			patterns[i].setInputArray(getInputs(str));
+			str = WavePattern.getDataChunk(wave);
+			patterns[i].setInputArray(WavePattern.getInputs(str));
 			//get instrumental outputs
-			instrs[i] = getInstrumentalOutputs(wave);
+			instrs[i] = WavePattern.getInstrumentalOutputs(wave);
 			patterns[i].instrument = instrs[i];
-		}
-		getOutputs(instrs);
-	}
-	
-	/** turns a set of waves with metadata to a pattern. This also redoes the FFT (input analysis) **/
-	public void wavReFFTPattern(File[] files) {
-		//patterns
-		if (files == null) {
-			files = getFilesFromDirectory();
-		}
-		this.patterns = new WavePattern[files.length];
-		String[] instrs = new String[files.length];
-		Wave wave = null;
-		for (int i = 0; i < files.length; ++i) {
-			wave = new Wave(files[i]);
-			patterns[i] = new WavePattern(i, wave); //make pattern
-			patterns[i].setInputArray(reFFT(wave.getSignals()));
-			//get instrumental outputs
-			instrs[i] = getInstrumentalOutputs(wave);
-			patterns[i].instrument = instrs[i];
-		}
-		getOutputs(instrs);
-	}
-	
-	/** Find waves, analyse, do more **/
-	public void wavReFFTBatchPattern(int count, File[] files) {
-		//randoms
-		Random pitchRand = new Random();
-		Random noiseRand = new Random();
-		Random hpRand = new Random();
-		Random lpRand = new Random();
-		//patterns
-		this.patterns = new WavePattern[files.length * count];
-		String[] instrs = new String[files.length * count];
-		Wave wave = null;
-		Signal signal = null;
-		for (int i = 0; i < files.length; ++i) {
-			//read
-			wave = new Wave(files[i]);
-			signal = wave.getSignals();
-			
-			for (int j = 0; j < count; ++j) {
-				patterns[i * count + j] = new WavePattern(i, wave); //make pattern
-				patterns[i * count + j].setInputArray(reFFT(
-						Conversion.processSignalChain(pitchRand, noiseRand, hpRand, lpRand, signal)));
-				//get instrumental outputs
-				instrs[i * count + j] = getInstrumentalOutputs(wave);
-				patterns[i * count + j].instrument = instrs[i * count + j];
-			}
 		}
 		this.instrs = instrs;
 		getOutputs(instrs);
 	}
-
+	
+	
 
 	/**FFT analysis sequence **/
 	protected ArrayList<InputShell> reFFT(Signal signals) {
-		FrameFFT fft = new FrameFFT(signals, 4096);
-		FFTBox dd = fft.analyse(20, 20000);
-		//fft.makeGraph();
-		dd = FFTBox.getSumTable(dd, 7);
-		dd = FFTBox.getHiResBarkedSubset(dd, 0.5);
-		dd = FFTBox.normaliseTable(dd, 10);
+		FFTBox dd = FFTChain.polyFFTChain(signals);
 		return Pattern.doubleToInputShell(dd.getValues()[0]);
 	}
 	
-
-	protected ArrayList<InputShell> getInputs(String str) {
-		CSVString s = new CSVString(str);
-		s.readFile();
-		return Pattern.doubleToInputShell(
-				s.makeDoubleArray()[1]);
+	/**FFT analysis sequence, returns FFT box **/
+	protected FFTBox reFFTBox(Signal signals) {
+		FFTBox dd = FFTChain.polyFFTChain(signals);
+		return dd;
 	}
-
-
-
-	protected String getInstrumentalOutputs(Wave wave) {
-		try {
-		return new String(wave.getSubChunk("LIST").
-				getSubChunk("IAS8").getData(), "UTF-8");
-		} catch (Exception e) {
-			Log.d(e);
-			return null;
-		}
-	}
-
-
-
-	protected String getDataChunk(Wave wave) {
-		String str = "";
-		try {
-			//get inputs
-			str = new String(
-					wave.getSubChunk("LIST").getSubChunk("IAS7").getData(), "UTF-8");
-		}
-		catch(Exception e) {
-			Log.d(e);
-		}
-		return str;
-	}
-		
 	
 	/** get the outputs from the patterns **/
-	private void getOutputs(String[] instrs) {
+	protected void getOutputs(String[] instrs) {
 		// convert to bitarray
-		String[][] targets = NNUtilities.getCount(instrs, true);
+		String[][] targets = NNUtilities.getCount(instrs, false);
 		this.instruments = ArrayMethods.reverse(ArrayMethods.flip(targets)[0]);
 		double[][] bits = NNUtilities.createUniqueBits(targets.length);
 		//convert back
 		for (int i = 0; i < this.patterns.length; ++i) {
 			for (int j = 0; j < targets.length; ++j) {
 				if (instrs[i].equals(targets[j][0])) {
-					patterns[i].targetArray = ArrayMethods.doubleToArrayList(bits[j]);
+					patterns[i].setTargetArray(ArrayMethods.doubleToArrayList(bits[j]));
 					//Log.d(patterns[i].toString());
 				}
 			}
@@ -346,7 +274,7 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 
 	@Override
 	public WavePatterns call() throws Exception {
-		this.wavReFFTBatchPattern(15, this.files);
+		this.wavMetaToPattern(this.files);
 		return this;
 	}
 	
@@ -355,6 +283,34 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 		Class<? extends WavePatterns> type = wavePatterns.getClass();
 		wavePatterns.files = Serialize.getActualFiles(wavePatterns.filePath);
 		File[][] splits = splitFiles(wavePatterns.files, threadCount);
+		//create Wave Patterns
+		WavePatterns[] newWP = initWavePatterns(wavePatterns, threadCount,
+				type, splits);
+		//job
+		runJobs(threadCount, newWP);
+		WavePatterns comb = WavePatterns.combinePatterns(newWP);
+		return comb;
+	}
+	
+	/** Run multi threaded jobs **/
+	protected static void runJobs(int threadCount, WavePatterns[] newWP) {
+		ExecutorService threadPool = Executors.newFixedThreadPool(threadCount);
+		Set<Future<WavePatterns>> futures = new HashSet<Future<WavePatterns>>(threadCount);
+		for (int i = 0; i < threadCount; ++i) {
+		    Future<WavePatterns> f = threadPool.submit(newWP[i]);
+		    futures.add(f);
+		}
+		threadPool.shutdown();
+		try {
+			threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**Initialise wave patterns for multithread jobs **/
+	protected static WavePatterns[] initWavePatterns(WavePatterns wavePatterns,
+			int threadCount, Class<? extends WavePatterns> type, File[][] splits) {
 		WavePatterns[] newWP = new WavePatterns[threadCount];
 		// Create jobs 
 		for (int i = 0; i < threadCount; ++i) {
@@ -368,22 +324,7 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 				e.printStackTrace();
 			}
 		}
-		//job
-		ExecutorService threadPool = Executors.newFixedThreadPool(threadCount);
-		Set<Future<WavePatterns>> futures = new HashSet<Future<WavePatterns>>(threadCount);
-		for (int i = 0; i < threadCount; ++i) {
-		    Future<WavePatterns> f = threadPool.submit(newWP[i]);
-		    // save the future if necessary in a collection or something
-		    futures.add(f);
-		}
-		threadPool.shutdown();
-		try {
-			threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		WavePatterns comb = WavePatterns.combinePatterns(newWP);
-		return comb;
+		return newWP;
 	}
 
 	

@@ -2,9 +2,9 @@ package com.waveProcess;
 
 import java.util.Random;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.riff.Signal;
+import com.util.ArrayMethods;
+import com.util.Log;
 import com.waveAnalysis.SampleRateException;
 
 public class Gen {

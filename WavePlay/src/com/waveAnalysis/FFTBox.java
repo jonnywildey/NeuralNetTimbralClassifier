@@ -2,10 +2,10 @@ package com.waveAnalysis;
 
 import java.io.File;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.CSVWriter;
-import com.filemanager.Log;
 import com.riff.Signal;
+import com.util.ArrayMethods;
+import com.util.Log;
+import com.util.fileReading.CSVWriter;
 import com.waveProcess.Gain;
 import com.waveProcess.Pitch;
 

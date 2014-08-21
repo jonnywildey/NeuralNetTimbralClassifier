@@ -4,13 +4,14 @@ package com.neuralNet;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.filemanager.Log;
+import com.exceptions.*;
+import com.neuralNet.layers.LayerList;
+import com.neuralNet.layers.LayerStructure;
 import com.neuralNet.pattern.Pattern;
 import com.neuralNet.pattern.TestPatterns;
 import com.neuralNet.pattern.WavePattern;
+import com.util.Log;
 import com.waveAnalysis.Statistics;
-
-import exceptions.*;
 
 
 public class MultiLayerNet  implements Serializable{
@@ -330,7 +331,7 @@ public class MultiLayerNet  implements Serializable{
 	}
 
 	public boolean areWeightsInitialised() {
-		return (neuronLayers.getFirstLayer().neurons.get(0).weightList.size() > 0);
+		return (neuronLayers.getFirstLayer().neurons.get(0).getWeightList().size() > 0);
 	}
 	
 	

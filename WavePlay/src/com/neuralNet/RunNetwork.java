@@ -14,14 +14,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.filemanager.CSVReader;
-import com.filemanager.HTML;
-import com.filemanager.Log;
-import com.filemanager.Serialize;
 import com.matrix.ConfusionMatrix;
+import com.neuralNet.layers.LayerStructure;
 import com.neuralNet.pattern.Pattern;
 import com.neuralNet.pattern.TestPatterns;
 import com.neuralNet.pattern.WavePatterns;
+import com.util.Log;
+import com.util.Serialize;
+import com.util.fileReading.CSVReader;
+import com.util.fileReading.HTML;
 
 /**Run time part of NN **/
 public class RunNetwork {

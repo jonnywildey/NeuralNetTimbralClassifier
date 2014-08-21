@@ -1,8 +1,8 @@
 package com.waveProcess;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.riff.Signal;
+import com.util.ArrayMethods;
+import com.util.Log;
 import com.waveAnalysis.FFT;
 import com.waveAnalysis.Statistics;
 

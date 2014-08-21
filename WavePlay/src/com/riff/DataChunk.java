@@ -1,8 +1,8 @@
 package com.riff;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.HexByte;
-import com.filemanager.Log;
+import com.util.ArrayMethods;
+import com.util.HexByte;
+import com.util.Log;
 
 
 public class DataChunk extends Chunk{

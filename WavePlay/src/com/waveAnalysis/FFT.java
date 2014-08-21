@@ -2,11 +2,11 @@ package com.waveAnalysis;
 
 import java.util.Arrays;
 
-import com.filemanager.ArrayMethods;
-import com.filemanager.Log;
 import com.plotting.FFTController;
 import com.plotting.SignalController;
 import com.riff.Signal;
+import com.util.ArrayMethods;
+import com.util.Log;
 
 /**Basic FFT algorithm implemented with lots of 
  * help from Rosetta Code

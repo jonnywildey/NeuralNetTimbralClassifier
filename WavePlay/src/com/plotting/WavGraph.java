@@ -7,7 +7,7 @@ import java.util.Collections;
 
 import javax.swing.*;
 
-import com.filemanager.ArrayMethods;
+import com.util.ArrayMethods;
 
 public class WavGraph extends PlotGraph {
 
