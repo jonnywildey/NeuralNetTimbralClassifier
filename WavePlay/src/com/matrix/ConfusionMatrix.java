@@ -2,7 +2,8 @@ package com.matrix;
 
 import java.util.Arrays;
 
-import com.neuralNet.NNFunctions;
+import neuralNet.NNFunctions;
+
 import com.plotting.ConfusionMatrixController;
 import com.util.Log;
 import com.waveAnalysis.Statistics;

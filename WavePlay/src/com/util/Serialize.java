@@ -1,14 +1,20 @@
 package com.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import com.neuralNet.pattern.*;
-import com.neuralNet.*;
+
+import com.google.gson.Gson;
+
+import neuralNet.*;
+import neuralNet.pattern.*;
 
 /**Static methods for easy serialization **/
 public class Serialize {
@@ -25,6 +31,36 @@ public class Serialize {
 	    } catch (IOException i) {
 	        i.printStackTrace();
 	    }
+	}
+	
+	/**Serializes an object to the output path. make sure output is .ser **/
+	public static void serializeGson(Object obj, File output) {
+		// Serialization code
+		Gson gson = new Gson();
+		String json = gson.toJson(obj);
+		try {
+			//write converted json data to a file named "file.json"
+			FileWriter writer = new FileWriter(output);
+			writer.write(json);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**Serializes an object to the output path. make sure output is .ser **/
+	public static <T> T getFromGson(File json, Class<T> type) {
+		Gson gson = new Gson();
+		T obj = null;
+		try {
+			BufferedReader br = new BufferedReader(
+				new FileReader(json));
+			//convert the json string back to object
+			obj = gson.fromJson(br, type);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 	
 	/**Serializes an object to the output path. make sure output is .ser **/

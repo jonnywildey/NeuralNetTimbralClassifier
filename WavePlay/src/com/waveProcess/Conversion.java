@@ -6,15 +6,19 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import com.neuralNet.RunNetwork;
-import com.neuralNet.pattern.Batch;
-import com.neuralNet.pattern.Combine;
-import com.neuralNet.pattern.GenerateWavePatterns;
-import com.neuralNet.pattern.Pattern;
-import com.neuralNet.pattern.WavePatterns;
+import neuralNet.Batch;
+import neuralNet.Combine;
+import neuralNet.GenerateWavePatterns;
+import neuralNet.InputShell;
+import neuralNet.Pattern;
+import neuralNet.RunNetwork;
+import neuralNet.WavePatterns;
+
+import com.google.gson.Gson;
 import com.riff.*;
 import com.util.ArrayMethods;
 import com.util.Log;
+import com.util.Serialize;
 import com.waveAnalysis.FFTBox;
 import com.waveAnalysis.FrameFFT;
 
@@ -36,9 +40,14 @@ public class Conversion {
 		WavePatterns wp = new WavePatterns(new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb5"));
 		WavePatterns wavePatterns = regenerateAndBatchPatterns(wp, waveSerial);
 		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds"); */
-		File combineDir = new File("/Users/Jonny/Documents/Timbre/Serial/WavePatterns/PolyTimbre/Separate");
-		File waveSerial = new File("/Users/Jonny/Documents/Timbre/Serial/WavePatterns/PolyTimbre/GeneratedCombine.ser");
-		Combine.combineAndSerialize(waveSerial, combineDir);
+		File combineDir = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Separate");
+		File waveSerial = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/WaveGen.json");
+		//Combine.combineAndSerialize(waveSerial, combineDir);
+
+		WavePatterns wp = Combine.combineFromJSONs(combineDir);
+		Log.d("Here");
+		Serialize.serializeGson(wp, waveSerial);
+		
 		/*
 		WavePatterns wp5 = (WavePatterns) Serialize.getFromSerial(
 				"/Users/Jonny/Documents/Timbre/Serial/WavePatterns/PolyTimbre/Batch40Input7FrameNorm10.ser");
