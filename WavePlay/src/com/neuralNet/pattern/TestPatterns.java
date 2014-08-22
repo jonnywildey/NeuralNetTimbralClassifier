@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import com.neuralNet.NNUtilities;
+import com.util.Log;
 
 /** A group of patterns. Useful methods for separation into training, validation
  * and testing sets
@@ -47,6 +48,16 @@ public class TestPatterns implements Serializable {
 		this(patterns, System.currentTimeMillis());
 	}
 	
+	/** pre separated constructor. Training, validation & testing **/
+	public TestPatterns(ArrayList<Pattern> trainingPatterns,
+			ArrayList<Pattern> validationPatterns,
+			ArrayList<Pattern> testingPatterns) {
+		super();
+		this.trainingPatterns = trainingPatterns;
+		this.validationPatterns = validationPatterns;
+		this.testingPatterns = testingPatterns;
+	}
+
 	/** Default constructor. Try not to use this **/
 	public TestPatterns() {
 		this(null);
@@ -228,6 +239,111 @@ public class TestPatterns implements Serializable {
 			sb.append("Patterns not separated");
 		}
 		return sb.toString();
+	}
+	
+	public void setPatterns(ArrayList<Pattern> trainingPatterns,
+			ArrayList<Pattern> validationPatterns, ArrayList<Pattern> testingPatterns) {
+		this.trainingPatterns = trainingPatterns;
+		this.validationPatterns = validationPatterns;
+		this.testingPatterns = testingPatterns;
+	}
+	
+	/** Split a group of test patterns into equal groups **/
+	public static ArrayList<TestPatterns> split(TestPatterns testPatterns, int count) {
+		ArrayList<ArrayList<Pattern>> trainingPatterns = split(testPatterns.getTrainingPatterns(), count);
+		ArrayList<ArrayList<Pattern>> validationPatterns = split(testPatterns.getValidationPatterns(), count);
+		ArrayList<ArrayList<Pattern>> testingPatterns = split(testPatterns.getTestingPatterns(), count);
+		ArrayList<TestPatterns> np = new ArrayList<TestPatterns>(count);
+		Log.d("size: " + np.size());
+		//set to new test Patterns
+		for (int i = 0; i < count; ++i) {
+			np.set(i, new TestPatterns(
+					trainingPatterns.get(i), 
+					validationPatterns.get(i),
+					testingPatterns.get(i)));
+		}
+		return np;
+	}
+	
+	/** Split a group of test patterns into equal groups. each group contains all
+	 * of the previous group and more. i.e the last group will be the original testPatterns **/
+	@SuppressWarnings("unchecked")
+	public static ArrayList<TestPatterns> splitAndAdd(TestPatterns testPatterns, int count) {
+		ArrayList<ArrayList<Pattern>> trainingPatterns = split(testPatterns.getTrainingPatterns(), count);
+		ArrayList<ArrayList<Pattern>> validationPatterns = split(testPatterns.getValidationPatterns(), count);
+		ArrayList<ArrayList<Pattern>> testingPatterns = split(testPatterns.getTestingPatterns(), count);
+		//set to new test Patterns
+		ArrayList<Pattern> trP = new ArrayList<Pattern>(0);
+		ArrayList<Pattern> vaP = new ArrayList<Pattern>(0);
+		ArrayList<Pattern> teP = new ArrayList<Pattern>(0);
+		ArrayList<TestPatterns> np = addToTestPatternsArrayList(count,
+				trainingPatterns, validationPatterns, testingPatterns, trP,
+				vaP, teP);
+		return np;
+	}
+	
+	/** Split a group of test patterns into equal groups and add them to initialTestPatterns. 
+	 * each group contains all
+	 * of the previous group and more. i.e the last group will be the original testPatterns **/
+	@SuppressWarnings("unchecked")
+	public static ArrayList<TestPatterns> splitAndAddToInital(TestPatterns initial, TestPatterns additional, int count) {
+		ArrayList<ArrayList<Pattern>> trainingPatterns = split(additional.getTrainingPatterns(), count);
+		ArrayList<ArrayList<Pattern>> validationPatterns = split(additional.getValidationPatterns(), count);
+		ArrayList<ArrayList<Pattern>> testingPatterns = split(additional.getTestingPatterns(), count);
+		//set to new test Patterns
+		ArrayList<Pattern> trP = (ArrayList<Pattern>) initial.getTrainingPatterns().clone();
+		ArrayList<Pattern> vaP = (ArrayList<Pattern>) initial.getValidationPatterns().clone();
+		ArrayList<Pattern> teP = (ArrayList<Pattern>) initial.getTestingPatterns().clone();
+		ArrayList<TestPatterns> np = addToTestPatternsArrayList(count,
+				trainingPatterns, validationPatterns, testingPatterns, trP,
+				vaP, teP);
+		return np;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected static ArrayList<TestPatterns> addToTestPatternsArrayList(
+			int count, ArrayList<ArrayList<Pattern>> trainingPatterns,
+			ArrayList<ArrayList<Pattern>> validationPatterns,
+			ArrayList<ArrayList<Pattern>> testingPatterns,
+			ArrayList<Pattern> trP, ArrayList<Pattern> vaP,
+			ArrayList<Pattern> teP) {
+		ArrayList<TestPatterns> np = new ArrayList<TestPatterns>(count);
+		Log.d("size: " + np.size());
+		for (int i = 0; i < count; ++i) {
+			trP = (ArrayList<Pattern>) trP.clone();
+			trP.addAll(trainingPatterns.get(i));
+			vaP = (ArrayList<Pattern>) vaP.clone();
+			vaP.addAll(validationPatterns.get(i));
+			teP = (ArrayList<Pattern>) teP.clone();
+			teP.addAll(testingPatterns.get(i));
+			np.set(i, new TestPatterns(trP,vaP,teP));
+		}
+		return np;
+	}
+	
+	/**Split up an arraylist by the count. **/
+	protected static <T> ArrayList<ArrayList<T>> split(ArrayList<T> patterns, int count) {
+		ArrayList<ArrayList<T>> np = new ArrayList<ArrayList<T>>(count);
+		//determine lengths
+		int div = patterns.size() / count;
+		int mod = patterns.size() % count;
+		for (int i = 0; i < count; ++i) {
+			if (mod != 0) {
+				np.set(i,  new ArrayList<T>(div + 1));
+				mod--;
+			} else {
+				np.set(i,  new ArrayList<T>(div));
+			}
+		}
+		//write values
+		int c = 0;
+		for (int i = 0; i < np.size(); ++i) {
+			for (int j = 0; j < np.get(i).size(); ++j) {
+				np.get(i).set(j, patterns.get(c));
+				c++;
+			}
+		}
+		return np;
 	}
 	
 

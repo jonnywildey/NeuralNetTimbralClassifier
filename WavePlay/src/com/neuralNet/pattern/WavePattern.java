@@ -83,6 +83,14 @@ public class WavePattern extends Pattern implements Serializable{
 	public void setInstrument(String instrument) {
 		this.instrument = instrument;
 	}
+	
+	/** Adds instrumental data from fftbox. 
+	 * Assumes fft box is correctly processed
+	 */
+	public void addInputData(FFTBox fftBox) {
+		this.setInputArray(WavePattern.doubleToInputShell(
+				fftBox.getValues()[0]));
+	}
 
 	/** Attaches fft analysis to data chunk **/
 	public static Chunk getFFTData(FFTBox fftData) {
@@ -125,7 +133,7 @@ public class WavePattern extends Pattern implements Serializable{
 	}
 
 	/** Get data chunk from Wave **/
-	protected static String getDataChunk(Wave wave) {
+	public static String getDataChunk(Wave wave) {
 		String str = "";
 		try {
 			//get inputs
@@ -139,7 +147,7 @@ public class WavePattern extends Pattern implements Serializable{
 	}
 
 	/** Get the output from a Wave **/
-	protected static String getInstrumentalOutputs(Wave wave) {
+	public static String getInstrumentalOutputs(Wave wave) {
 		try {
 		return new String(wave.getSubChunk("LIST").
 				getSubChunk("IAS8").getData(), "UTF-8");
@@ -150,7 +158,7 @@ public class WavePattern extends Pattern implements Serializable{
 	}
 
 	/** Get inputs from CSV row **/
-	protected static ArrayList<InputShell> getInputs(String str) {
+	public static ArrayList<InputShell> getInputs(String str) {
 		CSVString s = new CSVString(str);
 		s.readFile();
 		return Pattern.doubleToInputShell(

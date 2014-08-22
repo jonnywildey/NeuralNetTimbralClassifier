@@ -15,9 +15,17 @@ public class ThreadNet implements Callable<MultiLayerNet> {
 	public boolean verbose;
 	public File name;
 	public int id;
+	
+	public ThreadNet() {
+		super();
+	}
+
 	public int maxEpoch;
 	public int hiddenLayer;
 	
+	/** Create Thread Net. filename, runCount, testPatterns, hidden layer
+	 * max epoch, id, verbose
+	 */
 	public ThreadNet(File name, int runCount, TestPatterns testPatterns,
 			int hiddenLayer, int maxEpoch, int id, boolean verbose) {
 		super();
@@ -41,6 +49,10 @@ public class ThreadNet implements Callable<MultiLayerNet> {
 			e.printStackTrace();
 		}
 		return nn;
+	}
+	
+	public boolean hasTestPatterns() {
+		return (this.testPatterns != null);
 	}
 	
 	/**Config settings for MLN **/

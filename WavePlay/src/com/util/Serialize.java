@@ -7,8 +7,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import com.neuralNet.MultiLayerNet;
+import com.neuralNet.pattern.*;
+import com.neuralNet.*;
 
 /**Static methods for easy serialization **/
 public class Serialize {

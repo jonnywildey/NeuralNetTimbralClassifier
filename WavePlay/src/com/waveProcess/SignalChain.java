@@ -21,6 +21,13 @@ public class SignalChain {
 		s1 = Gain.normalise(s1);
 		return s1;
 	}
+	
+	/** get mid of signal and normalise **/
+	public static Signal midAndNormalise(Signal s1) {
+		s1 = Gain.getMid(s1);
+		s1 = Gain.normalise(s1);
+		return s1;
+	}
 
 	/**Applies a random pitch change to the file **/
 	public static Signal randomPitch(Signal s, double range, Random r) {

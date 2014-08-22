@@ -18,18 +18,18 @@ public class Pattern implements Serializable {
 	private ArrayList<InputShell> inputArray;
 	private ArrayList<Double> targetArray;
 	protected ArrayList<Double> errorList; 
-	protected Integer id; 
+	private Integer id; 
 	public File filePath; //if the pattern relates to some other object
 	
 	/** Default constructor. Not recommended **/
 	public Pattern() {
 		super();
-		this.id = -1;
+		this.setId(-1);
 	}
 	
 	/** id constructor **/
 	public Pattern(int id) {
-		this.id = id;
+		this.setId(id);
 	}
 	
 	/** full parameter constructor. input, output, id **/
@@ -40,7 +40,7 @@ public class Pattern implements Serializable {
 		}
 		this.setTargetArray(new ArrayList<Double>(targetArray));
 		this.errorList = new ArrayList<Double>();
-		this.id = id;
+		this.setId(id);
 	}
 	
 	/** return the input vector count **/
@@ -80,7 +80,7 @@ public class Pattern implements Serializable {
 	/**Comprehensible String representation of pattern.**/
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("\nTraining Pattern id: " + this.id + "\ninputs:\n");
+		sb.append("\nTraining Pattern id: " + this.getId() + "\ninputs:\n");
 		if (this.isInputArray()) {
 			for (NeuralComponent i: getInputArray()) {
 				sb.append(Statistics.round(i.getValue(), 4) + "\t");
@@ -137,6 +137,14 @@ public class Pattern implements Serializable {
 	/**Set target array **/
 	public void setTargetArray(ArrayList<Double> targetArray) {
 		this.targetArray = targetArray;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	
 	

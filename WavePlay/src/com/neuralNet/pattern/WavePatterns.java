@@ -35,7 +35,7 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 	private static final long serialVersionUID = 8265438349914627431L;
 	public File filePath; //Where to find Waves
 	public WavePattern[] patterns; //Group of patterns
-	private String[] instruments; // all instruments of WavePatterns
+	protected String[] instruments; // all instruments of WavePatterns
 	public File[] files; // Files of Waves
 	public String[] instrs; // For output analysis
 	
@@ -107,12 +107,12 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 		Wave wave = null;
 		for (int i = 0; i < files.length; ++i) {
 			wave = new Wave(files[i]);
-			patterns[i] = new WavePattern(i, wave); //make pattern
+			this.patterns[i] = new WavePattern(i, wave); //make pattern
 			str = WavePattern.getDataChunk(wave);
-			patterns[i].setInputArray(WavePattern.getInputs(str));
+			this.patterns[i].setInputArray(WavePattern.getInputs(str));
 			//get instrumental outputs
 			instrs[i] = WavePattern.getInstrumentalOutputs(wave);
-			patterns[i].instrument = instrs[i];
+			this.patterns[i].instrument = instrs[i];
 		}
 		this.instrs = instrs;
 		getOutputs(instrs);
@@ -206,7 +206,7 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 		for (int i = 0; i < patterns.length;++i) {
 			for (int j = 0; j < patterns[i].patterns.length;++j) {
 				np[c] = patterns[i].patterns[j];
-				np[c].id = c;
+				np[c].setId(c);
 				instruments[c] = patterns[i].instrs[j];
 				c++;
 			}
