@@ -1,4 +1,4 @@
-TimbreWav
+Neural Net Timbral Classifier
 =========
 
 Java implementation of a combination of a lightweight DSP library and an ANN for the purposes of timbre classification. 
