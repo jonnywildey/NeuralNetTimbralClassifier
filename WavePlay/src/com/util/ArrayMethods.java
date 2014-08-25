@@ -1,9 +1,7 @@
 package com.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import com.waveAnalysis.Statistics;
+import com.DSP.waveAnalysis.Statistics;
 
 /** Useful static methods for manipulating arrays **/
 public class ArrayMethods {

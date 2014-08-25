@@ -1,8 +1,5 @@
 package com.util;
 
-import java.util.Arrays;
-
-
 /** a bunch of utility methods for hex and byte conversion **/
 public class HexByte {
 

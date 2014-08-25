@@ -1,17 +1,11 @@
 package com.plotting;
 import java.awt.*;
-import java.util.Arrays;
-
 import javax.swing.*;
-
-import com.util.ArrayMethods;
-import com.util.Log;
-import com.waveAnalysis.Statistics;
+import com.DSP.waveAnalysis.Statistics;
 
 /** Create a plot graph of Matthews coefficients **/
-public class MatthewsChart {
+public class MatthewsChart extends Controller{
 	
-	private Dimension size;
 	private double[][] signals;
 	
 	public MatthewsChart(double[][] signals) {
@@ -25,16 +19,9 @@ public class MatthewsChart {
 		this.signals = signals;
 	}
 	
-	public void makeChart() {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				createChart(signals, size);
-			}
-		});
-	}
 	
 	/** Make the chart **/
-	private void createChart(double[][] values, Dimension winSize) {
+	protected static void createChart(double[][] values, Dimension winSize) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(winSize.width, 0, winSize.width, winSize.height);
@@ -42,12 +29,12 @@ public class MatthewsChart {
 		//Variables
 		//String[] names = new String{""}; 
 		String[] axisLabels = {"Matthews", "Epochs"};
-		frame.getContentPane().add(this.new MatthewsGraph(values, winSize, axisLabels));
+		frame.getContentPane().add(new MatthewsGraph(values, winSize, axisLabels));
 		//frame.pack();
 		frame.setVisible(true);
 	}
 	
-	class MatthewsGraph extends PlotGraph{
+	static class MatthewsGraph extends PlotGraph{
 		double[][] values;
 			
 		public MatthewsGraph(double[][] values, Dimension winSize, String[] axisLabels) {
@@ -92,9 +79,7 @@ public class MatthewsChart {
 						g2d);
 				}
 			}
-		
 
-		
 		public void drawBar(Graphics2D g2d) {
 			whiteBackground(g2d);
 			drawLines(g2d);

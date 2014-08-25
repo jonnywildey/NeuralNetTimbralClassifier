@@ -10,11 +10,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import com.google.gson.Gson;
-
-import neuralNet.*;
-import neuralNet.pattern.*;
 
 /**Static methods for easy serialization **/
 public class Serialize {
@@ -38,6 +34,7 @@ public class Serialize {
 		// Serialization code
 		Gson gson = new Gson();
 		String json = gson.toJson(obj);
+
 		try {
 			//write converted json data to a file named "file.json"
 			FileWriter writer = new FileWriter(output);

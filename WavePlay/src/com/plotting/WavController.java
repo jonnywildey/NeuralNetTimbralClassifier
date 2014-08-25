@@ -3,9 +3,8 @@ import java.awt.*;
 import javax.swing.*;
 
 /** Controller for WavGraph **/
-public class WavController {
+public class WavController extends Controller{
 	
-	private Dimension size;
 	private long[][] signals;
 	
 	public WavController(long[][] signals) {

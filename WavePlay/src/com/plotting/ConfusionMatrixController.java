@@ -1,19 +1,16 @@
 package com.plotting;
 import java.awt.*;
-
 import javax.swing.*;
-
-import com.matrix.ConfusionMatrix;
+import com.DSP.waveAnalysis.FFT;
+import com.DSP.waveAnalysis.FFTBox;
+import com.DSP.waveAnalysis.FrameFFT;
+import com.neuralNet.matrix.ConfusionMatrix;
 import com.riff.Signal;
 import com.util.ArrayMethods;
-import com.waveAnalysis.FFT;
-import com.waveAnalysis.FFTBox;
-import com.waveAnalysis.FrameFFT;
 
 /** Controller for generating readable Confusion Matrixes graphs **/
-public class ConfusionMatrixController {
+public class ConfusionMatrixController extends Controller{
 	
-	private Dimension size;
 	private ConfusionMatrix confusionMatrix;
 	
 	public ConfusionMatrixController(ConfusionMatrix confusionMatrix) {
@@ -34,8 +31,6 @@ public class ConfusionMatrixController {
 			}
 		});
 	}
-	
-	
 	
 	private static void createChart(ConfusionMatrix confusionMatrix, Dimension winSize) {
 		JFrame frame = new JFrame();

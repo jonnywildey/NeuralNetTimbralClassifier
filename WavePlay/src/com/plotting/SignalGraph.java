@@ -1,15 +1,7 @@
 package com.plotting;
 
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collections;
-
-import javax.swing.*;
-
 import com.riff.Signal;
-import com.util.ArrayMethods;
-import com.util.Log;
 
 /**
  * Graph for plotting signals. Based upon the plot graph but uses the signal

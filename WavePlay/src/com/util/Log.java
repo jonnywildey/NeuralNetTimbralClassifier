@@ -1,16 +1,12 @@
 package com.util;
 
-import java.awt.Dialog;
 import java.io.File;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-
 import com.util.fileReading.HTML;
-
-
 
 public class Log {
 	

@@ -1,12 +1,6 @@
 package com.plotting;
 
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collections;
-
-import javax.swing.*;
-
 import com.util.ArrayMethods;
 
 public class WavGraph extends PlotGraph {
@@ -32,10 +26,7 @@ public class WavGraph extends PlotGraph {
 		whiteBackground(g2d);
 		drawLines(g2d);
 		// the wavs
-		// System.out.println("widthness" + widthness);
-		// System.out.println("values length " + values[0].length);
 		drawValues(g2d);
-
 	}
 
 	/** Draw actual values **/

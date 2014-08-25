@@ -3,11 +3,8 @@ package com.riff;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-
 import javax.naming.InvalidNameException;
-
 import com.util.ArrayMethods;
 import com.util.HexByte;
 import com.util.Log;

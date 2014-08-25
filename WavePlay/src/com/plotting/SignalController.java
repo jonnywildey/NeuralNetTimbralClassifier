@@ -1,15 +1,12 @@
 package com.plotting;
 import java.awt.*;
-
 import javax.swing.*;
-
 import com.riff.Signal;
 
 /**Controller for plotting wave signals **/
-public class SignalController {
+public class SignalController extends Controller{
 	
-	private Dimension size;
-	private Signal signals;
+	protected Signal signals;
 	
 	public SignalController(Signal signals) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -30,8 +27,7 @@ public class SignalController {
 		});
 	}
 	
-	
-	private static void createChart(Signal signals, Dimension winSize) {
+	protected static void createChart(Signal signals, Dimension winSize) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(winSize.width, 0, winSize.width, winSize.height);

@@ -4,11 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
 import javax.swing.JPanel;
-
+import com.DSP.waveAnalysis.Statistics;
 import com.util.ArrayMethods;
-import com.waveAnalysis.Statistics;
 
 /** Basic plotting graph object for 2d values (Different colours) **/
 public class PlotGraph extends JPanel {

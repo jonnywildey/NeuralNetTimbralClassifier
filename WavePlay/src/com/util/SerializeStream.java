@@ -23,19 +23,19 @@ public class SerializeStream extends ObjectInputStream {
 	        throws IOException, ClassNotFoundException {
 	    ObjectStreamClass desc = super.readClassDescriptor();
 	    if (desc.getName().equals("neuralNet.WavePatterns")) {
-	        return ObjectStreamClass.lookup(neuralNet.WavePatterns.class);
+	        return ObjectStreamClass.lookup(com.DSP.neuralNet.pattern.WavePatterns.class);
 	    }
 	    if (desc.getName().equals("neuralNet.WavePattern")) {
-	        return ObjectStreamClass.lookup(neuralNet.WavePattern.class);
+	        return ObjectStreamClass.lookup(com.DSP.neuralNet.pattern.WavePattern.class);
 	    }
 	    if (desc.getName().equals("neuralNet.Pattern")) {
-	        return ObjectStreamClass.lookup(neuralNet.Pattern.class);
+	        return ObjectStreamClass.lookup(com.DSP.neuralNet.pattern.Pattern.class);
 	    }
 	    if (desc.getName().equals("neuralNet.TestPatterns")) {
-	        return ObjectStreamClass.lookup(neuralNet.TestPatterns.class);
+	        return ObjectStreamClass.lookup(com.DSP.neuralNet.pattern.TestPatterns.class);
 	    }
 	    if (desc.getName().equals("neuralNet.InputShell")) {
-	        return ObjectStreamClass.lookup(neuralNet.InputShell.class);
+	        return ObjectStreamClass.lookup(com.DSP.neuralNet.layers.InputShell.class);
 	    }
 	    return desc;
 	};
@@ -86,19 +86,19 @@ public class SerializeStream extends ObjectInputStream {
     {
         String name = desc.getName();
         if (desc.getName().equals("neuralNet.WavePatterns")) {
-	        return neuralNet.WavePatterns.class;
+	        return com.DSP.neuralNet.pattern.WavePatterns.class;
 	    }
 	    if (desc.getName().equals("neuralNet.WavePattern")) {
-	        return neuralNet.WavePattern.class;
+	        return com.DSP.neuralNet.pattern.WavePattern.class;
 	    }
 	    if (desc.getName().equals("neuralNet.Pattern")) {
-	        return neuralNet.Pattern.class;
+	        return com.DSP.neuralNet.pattern.Pattern.class;
 	    }
 	    if (desc.getName().equals("neuralNet.TestPatterns")) {
-	        return neuralNet.TestPatterns.class;
+	        return com.DSP.neuralNet.pattern.TestPatterns.class;
 	    }
 	    if (desc.getName().equals("neuralNet.InputShell")) {
-	        return neuralNet.InputShell.class;
+	        return com.DSP.neuralNet.layers.InputShell.class;
 	    }
 	    return desc.getClass();
     }

@@ -1,18 +1,11 @@
 package com.plotting;
 import java.awt.*;
-
 import javax.swing.*;
-
-import com.riff.Signal;
-import com.waveAnalysis.FFT;
-import com.waveAnalysis.FFTBox;
-import com.waveAnalysis.FrameFFT;
+import com.DSP.waveAnalysis.FFTBox;
 
 
-public class FFTDifferenceController {
+public class FFTDifferenceController extends Controller{
 	
-	private Dimension size;
-	private double[][] table;
 	
 	public FFTDifferenceController(double[][] table) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -25,16 +18,8 @@ public class FFTDifferenceController {
 		this.table = fftBox.getTable();
 	}
 	
-	public void makeChart() {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				createChart(table, size);
-			}
-		});
-	}
 	
-	
-	private static void createChart(double[][] table, Dimension winSize) {
+	protected static void createChart(double[][] table, Dimension winSize) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(winSize.width, 0, winSize.width, winSize.height);

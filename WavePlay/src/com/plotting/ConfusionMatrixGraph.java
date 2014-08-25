@@ -6,10 +6,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-
 import javax.swing.JPanel;
-
-import com.matrix.ConfusionMatrix;
+import com.neuralNet.matrix.ConfusionMatrix;
 
 /** A colour coded representation of a confusion matrix to allow for slightly easier reading **/
 public class ConfusionMatrixGraph extends JPanel {

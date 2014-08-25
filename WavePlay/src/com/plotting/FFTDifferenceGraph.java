@@ -1,16 +1,7 @@
 package com.plotting;
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collections;
-
-import javax.swing.*;
-
-import com.riff.Signal;
 import com.util.ArrayMethods;
 import com.util.Log;
-import com.waveAnalysis.FFT;
-import com.waveAnalysis.FrameFFT;
 
 /**Messy but somewhat functional FFT graph**/
 public class FFTDifferenceGraph extends PlotGraph {

@@ -1,18 +1,8 @@
 package com.plotting;
 
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collections;
-
-import javax.swing.*;
-
-import com.riff.Signal;
+import com.DSP.waveAnalysis.FFTBox;
 import com.util.ArrayMethods;
-import com.util.Log;
-import com.waveAnalysis.FFT;
-import com.waveAnalysis.FFTBox;
-import com.waveAnalysis.FrameFFT;
 
 /**
  * FFT graph. Specifically, an implementation of the plot graph using doubles
