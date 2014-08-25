@@ -12,10 +12,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import com.google.gson.Gson;
 
-/**Static methods for easy serialization **/
+/**
+ * Static methods for easy serialization *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Serialize {
 
-	/**Serializes an object to the output path. make sure output is .ser **/
+	/**
+	 * Serializes an object to the output path. make sure output is .ser *
+	 *
+	 * @param mln the mln
+	 * @param output the output
+	 */
 	public static void serialize(Object mln, String output) {
 		// Serialization code
 	    try {
@@ -29,7 +39,12 @@ public class Serialize {
 	    }
 	}
 	
-	/**Serializes an object to the output path. make sure output is .ser **/
+	/**
+	 * Serializes an object to the output path. make sure output is .ser *
+	 *
+	 * @param obj the obj
+	 * @param output the output
+	 */
 	public static void serializeGson(Object obj, File output) {
 		// Serialization code
 		Gson gson = new Gson();
@@ -45,7 +60,14 @@ public class Serialize {
 		}
 	}
 	
-	/**Serializes an object to the output path. make sure output is .ser **/
+	/**
+	 * Serializes an object to the output path. make sure output is .ser *
+	 *
+	 * @param <T> the generic type
+	 * @param json the json
+	 * @param type the type
+	 * @return the from gson
+	 */
 	public static <T> T getFromGson(File json, Class<T> type) {
 		Gson gson = new Gson();
 		T obj = null;
@@ -60,12 +82,22 @@ public class Serialize {
 		return obj;
 	}
 	
-	/**Serializes an object to the output path. make sure output is .ser **/
+	/**
+	 * Serializes an object to the output path. make sure output is .ser *
+	 *
+	 * @param mln the mln
+	 * @param output the output
+	 */
 	public static void serialize(Object mln, File output) {
 		serialize(mln, output.getAbsolutePath());
 	}
 	
-	/**Returns the serialized object from the filepath **/
+	/**
+	 * Returns the serialized object from the filepath *.
+	 *
+	 * @param file the file
+	 * @return the from serial
+	 */
 	public static Object getFromSerial(String file) {
 		Object mln = null;
         try {
@@ -83,8 +115,13 @@ public class Serialize {
         return mln;
 	}
 	
-	/** Receive only the visible files and non directories
-	 * in a path **/
+	/**
+	 * Receive only the visible files and non directories
+	 * in a path *.
+	 *
+	 * @param dir the dir
+	 * @return the actual files
+	 */
 	public static File[] getActualFiles(File dir) {
 		if (dir.isDirectory()) {
 			File[] allFiles = dir.listFiles(new FilenameFilter(){

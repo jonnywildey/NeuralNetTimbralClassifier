@@ -54,6 +54,26 @@ public class Statistics {
 		double dec = Math.pow(10, decimal);
 		return Math.round(x * dec) / dec;
 	}
+	
+	public static double round(float x, int decimal) {
+		double dec = Math.pow(10, decimal);
+		return Math.round(x * dec) / dec;
+	}
+	
+	public static double round(long x, int decimal) {
+		double dec = Math.pow(10, decimal);
+		return Math.round(x * dec) / dec;
+	}
+	
+	public static double round(char x, int decimal) {
+		double dec = Math.pow(10, decimal);
+		return Math.round(x * dec) / dec;
+	}
+	
+	public static double round(byte x, int decimal) {
+		double dec = Math.pow(10, decimal);
+		return Math.round(x * dec) / dec;
+	}
 
 	public static double round(int x, int decimal) {
 		double dec =  Math.pow(10, decimal);

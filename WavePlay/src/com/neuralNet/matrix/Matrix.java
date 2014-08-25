@@ -1,4 +1,4 @@
-package com.DSP.neuralNet.matrix;
+package com.neuralNet.matrix;
 
 public class Matrix {
 

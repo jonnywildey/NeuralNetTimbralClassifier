@@ -1,12 +1,27 @@
+
 package com.util;
 
-/** a bunch of utility methods for hex and byte conversion **/
+// TODO: Auto-generated Javadoc
+/**
+ * Utility methods for hex and byte conversion *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class HexByte {
 
+	/**
+	 * Instantiates a new hex byte.
+	 */
 	public HexByte() {
 	}
 
-	/** converts byte array to hex array **/
+	/**
+	 * converts byte array to hex array *.
+	 *
+	 * @param bytes the bytes
+	 * @return the int[]
+	 */
 	public static int[] convertByteArray(byte[] bytes) {
 		int[] sep = new int[bytes.length * 2];
 		int c = 0;
@@ -24,7 +39,12 @@ public class HexByte {
 		return sep;
 	}
 
-	/**converts byte array to hex array. little Endian**/
+	/**
+	 * converts byte array to hex array. little Endian*
+	 *
+	 * @param bytes the bytes
+	 * @return the int[]
+	 */
 	public static int[] convertByteArrayLE(byte[] bytes) {
 		int[] sep = new int[bytes.length * 2];
 		int c = 0;
@@ -42,7 +62,12 @@ public class HexByte {
 		return sep;
 	}
 	
-	/**Converts an array of byte values to an integer. Unsigned **/
+	/**
+	 * Converts an array of byte values to an integer. Unsigned *
+	 *
+	 * @param bytes the bytes
+	 * @return the long
+	 */
 	public static long hexArrayToInt(int[] bytes) {
 		long tally = 0;
 		for (int i = 0; i < bytes.length; ++i) {
@@ -52,19 +77,34 @@ public class HexByte {
 		return tally;
 	}
 
-	/**hexadecimal conversion. Unsigned **/
+	/**
+	 * hexadecimal conversion. Unsigned *
+	 *
+	 * @param bytes the bytes
+	 * @return the long
+	 */
 	public static long hexToDecimalUnsigned(byte[] bytes) {
 		int[] sep = convertByteArray(bytes);
 		return hexArrayToInt(sep);
 	}
 
-	/**hexadecimal conversion. Unsigned with Little Endian **/
+	/**
+	 * hexadecimal conversion. Unsigned with Little Endian *
+	 *
+	 * @param bytes the bytes
+	 * @return the long
+	 */
 	public static long hexToDecimalUnsignedLE(byte[] bytes) {
 		int[] sep = convertByteArrayLE(bytes);
 		return hexArrayToInt(sep);
 	}
 
-	/**hexadecimal conversion. Signed **/
+	/**
+	 * hexadecimal conversion. Signed *
+	 *
+	 * @param bytes the bytes
+	 * @return the long
+	 */
 	public static long hexToDecimalSigned(byte[] bytes) {
 		//System.out.println(Arrays.toString(bytes));
 		long unsigned = hexToDecimalUnsignedLE(bytes);
@@ -79,8 +119,11 @@ public class HexByte {
 		}
 	}
 	
-	/**Converts hex to double. 
-	 * 
+	/**
+	 * Converts hex to double.
+	 *
+	 * @param bytes the bytes
+	 * @return the double
 	 */
 	public static double hexToFloat(byte[] bytes) {
 		int[] sep = convertByteArrayLE(bytes); //we now have an array of the correct numbers
@@ -89,8 +132,11 @@ public class HexByte {
 		return Float.intBitsToFloat(n);
 	}
 	
-	/**Converts hex to double approximating a 16 bit fixed point value 
-	 * 
+	/**
+	 * Converts hex to double approximating a 16 bit fixed point value.
+	 *
+	 * @param bytes the bytes
+	 * @return the double
 	 */
 	public static double hexToFloat16(byte[] bytes) {
 		int[] sep = convertByteArrayLE(bytes); //we now have an array of the correct numbers
@@ -99,14 +145,24 @@ public class HexByte {
 	}
 	
 	
-	/**Converts single byte to decimal **/
+	/**
+	 * Converts single byte to decimal *.
+	 *
+	 * @param b the b
+	 * @return the int
+	 */
 	public static int hexToDecimal(byte b) {
 		StringBuffer buf = new StringBuffer(1);
 			buf.append(b);
 		return Integer.parseInt(buf.toString(), 16);
 	}
 
-	/** converts array of bytes into somewhat readable hex format **/
+	/**
+	 * converts array of bytes into somewhat readable hex format *.
+	 *
+	 * @param bytes the bytes
+	 * @return the string
+	 */
 	public static String byteToHexString(byte[] bytes) {
 			StringBuilder buf = new StringBuilder(bytes.length * 5);
 			int c4 = 1;
@@ -127,7 +183,12 @@ public class HexByte {
 	}
 	
 	
-	/** Converts bytes to fairly unreadable char string **/
+	/**
+	 * Converts bytes to fairly unreadable char string *.
+	 *
+	 * @param bytes the bytes
+	 * @return the string
+	 */
 	public static String byteToLetterString(byte[] bytes) {
 		StringBuilder buf = new StringBuilder(bytes.length * 5);
 		for (byte bt: bytes) {
@@ -140,11 +201,26 @@ public class HexByte {
 	}
 	
 	
+	/**
+	 * Gets the subset.
+	 *
+	 * @param bytes the bytes
+	 * @param start the start
+	 * @param end the end
+	 * @return the subset
+	 */
 	public static byte[] getSubset(byte[] bytes, int start, int end) {
 		return ArrayMethods.getSubset(bytes, start, end);
 	}
 	
-	/** returns Little Endian (reversed) subset of bytes **/
+	/**
+	 * returns Little Endian (reversed) subset of bytes *.
+	 *
+	 * @param bytes the bytes
+	 * @param start the start
+	 * @param end the end
+	 * @return the little endian subset
+	 */
 	public static byte[] getLittleEndianSubset(byte[] bytes, int start, int end) {
 		byte[] newBytes = new byte[(end + 1) - start];
 		for (int i = 0; i <= (end - start); ++i) {
@@ -154,19 +230,49 @@ public class HexByte {
 		return newBytes;
 	}
 
+	/**
+	 * Gets the endian subset.
+	 *
+	 * @param bytes the bytes
+	 * @param offset the offset
+	 * @param count the count
+	 * @return the endian subset
+	 */
 	public static byte[] getEndianSubset(byte[] bytes, int offset, long count) {
 		return getLittleEndianSubset(bytes, offset, (int) (offset + count - 1));
 	}
 
+	/**
+	 * Gets the offset subset.
+	 *
+	 * @param bytes the bytes
+	 * @param offset the offset
+	 * @param count the count
+	 * @return the offset subset
+	 */
 	public static byte[] getOffsetSubset(byte[] bytes, int offset, long count) {
 		return ArrayMethods.getSubset(bytes, offset, (int) (offset + count - 1));
 	}
 
+	/**
+	 * Gets the subset.
+	 *
+	 * @param bytes the bytes
+	 * @param offset the offset
+	 * @param length the length
+	 * @return the subset
+	 */
 	public static byte[] getSubset(byte[] bytes, long offset, long length) {
 		return ArrayMethods.getSubset(bytes, (int)offset, (int)length);
 	}
 	
-	/** returns the position of bytes if within, null if not found **/
+	/**
+	 * returns the position of bytes if within, null if not found *.
+	 *
+	 * @param toFind the to find
+	 * @param within the within
+	 * @return the integer
+	 */
 	public static Integer findBytes(byte[] toFind, byte[] within) {
 		for (int i = 0; i < within.length; ++i) {
 			//System.out.println("i is: " + i);
@@ -177,6 +283,15 @@ public class HexByte {
 		return null;
 	}
 	
+	/**
+	 * Find bytes is equal.
+	 *
+	 * @param toFind the to find
+	 * @param within the within
+	 * @param tf the tf
+	 * @param wi the wi
+	 * @return true, if successful
+	 */
 	private static boolean findBytesIsEqual(byte[] toFind, byte[] within, int tf, int wi) {
 		//System.out.println("Checking: " + toFind[tf] + " + " + within[wi]);
 		if (tf >= toFind.length) {
@@ -192,6 +307,12 @@ public class HexByte {
 		}
 	}
 	
+	/**
+	 * Byte sum.
+	 *
+	 * @param bytes the bytes
+	 * @return the long
+	 */
 	public static long byteSum(byte[] bytes) {
 		long c = 0;
 		for (byte b : bytes) {
@@ -202,8 +323,13 @@ public class HexByte {
 	
 	
 	
-	/**cheap and cheerful number to byte converter. If length is too
+	/**
+	 * cheap and cheerful number to byte converter. If length is too
 	 * small things will go wrong.
+	 *
+	 * @param val the val
+	 * @param length the length
+	 * @return the byte[]
 	 */
 	public static byte[] longToLittleEndianBytes(long val, int length) {
 		byte[] bytes = new byte[length];
@@ -217,8 +343,13 @@ public class HexByte {
 		return bytes;
 	}
 	
-	/**cheap and cheerful number to byte converter. If length is too
+	/**
+	 * cheap and cheerful number to byte converter. If length is too
 	 * small things will go wrong. Signed
+	 *
+	 * @param d the d
+	 * @param length the length
+	 * @return the byte[]
 	 */
 	public static byte[] doubleToLittleEndianBytes(double d, int length) {
 		long val = Math.abs(Math.round(d));
@@ -239,6 +370,12 @@ public class HexByte {
 		return bytes;
 	}
 	
+	/**
+	 * Twos flip le.
+	 *
+	 * @param bytes the bytes
+	 * @return the byte[]
+	 */
 	public static byte[] twosFlipLE(byte[] bytes) {
 		bytes[0] -= 1; 
 		for (int i = 0; i < bytes.length; ++i) {
@@ -248,6 +385,12 @@ public class HexByte {
 		return bytes;
 	}
 	
+	/**
+	 * Twos flip.
+	 *
+	 * @param bytes the bytes
+	 * @return the byte[]
+	 */
 	public static byte[] twosFlip(byte[] bytes) {
 		bytes[bytes.length - 1] -= 1; 
 		for (int i = 0; i < bytes.length; ++i) {
@@ -258,6 +401,13 @@ public class HexByte {
 	}
 	
 	
+	/**
+	 * String to bytes.
+	 *
+	 * @param str the str
+	 * @param byteRound the byte round
+	 * @return the byte[]
+	 */
 	public static byte[] stringToBytes(String str, int byteRound) {
 		byte[] bytes = str.getBytes(); //check charset is UTF-16
 		return roundUpBytes(bytes,byteRound);
@@ -265,8 +415,14 @@ public class HexByte {
 	}
 	
 	
-	/** Adds empty bytes to a byte array to allow it to be a multiple 
-	 * e.g. roundUpBytes([1, 5], 4) => [1,5,0,0]**/
+	/**
+	 * Adds empty bytes to a byte array to allow it to be a multiple
+	 * e.g. roundUpBytes([1, 5], 4) => [1,5,0,0]*
+	 *
+	 * @param bytes the bytes
+	 * @param byteRound the byte round
+	 * @return the byte[]
+	 */
 	public static byte[] roundUpBytes(byte[] bytes, int byteRound) {
 		if (bytes.length % byteRound == 0) {
 			return bytes;

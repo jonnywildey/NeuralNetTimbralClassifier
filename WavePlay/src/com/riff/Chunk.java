@@ -112,23 +112,19 @@ public class Chunk implements Serializable {
 	private Chunk makeChunk(String name, int start, long Datalength) { 
 		Chunk chunk;
 		byte[] tBytes;
-		switch (name) {
-		case "LIST":
+		
+		if(name.equals("LIST")) {
 			tBytes = getSubChunkBytes(start, Datalength + InfoChunk.dataOffset);
 			chunk = new InfoChunk(tBytes);
-			break;
-		case "fmt ":
+		} else if (name.equals("fmt ")) {
 			tBytes = getSubChunkBytes(start, Datalength + FMTChunk.dataOffset);
 			chunk = new FMTChunk(tBytes);
-			break;
-		case "data":
+		} else if (name.equals("data")) {
 			tBytes = getSubChunkBytes(start, Datalength + DataChunk.dataOffset);
 			chunk = new DataChunk(tBytes);
-			break;
-		default:
+		} else {
 			tBytes = getSubChunkBytes(start, Datalength + Chunk.dataOffset);
 			chunk = new Chunk(tBytes);
-			break;
 		}
 		return chunk;
 	}

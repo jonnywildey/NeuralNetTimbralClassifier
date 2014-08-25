@@ -2,7 +2,7 @@ package com.DSP.waveAnalysis;
 
 import java.util.Arrays;
 
-import com.DSP.plotting.FFTController;
+import com.plotting.FFTController;
 import com.riff.Signal;
 import com.util.ArrayMethods;
 

@@ -1,7 +1,7 @@
 package com.DSP.waveAnalysis;
 
-import com.DSP.plotting.FFTController;
-import com.DSP.plotting.FFTDifferenceController;
+import com.plotting.FFTController;
+import com.plotting.FFTDifferenceController;
 import com.util.ArrayMethods;
 import com.util.Log;
 

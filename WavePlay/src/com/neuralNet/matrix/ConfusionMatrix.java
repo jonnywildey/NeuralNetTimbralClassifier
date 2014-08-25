@@ -1,11 +1,11 @@
-package com.DSP.neuralNet.matrix;
+package com.neuralNet.matrix;
 
 import java.util.Arrays;
 
-import com.DSP.DSP.waveAnalysis.Statistics;
-import com.DSP.neuralNet.NNFunctions;
-import com.DSP.plotting.ConfusionMatrixController;
-import com.DSP.util.Log;
+import com.DSP.waveAnalysis.Statistics;
+import com.neuralNet.NNFunctions;
+import com.plotting.ConfusionMatrixController;
+import com.util.Log;
 
 /** Matrix for mapping classifications. Typically classification is row,
  * correct output is column **/

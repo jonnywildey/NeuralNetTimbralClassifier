@@ -8,12 +8,28 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import com.util.fileReading.HTML;
 
+/**
+ * Basic simple, static logger *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Log {
 	
+	/** The file handler. */
 	public static FileHandler fileHandler;
+	
+	/** The logger. */
 	private static Logger logger;
+	
+	/** The init. */
 	public static boolean init = false;
 	
+	/**
+	 * Sets the file path.
+	 *
+	 * @param f the new file path
+	 */
 	public static void setFilePath(File f) {
 		try {
 			
@@ -41,7 +57,11 @@ public class Log {
 		} 
 	}
 	
-	/**Standard debug log **/
+	/**
+	 * Standard debug log *.
+	 *
+	 * @param str the str
+	 */
 	public static void d(String str) {
 		if (init) {
 			logger.fine(str);;
@@ -49,7 +69,11 @@ public class Log {
 		System.out.println(str);
 	}
 	
-	/**Generate popup of message **/
+	/**
+	 * Generate popup of message *.
+	 *
+	 * @param str the str
+	 */
 	public static void popUp(String str) {
 		if (init) {
 			logger.fine(str);;
@@ -57,31 +81,56 @@ public class Log {
 		HTML.winDisplay(str);
 	}
 	
-	/**Standard debug log **/
+	/**
+	 * Standard debug log *.
+	 *
+	 * @param d the d
+	 */
 	public static void d(double d) {
 		d(String.valueOf(d));
 	}
 	
-	/**Standard debug log **/
+	/**
+	 * Standard debug log *.
+	 *
+	 * @param d the d
+	 */
 	public static void d(byte d) {
 		d(String.valueOf(d));
 	}
 	
-	/**Standard debug log **/
+	/**
+	 * Standard debug log *.
+	 *
+	 * @param d the d
+	 */
 	public static void d(int d) {
 		d(String.valueOf(d));
 	}
 	
-	/**Standard debug log **/
+	/**
+	 * Standard debug log *.
+	 *
+	 * @param d the d
+	 */
 	public static void d(char d) {
 		d(String.valueOf(d));
 	}
 	
-	/**Standard debug log **/
+	/**
+	 * Standard debug log *.
+	 *
+	 * @param o the o
+	 */
 	public static void d(Object o) {
 		d(o.toString());
 	}
 	
+	/**
+	 * Error/bad thing log *.
+	 *
+	 * @param str the str
+	 */
 	public static void bad(String str) {
 		if (init) {
 			logger.fine(str);;
@@ -89,53 +138,59 @@ public class Log {
 		System.err.println(str);
 	}
 	
+	/**
+	 * Error/bad thing log *.
+	 *
+	 * @param f the f
+	 */
 	public static void bad(double f) {
 		bad(String.valueOf(f));
 	}
 	
+	/**
+	 * Error/bad thing log *.
+	 *
+	 * @param f the f
+	 */
 	public static void bad(int f) {
 		bad(String.valueOf(f));
 	}
 	
+	/**
+	 * Error/bad thing log *.
+	 *
+	 * @param f the f
+	 */
 	public static void bad(long f) {
 		bad(String.valueOf(f));
 	}
 	
+	/**
+	 * Error/bad thing log *.
+	 *
+	 * @param f the f
+	 */
 	public static void bad(byte f) {
 		bad(String.valueOf(f));
 	}
 	
+	/**
+	 * Error/bad thing log *.
+	 *
+	 * @param f the f
+	 */
 	public static void bad(float f) {
 		bad(String.valueOf(f));
 	}
 	
+	/**
+	 * Error/bad thing log *.
+	 *
+	 * @param o the o
+	 */
 	public static void bad(Object o) {
 		bad(o.toString());
 	}
-	
-	
-	
-	
-	public static void logTesting() {
-		FileHandler fh;
-		try {
-			fh = new FileHandler("fileDemo.txt");
-			Logger logger = Logger.getLogger("New Log");
-			logger.addHandler(fh);
-			SimpleFormatter sf = new SimpleFormatter();
-			fh.setFormatter(sf);
-			logger.setLevel(Level.ALL);
-			logger.log(Level.CONFIG, "TESTING");
-			logger.log(Level.FINER, "Ytfgh");
-			logger.log(Level.ALL, "TESTING2");
-		} catch (Exception e) {
-			e.printStackTrace();;
-		} 
-	}
-
-	
-
-	
 	
 
 }
