@@ -5,6 +5,12 @@ import java.util.ArrayList;
 
 import com.neuralNet.NeuralComponent;
 
+/**
+ * The Class Neuron.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Neuron extends NeuralComponent implements Serializable {
 	
 	private static final long serialVersionUID = -1422063420400907090L;
@@ -22,6 +28,13 @@ public class Neuron extends NeuralComponent implements Serializable {
 	protected double trainingRate;
 	protected double delta; //necessary for easy back-prop
 	
+	/**
+	 * Instantiates a new neuron.
+	 *
+	 * @param id the id
+	 * @param inputCount the input count
+	 * @param layer the layer
+	 */
 	public Neuron(Integer id, int inputCount, int layer) {
 		this.randomRange = 0.2;
 		this.setWeightList(new ArrayList<Double>(inputCount + 1));
@@ -31,6 +44,11 @@ public class Neuron extends NeuralComponent implements Serializable {
 	}
 	
 	/* Copy constructor */
+	/**
+	 * Instantiates a new neuron.
+	 *
+	 * @param n the n
+	 */
 	public Neuron(Neuron n) {
 		this.setId(n.getId());
 		this.randomRange = n.randomRange;
@@ -47,40 +65,71 @@ public class Neuron extends NeuralComponent implements Serializable {
 		this.target = n.target;
 	}
 
+	/**
+	 * Turn off learning.
+	 */
 	public void turnOffLearning(){
 		this.learning = false;
 	}
 	
+	/**
+	 * Turn on learning.
+	 */
 	public void turnOnLearning() {
 		this.learning = true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.neuralNet.NeuralComponent#getValue()
+	 */
 	@Override
 	public Double getValue() {
 		return this.output;
 	}
 		
-	/**Only useful if calculating error **/
+	/**
+	 * Only useful if calculating error *.
+	 *
+	 * @return the error
+	 */
 	public Double getError() {
 		return (Double) Math.pow((this.target - this.output), 2); //I think...
 	}
 	
 	
+	/**
+	 * Sets the target.
+	 *
+	 * @param target the new target
+	 */
 	public void setTarget(Double target) {
 		this.target = target;
 	}
 	
+	/**
+	 * Sets the target rate.
+	 *
+	 * @param targetRate the new target rate
+	 */
 	public void setTargetRate(Double targetRate) {
 		this.trainingRate = targetRate;
 	}
 	
 	
+	/**
+	 * Gets the output.
+	 *
+	 * @return the output
+	 */
 	public Double getOutput() {
 		return this.output;
 	}
 	
 
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		String str = "\nNeuron id: " + this.getId() + " \tLayer: " + this.layer +  "\tWeights: \n";
 		for (Double f: this.getWeightList()) {
@@ -92,18 +141,38 @@ public class Neuron extends NeuralComponent implements Serializable {
 		return str;
 	}
 
+	/**
+	 * Gets the weight list.
+	 *
+	 * @return the weight list
+	 */
 	public ArrayList<Double> getWeightList() {
 		return weightList;
 	}
 
+	/**
+	 * Sets the weight list.
+	 *
+	 * @param weightList the new weight list
+	 */
 	public void setWeightList(ArrayList<Double> weightList) {
 		this.weightList = weightList;
 	}
 
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
 	public Integer getId() {
 		return id;
 	}
 
+	/**
+	 * Sets the id.
+	 *
+	 * @param id the new id
+	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}

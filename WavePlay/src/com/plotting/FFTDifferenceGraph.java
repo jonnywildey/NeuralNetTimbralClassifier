@@ -3,11 +3,23 @@ import java.awt.*;
 import com.util.ArrayMethods;
 import com.util.Log;
 
-/**Messy but somewhat functional FFT graph**/
+/**
+ * FFT graph*.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class FFTDifferenceGraph extends PlotGraph {
 	
 	protected double[][] values;
 	
+	/**
+	 * Instantiates a new fFT difference graph.
+	 *
+	 * @param table the table
+	 * @param winSize the win size
+	 * @param axisLabels the axis labels
+	 */
 	public FFTDifferenceGraph(double[][] table, Dimension winSize, String[] axisLabels) {
 		super();
 		this.values = table;
@@ -27,7 +39,12 @@ public class FFTDifferenceGraph extends PlotGraph {
 	}
 	
 	
-	/** converts amp value to graph value **/
+	/**
+	 * converts amp value to graph value *.
+	 *
+	 * @param c the c
+	 * @return the int
+	 */
 	public int ampValue(double c) {
 		//Log.d(c);
 		 return (int) (this.half - (c * maxBar));
@@ -35,10 +52,18 @@ public class FFTDifferenceGraph extends PlotGraph {
 	
 
 	
+	/**
+	 * Gets the high freq.
+	 *
+	 * @return the high freq
+	 */
 	private String getHighFreq() {
 		return String.valueOf(Math.rint(Math.pow(2,ArrayMethods.getMax(this.values[0]))) + "hz");
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.plotting.PlotGraph#drawBar(java.awt.Graphics2D)
+	 */
 	@Override
 	public void drawBar(Graphics2D g2d) {
 		whiteBackground(g2d);

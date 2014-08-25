@@ -1,29 +1,55 @@
 package com.DSP.waveAnalysis;
 
-import java.util.Arrays;
-
 import com.riff.Signal;
 import com.util.ArrayMethods;
-import com.util.Log;
 
+/**
+ * staggered FFT window analysis *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class FrameBlurFFT extends FrameFFT{
 	
 	
+	/**
+	 * Instantiates a new frame blur fft.
+	 *
+	 * @param s the s
+	 * @param frameSize the frame size
+	 */
 	public FrameBlurFFT(Signal s, int frameSize) {
 		super(s, frameSize);
 	}
 
+	/**
+	 * Instantiates a new frame blur fft.
+	 *
+	 * @param s the s
+	 */
 	public FrameBlurFFT(Signal s) {
 		super(s);
 	}
 	
-	/**Overload of FrameFFT**/
+	/**
+	 * Overload of FrameFFT*.
+	 *
+	 * @param s the s
+	 * @param frameSize the frame size
+	 * @return the frame count
+	 */
 	protected static int getFrameCount(Signal s, int frameSize) {
 		return (int) Math.ceil(
 				(double)(s.getLength()) / (double)(frameSize) * 2);
 	}
 	
-	/** Convert one signal into many signals, each one a frame long**/
+	/**
+	 * Convert one signal into many signals, each one a frame long*.
+	 *
+	 * @param s the s
+	 * @param frame the frame
+	 * @return the double[][]
+	 */
 	protected static double[][] makeBlurAmps(Signal s, int frame) {
 		int chan = 0;
 		int frameCount = getFrameCount(s, frame);
@@ -44,7 +70,11 @@ public class FrameBlurFFT extends FrameFFT{
 		return amps;
 	}
 	
-	/**Perform frame analysis **/
+	/**
+	 * Perform frame analysis *.
+	 *
+	 * @return the fFT box
+	 */
 	@Override
 	public FFTBox analyse() {
 		double[][] amps = makeBlurAmps(this.signal, this.frameSize);

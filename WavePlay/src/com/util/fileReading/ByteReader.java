@@ -9,24 +9,37 @@ import java.util.ArrayList;
 
 
 /**
- * ByteReader
+ * ByteReader.
  *
  * @author Jonny Wildey
- *
  */
 public class ByteReader {
+	
+	/** The filename. */
 	private String filename;
+	
+	/** The reader. */
 	private FileInputStream reader;
+	
+	/** The eof. */
 	private boolean eof;
+	
+	/** The byte array. */
 	private ArrayList<Integer> byteArray;
 	
-	/**File Prompt Constructor */
+	/**
+	 * File Prompt Constructor.
+	 */
 	public ByteReader() {
 		this(com.util.fileReading.HTML.fileChooser());
 	}
 	
 	
-	/**Main Constructor */
+	/**
+	 * Main Constructor.
+	 *
+	 * @param fname the fname
+	 */
 	public ByteReader(String fname)
     {
       filename = fname ;
@@ -41,6 +54,11 @@ public class ByteReader {
       
     }
 	
+		/**
+		 * Read file.
+		 *
+		 * @return the byte[]
+		 */
 		public byte[] readFile() {
 		
 		byteArray = new ArrayList<Integer>();
@@ -55,7 +73,11 @@ public class ByteReader {
 		return byteIntArray;
 	}
 	
-	/**Converts arraylist to byteArray*/
+	/**
+	 * Converts arraylist to byteArray.
+	 *
+	 * @return the byte[]
+	 */
 	
 	private byte[] IntegerToByte() {
 		byte[] byteIntArray = new byte[byteArray.size()];
@@ -68,11 +90,21 @@ public class ByteReader {
     }
 	
 
+    /**
+     * Eof.
+     *
+     * @return true, if successful
+     */
     public boolean eof()
     {
       return eof ;
     }
 	
+    /**
+     * Read.
+     *
+     * @return the int
+     */
     public int read() {
     	try {
     		int c = reader.read();
@@ -88,6 +120,9 @@ public class ByteReader {
     }
 	
 	
+	/**
+	 * Close.
+	 */
 	public void close()
     {
       try
@@ -100,6 +135,11 @@ public class ByteReader {
       }
     }
 
+    /**
+     * Error.
+     *
+     * @param msg the msg
+     */
     private void error(String msg)
     {
       System.out.println(msg) ;

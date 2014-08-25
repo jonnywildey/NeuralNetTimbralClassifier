@@ -11,6 +11,12 @@ import com.neuralNet.pattern.Pattern;
 import com.neuralNet.pattern.WavePattern;
 import com.util.Log;
 
+/**
+ * Run through of a group of patterns *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Epoch {
 	protected ArrayList<Pattern> trainingPatterns;
 	protected ArrayList<Pattern> testingPatterns;
@@ -27,6 +33,9 @@ public class Epoch {
 	private boolean addMaxOutputNeuron;
 	public Double meanError;
 	
+	/**
+	 * Instantiates a new epoch.
+	 */
 	public Epoch() {
 		this.trainingPatterns = new ArrayList<Pattern>();
 		this.testingPatterns = new ArrayList<Pattern>();
@@ -37,6 +46,16 @@ public class Epoch {
 	}
 	
 	
+	/**
+	 * Instantiates a new epoch.
+	 *
+	 * @param trainingPatterns the training patterns
+	 * @param testingPatterns the testing patterns
+	 * @param neurons the neurons
+	 * @param trainingRate the training rate
+	 * @param verbose the verbose
+	 * @param debug the debug
+	 */
 	public Epoch(ArrayList<Pattern> trainingPatterns,
 			ArrayList<Pattern> testingPatterns, LayerList neurons,
 			Double trainingRate, boolean verbose, boolean debug) {
@@ -57,22 +76,45 @@ public class Epoch {
 		}
 	}
 	
+	/**
+	 * Sets the debug.
+	 *
+	 * @param debug the new debug
+	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 
+	/**
+	 * Sets the verbose.
+	 *
+	 * @param verbose the new verbose
+	 */
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
 	
+	/**
+	 * Sets the shuffle seed.
+	 *
+	 * @param seed the new shuffle seed
+	 */
 	public void setShuffleSeed(long seed) {
 		shuffleRandom.setSeed(seed);
 	}
 
+	/**
+	 * Gets the confusion matrix.
+	 *
+	 * @return the confusion matrix
+	 */
 	public ConfusionMatrix getConfusionMatrix() {
 		return testConfusionMatrix;
 	}
 
+	/**
+	 * Shuffle training patterns.
+	 */
 	public void shuffleTrainingPatterns() {
 		Pattern holder = null;//ugh
 		int j = 0;
@@ -86,14 +128,30 @@ public class Epoch {
 	}
 	
 
+	/**
+	 * Adds the training pattern.
+	 *
+	 * @param trainingPattern the training pattern
+	 */
 	public void addTrainingPattern(Pattern trainingPattern) {
 		trainingPatterns.add(trainingPattern);
 	}
 	
+	/**
+	 * Sets the training rate.
+	 *
+	 * @param trainingRate the new training rate
+	 */
 	public void setTrainingRate(Double trainingRate) {
 		this.trainingRate = trainingRate;
 	}
 	
+	/**
+	 * Run pattern.
+	 *
+	 * @param p the p
+	 * @return the double[]
+	 */
 	public double[] runPattern(Pattern p) {
 		neurons.setLearning(false);
 		for (int i = 0; i < neurons.getLayerCount(); ++i) {
@@ -103,6 +161,11 @@ public class Epoch {
 		return getOutputs();
 	}
 	
+	/**
+	 * Gets the outputs.
+	 *
+	 * @return the outputs
+	 */
 	public double[] getOutputs() {
 		double[] d = new double[this.neurons.getOutputCount()];
 		for (int i = 0; i < d.length; ++i) {
@@ -111,6 +174,12 @@ public class Epoch {
 		return d;
 	}
 	
+	/**
+	 * Run patterns.
+	 *
+	 * @param patterns the patterns
+	 * @return the double[][]
+	 */
 	public double[][] runPatterns(Pattern[] patterns) {
 		double[][] ds = new double[patterns.length][];
 		for (int i = 0; i < ds.length; ++i) {
@@ -119,6 +188,12 @@ public class Epoch {
 		return ds;
 	}
 	
+	/**
+	 * Run patterns.
+	 *
+	 * @param patterns the patterns
+	 * @return the double[][]
+	 */
 	public double[][] runPatterns(ArrayList<Pattern> patterns) {
 		double[][] ds = new double[patterns.size()][];
 		for (int i = 0; i < ds.length; ++i) {
@@ -127,6 +202,12 @@ public class Epoch {
 		return ds;
 	}
 	
+	/**
+	 * Run patterns get max.
+	 *
+	 * @param patterns the patterns
+	 * @return the int[]
+	 */
 	public int[] runPatternsGetMax(ArrayList<Pattern> patterns) {
 		int[] ds = new int[patterns.size()];
 		for (int i = 0; i < ds.length; ++i) {
@@ -136,6 +217,12 @@ public class Epoch {
 		return ds;
 	}
 	
+	/**
+	 * Run patterns get max.
+	 *
+	 * @param patterns the patterns
+	 * @return the int[]
+	 */
 	public int[] runPatternsGetMax(Pattern[] patterns) {
 		int[] ds = new int[patterns.length];
 		for (int i = 0; i < ds.length; ++i) {
@@ -145,6 +232,11 @@ public class Epoch {
 		return ds;
 	}
 	
+	/**
+	 * Run validation epoch.
+	 *
+	 * @return the confusion matrix
+	 */
 	public ConfusionMatrix runValidationEpoch() {
 		testConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount(), verbose);
 		neurons.setLearning(false);
@@ -168,7 +260,11 @@ public class Epoch {
 		return testConfusionMatrix;	
 	}
 	
-	/** returns an arraylist of all patterns that were incorrect **/
+	/**
+	 * returns an arraylist of all patterns that were incorrect *.
+	 *
+	 * @return the problem patterns
+	 */
 	public ArrayList<WavePattern> getProblemPatterns() {
 		ArrayList<WavePattern> problems = new ArrayList<WavePattern>();
 		for (Pattern pattern: this.testingPatterns) {
@@ -187,7 +283,12 @@ public class Epoch {
 		return problems;	
 	}
 	
-	/** add neuron outputs > 0.5 **/
+	/**
+	 * add neuron outputs > 0.5 *
+	 *
+	 * @param p the p
+	 * @param cm the cm
+	 */
 	public void addRounded(Pattern p, ConfusionMatrix cm) {
 		for (Neuron n : neurons.getLastLayer().neurons) {
 			int roundedOut = (int)Math.rint(n.getOutput());
@@ -198,11 +299,23 @@ public class Epoch {
 		}
 	}
 	
+	/**
+	 * Adds the max.
+	 *
+	 * @param p the p
+	 * @param cm the cm
+	 */
 	public void addMax(Pattern p, ConfusionMatrix cm) {
 		int nid = getMaxId();
 		cm.addToCell(nid, p.getTargetNumber());
 		//Neuron Row, Class Column
 	}
+	
+	/**
+	 * Gets the max id.
+	 *
+	 * @return the max id
+	 */
 	public int getMaxId() {
 		double max = 0;
 		int nid = 0;
@@ -216,6 +329,12 @@ public class Epoch {
 	}
 	
 	
+	/**
+	 * Checks if is right.
+	 *
+	 * @param p the p
+	 * @return true, if is right
+	 */
 	public boolean isRight(Pattern p) {
 		double max = 0;
 		int nid = 0;
@@ -232,6 +351,9 @@ public class Epoch {
 	
 	
 	
+	/**
+	 * Runs a training epoch.
+	 */
 	public void runEpoch() {
 		trainingConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount(), verbose);
 		Double patternErrors = 0d;
@@ -268,6 +390,9 @@ public class Epoch {
 	
 	
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		return this.neurons.toString();
  

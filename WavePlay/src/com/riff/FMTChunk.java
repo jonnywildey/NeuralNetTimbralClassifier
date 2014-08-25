@@ -3,15 +3,31 @@ package com.riff;
 import com.util.ArrayMethods;
 import com.util.HexByte;
 
-/** Essentially the header chunk for the Wave file
- * Contains lots of format stuff **/
+/**
+ * Header chunk for the Wave file
+ * Contains lots of format stuff *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class FMTChunk extends Chunk{
 
+	/**
+	 * Instantiates a new fMT chunk.
+	 *
+	 * @param bytes the bytes
+	 */
 	public FMTChunk(byte[] bytes) {
 		super(bytes);
 	}
 	
-	/** Constructor From Nothing **/
+	/**
+	 * Constructor From Nothing *.
+	 *
+	 * @param bit the bit
+	 * @param sampleRate the sample rate
+	 * @param channels the channels
+	 */
 	public FMTChunk(int bit, int sampleRate, int channels) {
 		int byteRate = sampleRate * channels * (bit / 8);
 		int blockAlign = channels * (bit / 8);
@@ -28,21 +44,39 @@ public class FMTChunk extends Chunk{
 		this.name = new String(HexByte.getSubset(bytes, 0, 3));
 	}
 	
+	/**
+	 * Gets the bit size.
+	 *
+	 * @return the bit size
+	 */
 	public int getBitSize() {
 		byte[] bit = HexByte.getEndianSubset(this.bytes, 22, 2);
 		return (int)HexByte.hexToDecimalUnsigned(bit); 
 	}
 	
+	/**
+	 * Gets the sample rate.
+	 *
+	 * @return the sample rate
+	 */
 	public int getSampleRate() {
 		byte[] sampleRate = HexByte.getEndianSubset(this.bytes, 12,4);
 		return (int) HexByte.hexToDecimalUnsigned(sampleRate);
 	}
 	
+	/**
+	 * Gets the channels.
+	 *
+	 * @return the channels
+	 */
 	public int getChannels() {
 		byte[] channel = HexByte.getEndianSubset(this.bytes, 10, 2);
 		return (int)HexByte.hexToDecimalUnsigned(channel);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.riff.Chunk#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(100);

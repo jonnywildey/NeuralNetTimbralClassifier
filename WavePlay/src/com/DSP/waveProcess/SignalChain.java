@@ -5,9 +5,24 @@ import java.util.Random;
 import com.riff.Signal;
 import com.util.Log;
 
+/**
+ * Signal processing chains *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class SignalChain {
 
-	/** Performs the audio processing of a file **/
+	/**
+	 * Performs the audio processing of a file *.
+	 *
+	 * @param pitchRand the pitch rand
+	 * @param noiseRand the noise rand
+	 * @param hpRand the hp rand
+	 * @param lpRand the lp rand
+	 * @param s1 the s1
+	 * @return the signal
+	 */
 	public static Signal processSignalChain(Random pitchRand,
 			Random noiseRand, Random hpRand, Random lpRand, Signal s1) {
 		s1 = Gain.getMid(s1);
@@ -22,14 +37,26 @@ public class SignalChain {
 		return s1;
 	}
 	
-	/** get mid of signal and normalise **/
+	/**
+	 * get mid of signal and normalise *.
+	 *
+	 * @param s1 the s1
+	 * @return the signal
+	 */
 	public static Signal midAndNormalise(Signal s1) {
 		s1 = Gain.getMid(s1);
 		s1 = Gain.normalise(s1);
 		return s1;
 	}
 
-	/**Applies a random pitch change to the file **/
+	/**
+	 * Applies a random pitch change to the file *.
+	 *
+	 * @param s the s
+	 * @param range the range
+	 * @param r the r
+	 * @return the signal
+	 */
 	public static Signal randomPitch(Signal s, double range, Random r) {
 		double semi = (range * r.nextDouble()) - (range * 0.5);
 		Signal ns = Pitch.pitchShift(s, semi);
@@ -41,7 +68,14 @@ public class SignalChain {
 		}
 	}
 
-	/**chance is a percentage. Normally 0.1 **/
+	/**
+	 * chance is a percentage. Normally 0.1 *
+	 *
+	 * @param s the s
+	 * @param chance the chance
+	 * @param r the r
+	 * @return the signal
+	 */
 	public static Signal randomHP(Signal s, double chance, Random r) {
 		double freq = r.nextDouble() * 130 + 100;
 		if (r.nextDouble() > chance) {
@@ -50,7 +84,14 @@ public class SignalChain {
 		return s;
 	}
 
-	/**chance is a percentage. Normally 0.1 **/
+	/**
+	 * chance is a percentage. Normally 0.1 *
+	 *
+	 * @param s the s
+	 * @param chance the chance
+	 * @param r the r
+	 * @return the signal
+	 */
 	public static Signal randomLP(Signal s, double chance, Random r) {
 		double freq = 10000 - r.nextDouble() * 6000;
 		if (r.nextDouble() > chance) {
@@ -59,7 +100,13 @@ public class SignalChain {
 		return s;
 	}
 
-	/** Adds random noise to a signal **/
+	/**
+	 * Adds random noise to a signal *.
+	 *
+	 * @param s the s
+	 * @param nr the nr
+	 * @return the signal
+	 */
 	public static Signal addNoise(Signal s, Random nr) {
 		double nc = nr.nextDouble();
 		double maxLoud = -90;

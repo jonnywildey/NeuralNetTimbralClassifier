@@ -4,19 +4,39 @@ import com.util.ArrayMethods;
 import com.util.HexByte;
 import com.util.Log;
 
-
+/**
+ * DATA type chunk and methods associated with it *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class DataChunk extends Chunk{
 
+	/**
+	 * Instantiates a new data chunk.
+	 *
+	 * @param bytes the bytes
+	 */
 	public DataChunk(byte[] bytes) {
 		super(bytes);
 	}
 	
 	
+	/**
+	 * Instantiates a new data chunk.
+	 *
+	 * @param signal the signal
+	 */
 	public DataChunk(Signal signal) {
 		signalToByte(signal);
 		
 	}
 	
+	/**
+	 * Signal to byte.
+	 *
+	 * @param signal the signal
+	 */
 	public void signalToByte(Signal signal) {
 		int bj = signal.getBit() / 8;
 		int channels = signal.getChannels();
@@ -36,6 +56,11 @@ public class DataChunk extends Chunk{
 		doHeader(nb);
 	}
 	
+	/**
+	 * Do header.
+	 *
+	 * @param data the data
+	 */
 	private void doHeader(byte[] data) {
 		this.bytes = new byte[data.length + 8];
 		this.bytes = ArrayMethods.addBytes(bytes, HexByte.stringToBytes("data", 4), 0);
@@ -45,8 +70,13 @@ public class DataChunk extends Chunk{
 	}
 
 
-	/** return array of each channel's amplitude values. For bitRates less than 24 
-	 * @throws BitRateException **/
+	/**
+	 * return array of each channel's amplitude values. For bitRates less than 24
+	 *
+	 * @param bit the bit
+	 * @param channel the channel
+	 * @return the signals long
+	 */
 	public long[][] getSignalsLong(int bit, int channel) {
 		if (bit > 24) {
 			Log.d("Converting floating wav to fixed point");
@@ -78,8 +108,13 @@ public class DataChunk extends Chunk{
 		return signals;
 	}
 	
-	/** return array of each channel's amplitude values. For bitRates 32 and above 
-	 * @throws BitRateException **/
+	/**
+	 * return array of each channel's amplitude values. For bitRates 32 and above
+	 *
+	 * @param bit the bit
+	 * @param channel the channel
+	 * @return the signals double
+	 */
 	public double[][] getSignalsDouble(int bit, int channel) {
 		if (bit < 32) {
 			Log.d("Converting fixed point wav to floating point");
@@ -112,11 +147,17 @@ public class DataChunk extends Chunk{
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see com.riff.Chunk#toString()
+	 */
 	@Override
 	public String toString() {
 		return toStringNoData();
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.riff.Chunk#toStringRecursive()
+	 */
 	@Override
 	public String toStringRecursive() {
 		return toStringNoData();

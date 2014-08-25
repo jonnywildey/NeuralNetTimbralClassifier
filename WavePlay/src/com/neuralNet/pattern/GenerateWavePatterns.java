@@ -16,7 +16,7 @@ public class GenerateWavePatterns {
 		WavePatterns wp = new WavePatternsBatchRegen(batchFolder);
 		wp = WavePatternsBatchRegen.genWaves(wp, 4, genCount);
 		try {
-		Serialize.serializeGson(wp, fileOut);
+		Serialize.writeJSON(wp, fileOut);
 		Log.d("serialised!");
 		} catch (Exception e){
 			Log.d("not serialised");

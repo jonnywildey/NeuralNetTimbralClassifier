@@ -4,12 +4,26 @@ import com.DSP.waveAnalysis.FFTBox;
 import com.DSP.waveAnalysis.FrameFFT;
 import com.riff.Signal;
 
+/**
+ * FFT analysis chains *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class FFTChain {
 
+	/**
+	 * Instantiates a new fFT chain.
+	 */
 	public FFTChain() {
-		// TODO Auto-generated constructor stub
 	}
 	
+	/**
+	 * Poly fft chain.
+	 *
+	 * @param signals the signals
+	 * @return the fFT box
+	 */
 	public static FFTBox polyFFTChain(Signal signals) {
 		FrameFFT fft = new FrameFFT(signals, 4096);
 		FFTBox dd = fft.analyse(20, 20000);
@@ -20,6 +34,12 @@ public class FFTChain {
 		return dd;
 	}
 	
+	/**
+	 * Mono fft chain.
+	 *
+	 * @param signals the signals
+	 * @return the fFT box
+	 */
 	public static FFTBox monoFFTChain(Signal signals) {
 		FrameFFT fft = new FrameFFT(signals, 4096);
 		FFTBox dd = fft.analyse(20, 20000);

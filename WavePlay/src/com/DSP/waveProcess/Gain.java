@@ -5,27 +5,56 @@ import com.riff.Signal;
 import com.util.ArrayMethods;
 import com.util.Log;
 
+/**
+ * Signal processes relating to amplitudes *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Gain {
 	
+	/**
+	 * Decibel to power.
+	 *
+	 * @param decibel the decibel
+	 * @return the double
+	 */
 	public static double decibelToPower(double decibel) {
 		return  Math.pow(10, decibel / 10);
 	}
 	
+	/**
+	 * Decibel to amplitude.
+	 *
+	 * @param decibel the decibel
+	 * @return the double
+	 */
 	public static double decibelToAmplitude(double decibel) {
 		return  Math.pow(10, (decibel / 20));
 	}
 	
+	/**
+	 * Amplitude to decibel.
+	 *
+	 * @param amplitude the amplitude
+	 * @return the double
+	 */
 	public static double amplitudeToDecibel(double amplitude) {
 		return 10 * Math.log10(amplitude * amplitude);
 	}
 	
+	/**
+	 * Power to decibel.
+	 *
+	 * @param power the power
+	 * @return the double
+	 */
 	public static double powerToDecibel(double power) {
 		return 10 * (Math.log10(power));
 	}
 	
-	
-	/**TEMPLATE **/
-	public static Signal processTemplate(Signal signal) {
+
+	/*public static Signal processTemplate(Signal signal) {
 		//set up arrays
 		double[][] os = signal.getSignal();
 		double[][] ns = new double[os.length][os[0].length];
@@ -36,9 +65,15 @@ public class Gain {
 			}
 		}
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
-	}
+	} */
 	
-	/**Adjusts volume in terms of decibels **/
+	/**
+	 * Adjusts volume in terms of decibels *.
+	 *
+	 * @param signal the signal
+	 * @param db the db
+	 * @return the signal
+	 */
 	public static Signal volume(Signal signal, double db) {
 		//set up arrays
 		double[][] os = signal.getSignal();
@@ -53,7 +88,13 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Adjusts amplitude. e.g. factor 2 is twice as much amplitude **/
+	/**
+	 * Adjusts amplitude. e.g. factor 2 is twice as much amplitude *
+	 *
+	 * @param signal the signal
+	 * @param factor the factor
+	 * @return the signal
+	 */
 	public static Signal amplifyByFactor(Signal signal, double factor) {
 		//set up arrays
 		double[][] os = signal.getSignal();
@@ -68,7 +109,12 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Inverts signal **/
+	/**
+	 * Inverts signal *.
+	 *
+	 * @param signal the signal
+	 * @return the signal
+	 */
 	public static Signal invert(Signal signal) {
 		//set up arrays
 		double[][] os = signal.getSignal();
@@ -83,7 +129,12 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Adjusts volume in terms of decibels **/
+	/**
+	 * Adjusts volume in terms of decibels *.
+	 *
+	 * @param signal the signal
+	 * @return the signal
+	 */
 	public static Signal swapChannels(Signal signal) {
 		if (signal.getChannels() != 2) {
 			return null;
@@ -100,7 +151,12 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**left to mono **/
+	/**
+	 * left to mono *.
+	 *
+	 * @param signal the signal
+	 * @return the signal
+	 */
 	public static Signal monoLeft(Signal signal) {
 		//set up arrays
 		if (signal.getChannels() == 1) {
@@ -112,7 +168,12 @@ public class Gain {
 		}
 	}
 	
-	/**left to mono **/
+	/**
+	 * left to mono *.
+	 *
+	 * @param signal the signal
+	 * @return the signal
+	 */
 	public static Signal monoRight(Signal signal) {
 		if (signal.getChannels() == 1) {
 			return signal;
@@ -123,11 +184,16 @@ public class Gain {
 		}
 	}
 	
-	/**Add signals together. very useful. Stereo. 
-	 * Uses the highest bit rate. throws an exception if 
+	/**
+	 * Add signals together. very useful. Stereo.
+	 * Uses the highest bit rate. throws an exception if
 	 * sample rates are bad.
-	 * Use sumMono for mono summing 
-	 * @throws SampleRateException **/
+	 * Use sumMono for mono summing
+	 *
+	 * @param signals the signals
+	 * @return the signal
+	 * @throws SampleRateException *
+	 */
 	public static Signal sum(Signal... signals) throws SampleRateException {
 		//set up arrays
 		double[][][] os = new double[signals.length][][];
@@ -156,10 +222,15 @@ public class Gain {
 		return new Signal(ns, bit, sr);
 	}
 	
-	/**Add signals together. very useful. Mono. 
-	 * Uses the highest bit rate. throws an exception if 
+	/**
+	 * Add signals together. very useful. Mono.
+	 * Uses the highest bit rate. throws an exception if
 	 * sample rates are bad.
-	 * @throws SampleRateException **/
+	 *
+	 * @param signals the signals
+	 * @return the signal
+	 * @throws SampleRateException *
+	 */
 	public static Signal sumMono(Signal... signals) throws SampleRateException {
 		//set up arrays
 		double[][] os = new double[signals.length][];
@@ -189,6 +260,12 @@ public class Gain {
 	
 	
 	
+	/**
+	 * Mid side encode.
+	 *
+	 * @param signal the signal
+	 * @return the signal
+	 */
 	public static Signal midSideEncode(Signal signal) {
 		double[][] ns = new double[][]{
 				getMid(signal).getSignal()[0], 
@@ -196,6 +273,12 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
+	/**
+	 * Gets the mid.
+	 *
+	 * @param signal the signal
+	 * @return the mid
+	 */
 	public static Signal getMid(Signal signal) {
 		if (signal.getChannels() == 1) {
 			return signal;
@@ -210,6 +293,12 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
+	/**
+	 * Gets the side.
+	 *
+	 * @param signal the signal
+	 * @return the side
+	 */
 	public static Signal getSide(Signal signal) {
 		if (signal.getChannels() == 1) {
 			return signal;
@@ -222,7 +311,13 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**converts from one bit rate to another **/
+	/**
+	 * converts from one bit rate to another *.
+	 *
+	 * @param signal the signal
+	 * @param newBitRate the new bit rate
+	 * @return the signal
+	 */
 	public static Signal bitRateConvert(Signal signal, int newBitRate) {
 		//set up arrays
 		int obr = signal.getBit();
@@ -237,7 +332,13 @@ public class Gain {
 		
 	}
 	
-	/**Adjusts volume to distance from ceiling, -ve **/
+	/**
+	 * Adjusts volume to distance from ceiling, -ve *.
+	 *
+	 * @param signal the signal
+	 * @param dbBelowFloor the db below floor
+	 * @return the signal
+	 */
 	public static Signal changeGain(Signal signal, double dbBelowFloor) {
 		//set up arrays
 		double[][] os = signal.getSignal();
@@ -254,7 +355,12 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**calculates root mean square **/
+	/**
+	 * calculates root mean square *.
+	 *
+	 * @param signal the signal
+	 * @return the double
+	 */
 	public static double calculateRMS(Signal signal) {
 		//set up arrays
 		double[][] os = signal.getSignal();
@@ -270,8 +376,14 @@ public class Gain {
 		return amplitudeToDecibel(avg);
 	}
 	
-	/**changes the volume to an rms value (e.g -12). Does NOT
-	 * check if this will clip **/
+	/**
+	 * changes the volume to an rms value (e.g -12). Does NOT
+	 * check if this will clip *
+	 *
+	 * @param signal the signal
+	 * @param rms the rms
+	 * @return the signal
+	 */
 	public static Signal volumeRMS(Signal signal, double rms) {
 		//Log.d("a");
 		double error = 0.05;
@@ -286,12 +398,22 @@ public class Gain {
 	
 	
 	
-	/**Adjusts volume to distance from ceiling, -ve **/
+	/**
+	 * Adjusts volume to distance from ceiling, -ve *.
+	 *
+	 * @param signal the signal
+	 * @return the signal
+	 */
 	public static Signal normalise(Signal signal) {
 		return changeGain(signal, 0);
 	}
 	
-	/**converts to stereo **/
+	/**
+	 * converts to stereo *.
+	 *
+	 * @param signal the signal
+	 * @return the signal
+	 */
 	public static Signal monoToStereo(Signal signal) {
 		//set up arrays
 		double[][] os = signal.getSignal();
@@ -305,7 +427,13 @@ public class Gain {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 
-	/**converts channels sort of ok **/
+	/**
+	 * converts channels sort of ok *.
+	 *
+	 * @param signal the signal
+	 * @param channel the channel
+	 * @return the signal
+	 */
 	public static Signal toChannels(Signal signal, int channel) {
 		if (signal.getChannels() == channel) {
 			return signal;

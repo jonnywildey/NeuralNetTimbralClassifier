@@ -3,23 +3,44 @@ package com.plotting;
 import java.awt.*;
 import com.util.ArrayMethods;
 
+/**
+ * Graph for plotting wave amplitudes. Automatically normalises *
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class WavGraph extends PlotGraph {
 
 	private static final long serialVersionUID = -3355221550223089425L;
 
+	/**
+	 * Instantiates a new wav graph.
+	 *
+	 * @param values the values
+	 * @param winSize the win size
+	 * @param axisLabels the axis labels
+	 */
 	public WavGraph(long[][] values, Dimension winSize, String[] axisLabels) {
 		super(values, winSize, axisLabels);
 		maxBar = (((heightness - offsetSize.height) / ArrayMethods
 				.getMax(values)) * 0.5);
 	}
 
-	/** converts amp value to graph value **/
+	/**
+	 * converts amp value to graph value *.
+	 *
+	 * @param c the c
+	 * @return the int
+	 */
 	public int ampValue(double c) {
 		// System.out.println((int) (half - (c * maxBar)));
 		return (int) (this.half - (c * maxBar));
 
 	}
 
+	/* (non-Javadoc)
+	 * @see com.plotting.PlotGraph#drawBar(java.awt.Graphics2D)
+	 */
 	@Override
 	/**Main draw Method **/
 	public void drawBar(Graphics2D g2d) {
@@ -29,7 +50,11 @@ public class WavGraph extends PlotGraph {
 		drawValues(g2d);
 	}
 
-	/** Draw actual values **/
+	/**
+	 * Draw actual values *.
+	 *
+	 * @param g2d the g2d
+	 */
 	protected void drawValues(Graphics2D g2d) {
 		int c = 0;
 		for (long[] av : values) {
@@ -42,7 +67,11 @@ public class WavGraph extends PlotGraph {
 		}
 	}
 
-	/** Draw axis and labels **/
+	/**
+	 * Draw axis and labels *.
+	 *
+	 * @param g2d the g2d
+	 */
 	protected void drawLines(Graphics2D g2d) {
 		// Y axis
 		g2d.drawLine(offsetSize.width, heightness, offsetSize.width,

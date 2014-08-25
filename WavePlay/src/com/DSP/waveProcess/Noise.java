@@ -4,13 +4,27 @@ import java.util.Random;
 
 import com.riff.Signal;
 
+/**
+ * Noise based signal processes *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Noise {
 
+	/**
+	 * Instantiates a new noise.
+	 */
 	public Noise() {
-		// TODO Auto-generated constructor stub
 	}
 	
-	/**adds white noise to the signal. db should be -ve  **/
+	/**
+	 * adds white noise to the signal. db should be -ve  *
+	 *
+	 * @param signal the signal
+	 * @param dbBelowFloor the db below floor
+	 * @return the signal
+	 */
 	public static Signal whiteNoise(Signal signal, double dbBelowFloor) {
 		//set up arrays
 		double[][] os = signal.getSignal();
@@ -28,7 +42,13 @@ public class Noise {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**adds tape hiss to the signal. db should be -ve  **/
+	/**
+	 * adds tape hiss to the signal. db should be -ve  *
+	 *
+	 * @param signal the signal
+	 * @param dbBelowFloor the db below floor
+	 * @return the signal
+	 */
 	public static Signal addTapeHiss(Signal signal, double dbBelowFloor) {
 		//set up arrays
 		double[][] os = signal.getSignal();

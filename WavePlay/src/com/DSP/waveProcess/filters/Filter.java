@@ -1,7 +1,12 @@
 package com.DSP.waveProcess.filters;
 
 
-/** basic template for filter. Just need to change the coefficients **/
+/**
+ * basic template for filter. Just need to change the coefficients *
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Filter {
 	
 	protected double sampleRate;
@@ -24,6 +29,14 @@ public class Filter {
 	
 	double xmem1, xmem2, ymem1, ymem2;
 	
+	/**
+	 * Instantiates a new filter.
+	 *
+	 * @param sampleRate the sample rate
+	 * @param centreFreq the centre freq
+	 * @param octaveBW the octave bw
+	 * @param gain the gain
+	 */
 	public Filter(int sampleRate, double centreFreq, double octaveBW,
 			double gain) {
 		this.sampleRate = sampleRate;
@@ -35,6 +48,9 @@ public class Filter {
 		this.reset();
 	}
 	
+	/**
+	 * Calculate middles.
+	 */
 	protected void calculateMiddles() {
 		this.bigA = Math.pow(10, gain / 20);
 		this.w0 = 2 * Math.PI * this.centreFreq / this.sampleRate;
@@ -45,13 +61,22 @@ public class Filter {
 	
 	
 	
+	/**
+	 * Calculate coefficients.
+	 */
 	protected void calculateCoefficients() {
 	}
 	
+	/**
+	 * Reset.
+	 */
 	public void reset() {
 	   xmem1 = xmem2 = ymem1 = ymem2 = 0;
 	}
 	
+	/**
+	 * Normalise coefficients.
+	 */
 	protected void normaliseCoefficients() {
 		b0 /= a0;
 	    b1 /= a0;
@@ -60,6 +85,12 @@ public class Filter {
 	    a2 /= a0;
 	}
 	
+	/**
+	 * Process.
+	 *
+	 * @param x the x
+	 * @return the double
+	 */
 	public double process(double x ) {
 	   double y = b0*x + b1*xmem1 + b2*xmem2 - a1*ymem1 - a2*ymem2;
 	   xmem2 = xmem1;
@@ -69,18 +100,38 @@ public class Filter {
 	   return y;
 	}
 
+	/**
+	 * Gets the sample rate.
+	 *
+	 * @return the sample rate
+	 */
 	public double getSampleRate() {
 		return sampleRate;
 	}
 
+	/**
+	 * Sets the sample rate.
+	 *
+	 * @param sampleRate the new sample rate
+	 */
 	public void setSampleRate(double sampleRate) {
 		this.sampleRate = sampleRate;
 	}
 
+	/**
+	 * Gets the centre freq.
+	 *
+	 * @return the centre freq
+	 */
 	public double getCentreFreq() {
 		return centreFreq;
 	}
 
+	/**
+	 * Sets the centre freq.
+	 *
+	 * @param centreFreq the new centre freq
+	 */
 	public void setCentreFreq(double centreFreq) {
 		this.centreFreq = centreFreq;
 		this.calculateMiddles();
@@ -88,18 +139,38 @@ public class Filter {
 		//this.reset();
 	}
 
+	/**
+	 * Gets the octave bw.
+	 *
+	 * @return the octave bw
+	 */
 	public double getOctaveBW() {
 		return octaveBW;
 	}
 
+	/**
+	 * Sets the octave bw.
+	 *
+	 * @param octaveBW the new octave bw
+	 */
 	public void setOctaveBW(double octaveBW) {
 		this.octaveBW = octaveBW;
 	}
 
+	/**
+	 * Gets the gain.
+	 *
+	 * @return the gain
+	 */
 	public double getGain() {
 		return gain;
 	}
 
+	/**
+	 * Sets the gain.
+	 *
+	 * @param gain the new gain
+	 */
 	public void setGain(double gain) {
 		this.gain = gain;
 	}

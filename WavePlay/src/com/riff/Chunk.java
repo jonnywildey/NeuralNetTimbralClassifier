@@ -10,15 +10,19 @@ import com.util.HexByte;
 import com.util.Log;
 
 
-/** Basic RIFF type chunk object. In order to stop the whole thing being horribly confusing
+/**
+ * Basic RIFF type chunk object. In order to stop the whole thing being horribly confusing
  * most methods just read/write straight from the chunk byte array. However this can't really be done
  * for sub-chunks, so be aware that every time you make a sub chunk you are essentially copying the data.
- * As this will be mainly used for meta data I don't think this will be much of a problem **/
+ * As this will be mainly used for meta data I don't think this will be much of a problem *
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 
 public class Chunk implements Serializable {
-	/**
-	 * 
-	 */
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 780237399568607900L;
 	protected String name;
 	protected byte[] bytes; //the byte array of the entire chunk including

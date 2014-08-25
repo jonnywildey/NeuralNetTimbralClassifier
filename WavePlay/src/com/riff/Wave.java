@@ -9,35 +9,62 @@ import com.util.HexByte;
 import com.util.Log;
 import com.util.fileReading.ByteReader;
 
+/**
+ * Wave chunk. Includes encoding and decoding methods,
+ * read/write, and graphing
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Wave extends Chunk{
 	
 	protected static int dataOffset = 12;
 	public File filepath;
 	
+	/**
+	 * Instantiates a new wave.
+	 */
 	public Wave() {
 		super();
 	}
 	
-	public Wave(File f) {
+	/**
+	 * Instantiates a new wave.
+	 *
+	 * @param file the f
+	 */
+	public Wave(File file) {
 		super();
-		this.filepath = f;
+		this.filepath = file;
 		this.readFile();
 		this.name = new String(HexByte.getSubset(bytes, 0, 3));
 		this.initTypes();
 		this.initSubChunks();
 	}
 
+	/**
+	 * Instantiates a new wave.
+	 *
+	 * @param file the file
+	 */
 	public Wave(String file) {
 		this(new File(file));
 	}
 	
+	/**
+	 * Instantiates a new wave.
+	 *
+	 * @param bytes the bytes
+	 */
 	public Wave(byte[] bytes) {
 		this.bytes = bytes;
 	}
 	
-	/** Constructs a Wave from a signal. Make sure you've set
+	/**
+	 * Constructs a Wave from a signal. Make sure you've set
 	 * your bit rate and sample rate
-	 * @param signal
+	 *
+	 * @param signal the signal
 	 */
 	public Wave(Signal signal) {
 		this.name = "RIFF";
@@ -48,7 +75,9 @@ public class Wave extends Chunk{
 	
 	
 	
-	/** gets byte array from filePath file **/
+	/**
+	 * gets byte array from filePath file *.
+	 */
 	public void readFile() {
 		try{
 			ByteReader br = new ByteReader(this.filepath.toString());
@@ -61,26 +90,41 @@ public class Wave extends Chunk{
 	}
 	
 	
-	/** gets byte array from file **/
+	/**
+	 * gets byte array from file *.
+	 *
+	 * @param f the f
+	 */
 	public void readFile(File f) {
 		this.filepath = f;
 		readFile();
 	}
 	
 	
-	/** Writes the bytes to a file **/
+	/**
+	 * Writes the bytes to a file *.
+	 *
+	 * @param f the f
+	 */
 	public void writeFile(File f) {
 		super.writeFile(f);
 		this.filepath = f;
 	}
 	
-	/** get byteArray **/
+	/**
+	 * get byteArray *.
+	 *
+	 * @return the bytes
+	 */
 	public byte[] getBytes() {
 		return this.bytes;
 	}
 	
-	/** This essentially completely rewrites the data of the 
+	/**
+	 * This essentially completely rewrites the data of the
 	 * wav, reencoding the header, fmt and data chunks.
+	 *
+	 * @param s the new signal
 	 */
 	public void setSignal(Signal s) {
 		this.chunks = new ArrayList<Chunk>();
@@ -99,12 +143,17 @@ public class Wave extends Chunk{
 
 	}
 	
-	/**Clears the wav of any information **/
+	/**
+	 * Clears the wav of any information *.
+	 */
 	public void clear() {
 		this.bytes = null;
 		this.chunks = new ArrayList<Chunk>();
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.riff.Chunk#addChunk(com.riff.Chunk)
+	 */
 	@Override
 	/** Adds an infoChunk **/
 	public void addChunk(Chunk chunk) {
@@ -115,21 +164,33 @@ public class Wave extends Chunk{
 	}
 	
 	
-	/** return the signals in a fixed point format **/
+	/**
+	 * return the signals in a fixed point format *.
+	 *
+	 * @return the signals long
+	 */
 	public long[][] getSignalsLong() {
 		DataChunk dc = (DataChunk) this.getSubChunk("data");
 		long[][] signals = dc.getSignalsLong(this.getBitRate(), this.getChannels());
 		return signals;
 	}
 	
-	/** return the signal(s) in a floating point format **/
+	/**
+	 * return the signal(s) in a floating point format *.
+	 *
+	 * @return the signals double
+	 */
 	public double[][] getSignalsDouble() {
 		DataChunk dc = (DataChunk) this.getSubChunk("data");
 		double[][]	signals = dc.getSignalsDouble(this.getBitRate(), this.getChannels());
 		return signals;
 	}
 	
-	/**Returns the signals in a process-friendly Signal format **/
+	/**
+	 * Returns the signals in a process-friendly Signal format *.
+	 *
+	 * @return the signals
+	 */
 	public Signal getSignals() {
 		DataChunk dc = (DataChunk) this.getSubChunk("data");
 		double[][]	signals = dc.getSignalsDouble(this.getBitRate(), this.getChannels());
@@ -137,14 +198,22 @@ public class Wave extends Chunk{
 	}
 	
 	
-	/** Makes a waveform graph **/
+	/**
+	 * Makes a waveform graph *.
+	 */
 	public void makeGraph() {
 		if (hasBytes()) {
 			WavController c = new WavController(this.getSignalsLong());
 			c.makeChart();
 		}
 	}
-	/** Makes a waveform graph of size specified **/
+	
+	/**
+	 * Makes a waveform graph of size specified *.
+	 *
+	 * @param width the width
+	 * @param height the height
+	 */
 	public void makeGraph(int width, int height) {
 		if (hasBytes()) {
 			WavController c = new WavController(this.getSignalsLong(), width, height);
@@ -152,7 +221,11 @@ public class Wave extends Chunk{
 		}
 	}
 	
-	/** Make a graph using one channel of wav **/
+	/**
+	 * Make a graph using one channel of wav *.
+	 *
+	 * @param channel the channel
+	 */
 	public void makeGraphMono(int channel) {
 		long[][] sig = new long[1][];
 		sig[0] = this.getSignalsLong()[0];
@@ -163,48 +236,81 @@ public class Wave extends Chunk{
 	}
 	
 	
-	/** Return a semireadable header **/
+	/**
+	 * Return a semireadable header *.
+	 *
+	 * @return the hex header
+	 */
 	public String getHexHeader() {
 		return HexByte.byteToHexString(ArrayMethods.getSubset(this.bytes, 0, 44));
 	}
 	
-	/** Return the first x of the file in a semireadable format **/
+	/**
+	 * Return the first x of the file in a semireadable format *.
+	 *
+	 * @param x the x
+	 * @return the hex
+	 */
 	public String getHex(int x) {
 		return HexByte.byteToHexString(ArrayMethods.getSubset(this.bytes, 0, x - 1));
 	}
 	
+	/**
+	 * Gets the hex.
+	 *
+	 * @return the hex
+	 */
 	public String getHex() {
 		return getHex(this.bytes.length);
 	}
 	
 	
-	/**Returns bit rate of Wave **/
+	/**
+	 * Returns bit rate of Wave *.
+	 *
+	 * @return the bit rate
+	 */
 	public int getBitRate() {
 		FMTChunk fc =  (FMTChunk) this.getSubChunk("fmt ");
 		return fc.getBitSize();
 	}
 	
-	/**Returns sample rate of Wave **/
+	/**
+	 * Returns sample rate of Wave *.
+	 *
+	 * @return the sample rate
+	 */
 	public int getSampleRate() {
 		FMTChunk fc =  (FMTChunk) this.getSubChunk("fmt ");
 		return fc.getSampleRate();
 	}
 	
-	/** Returns channel number of Wave **/
+	/**
+	 * Returns channel number of Wave *.
+	 *
+	 * @return the channels
+	 */
 	public int getChannels() {
 		FMTChunk fc =  (FMTChunk) this.getSubChunk("fmt ");
 		return fc.getChannels();
 	}
 	
-	/** get the bitwise hamming distance between the signals
-	 * of waves. correlation above 0.9 suggests waves are VERY similar **/
+	/**
+	 * get the bitwise hamming distance between the signals
+	 * of waves. correlation above 0.9 suggests waves are VERY similar *
+	 *
+	 * @param wave the wave
+	 * @return the double
+	 */
 	public double compareTo(Wave wave) {
 		return ArrayMethods.byteSimilarity(this.getData(), wave.getData());
 	}
 	
-	/** Returns the length of the signal data. A bit 
+	/**
+	 * Returns the length of the signal data. A bit
 	 * different than other chunk's getDataLength
-	 * @return
+	 *
+	 * @return the data length
 	 */
 	@Override
 	public long getDataLength() {
@@ -213,13 +319,20 @@ public class Wave extends Chunk{
 	}
 	
 	
-	/**Different than other chunks, this sends out the signal data (in bytes)**/
+	/**
+	 * Different than other chunks, this sends out the signal data (in bytes)*.
+	 *
+	 * @return the data
+	 */
 	@Override
 	public byte[] getData() {
 		return HexByte.getOffsetSubset(this.bytes, 44, this.getDataLength());
 	}
 	
 
+	/* (non-Javadoc)
+	 * @see com.riff.Chunk#initTypes()
+	 */
 	@Override
 	protected void initTypes() {
 		/* All the official chunk types you can get in INFO */
@@ -234,7 +347,12 @@ public class Wave extends Chunk{
 	
 
 	
-	/** Basic checks as to whether file is wav **/
+	/**
+	 * Basic checks as to whether file is wav *.
+	 *
+	 * @param bytes the bytes
+	 * @return true, if is wav
+	 */
 	public boolean isWav(byte[] bytes) {
 		try {
 			long riff = HexByte.hexArrayToInt(HexByte.convertByteArray(HexByte.getOffsetSubset(bytes, 0, 4)));
@@ -251,6 +369,11 @@ public class Wave extends Chunk{
 		}
 	}
 
+	/**
+	 * Gets the file path.
+	 *
+	 * @return the file path
+	 */
 	public File getFilePath() {
 		return this.filepath;
 	}

@@ -6,16 +6,29 @@ import com.util.ArrayMethods;
 import com.util.HexByte;
 
 
-/**A class for determining what information there is in an INFO chunk 
- * Written more for readability than efficiency**/
+/**
+ * A class for determining what information there is in an INFO chunk
+ * Written more for readability than efficiency*.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class InfoChunk extends Chunk{
 	
 	protected static int dataOffset = 12;
 
+	/**
+	 * Instantiates a new info chunk.
+	 *
+	 * @param chunk the chunk
+	 */
 	public InfoChunk(byte[] chunk) {
 		super(chunk);
 	}
 	
+	/**
+	 * Instantiates a new info chunk.
+	 */
 	public InfoChunk() {
 		super();
 		try {
@@ -25,6 +38,9 @@ public class InfoChunk extends Chunk{
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.riff.Chunk#initTypes()
+	 */
 	@Override
 	protected void initTypes() {
 		/* All the official chunk types you can get in INFO */
@@ -49,6 +65,9 @@ public class InfoChunk extends Chunk{
 		this.acceptableSubChunks = s;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.riff.Chunk#setData(byte[])
+	 */
 	@Override
 	//List has a weird Header...
 	public void setData(byte[] data) {

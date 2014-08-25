@@ -3,18 +3,15 @@ package com.neuralNet;
 import java.io.File;
 import java.util.concurrent.Callable;
 
-import com.DSP.waveProcess.filters.MultiLayerNet;
 import com.neuralNet.pattern.TestPatterns;
 import com.util.Log;
 import com.util.fileReading.CSVWriter;
 
-/** current dumping ground for any methods concerned
- * with running lots of nets at the same time
- * (needs more work)
- *ALSO
- *Threadable MLP
- * @author Jonny
+/**
+ * Run multiple sets of multiple nets.
  *
+ * @author Jonny Wildey
+ * @version 1.0
  */
 public class ManyNets implements Callable<MultiLayerNet[][]>{
 	
@@ -27,11 +24,23 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 	
 	
 	
+	/**
+	 * Instantiates a new many nets.
+	 */
 	public ManyNets() {
 		super();
 	}
 
 
+	/**
+	 * Instantiates a new many nets.
+	 *
+	 * @param name the name
+	 * @param runCount the run count
+	 * @param id the id
+	 * @param testPatterns the test patterns
+	 * @param verbose the verbose
+	 */
 	public ManyNets(File name, int runCount, int id, TestPatterns testPatterns,
 			boolean verbose) {
 		super();
@@ -43,6 +52,9 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.Callable#call()
+	 */
 	public MultiLayerNet[][] call() {
 		
 		MultiLayerNet[][] nets = tryDifferentLayers(runCount, testPatterns,verbose, even);
@@ -53,7 +65,15 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 	}
 	
 	
-	/** Runs a network multiple times **/
+	/**
+	 * Runs a network multiple times *.
+	 *
+	 * @param runCount the run count
+	 * @param testPatterns the test patterns
+	 * @param neuronCount the neuron count
+	 * @param verbose the verbose
+	 * @return the multi layer net[]
+	 */
 	public static MultiLayerNet[] runNets(int runCount, TestPatterns testPatterns, 
 											Integer neuronCount, boolean verbose) {
 		MultiLayerNet[] nns = new MultiLayerNet[runCount];		
@@ -73,12 +93,18 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 		return nns;		
 	}
 	
+	/**
+	 * Try different layers.
+	 *
+	 * @param runCount the run count
+	 * @param testPatterns the test patterns
+	 * @param verbose the verbose
+	 * @param even the even
+	 * @return the multi layer net[][]
+	 */
 	public MultiLayerNet[][] tryDifferentLayers(int runCount, TestPatterns testPatterns, 
 			boolean verbose, boolean even) {
-		int[] layerOneSize = new int[]{1,5,10,15,20,30,40,50,60,70,80,90,100,110,120,150,160,200,300,400};
-		//int[] layerOneSize = new int[]{40,50,60};
-		//int[] layerOneSize = new int[]{400,800,1600, 3200};
-		//int[] layerOneSize = new int[]{50, 60};
+		int[] layerOneSize = new int[]{1,5,10,15,20,30,40,50,60,70,80,90,100,110,120,150,160,200};
 		MultiLayerNet[][] mlns = new MultiLayerNet[layerOneSize.length / 2][runCount];
 		if (even) {
 		for (int i = 0; i < mlns.length; i++) {
@@ -90,37 +116,6 @@ public class ManyNets implements Callable<MultiLayerNet[][]>{
 			}
 		}
 		return mlns;
-	}
-	
-	/** Makes a graph of your nets' Matthews Coefficient **/
-	public static void graphNets(MultiLayerNet[] nets) {
-		CoefficientLogger[] mBox = CoefficientLogger.getErrorsFromMultiLayer(nets);
-		CoefficientLogger.makeGraph(mBox);
-	}
-	
-	/** Makes a graph of your nets' Matthews Coefficient **/
-	public static void graphNets(MultiLayerNet[][] nets) {
-		CoefficientLogger[][] mBox = CoefficientLogger.getErrorsFromMultiLayer(nets);
-		for (int i = 0; i < mBox.length; ++i) {
-			CoefficientLogger.makeGraph(mBox[i]);
-		}
-		
-	}
-	
-	public static MultiLayerNet pickBestNet(MultiLayerNet[] nns) {
-		MultiLayerNet nn = null;
-		double er = 0;
-		for (MultiLayerNet mln : nns) {
-			double val = Math.abs(mln.getErrorRate()); // + mln.getValidationErrorRate());
-			if (val > er) {
-				er = mln.getErrorRate(); // + mln.getValidationErrorRate();
-				nn = mln;
-			}
-			if (er == 0) {
-				break;
-			}
-		}
-		return nn;
 	}
 
 }

@@ -9,7 +9,7 @@ import com.riff.Wave;
  * Class for determining the fundamental pitch of a waveform.
  * DEPRECATED, USE GETFUNDAMENTAL IN PITCH INSTEAD
  * @author Jonny Wildey
- *
+ * @deprecated
  */
 public class WaveFund {
 

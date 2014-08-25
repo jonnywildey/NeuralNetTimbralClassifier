@@ -10,16 +10,30 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.DSP.waveProcess.filters.MultiLayerNet;
 import com.neuralNet.matrix.ConfusionMatrix;
 import com.neuralNet.pattern.TestPatterns;
 
+
+/**
+ * Utilities concerned with multiple sets of neural networks *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class MultiNNUtilities {
 
+	/**
+	 * Instantiates a new multi nn utilities.
+	 */
 	public MultiNNUtilities() {
-		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Test committee.
+	 *
+	 * @param testPatterns the test patterns
+	 * @param committee the committee
+	 */
 	public static void testCommittee(TestPatterns testPatterns,
 			Committee committee) {
 		ConfusionMatrix cm = committee.testPatterns(testPatterns.getTrainingPatterns());
@@ -30,6 +44,13 @@ public class MultiNNUtilities {
 		cm.makeGraph();
 	}
 
+	/**
+	 * Run multiple neuron.
+	 *
+	 * @param testPatterns the test patterns
+	 * @param runCount the run count
+	 * @param verbose the verbose
+	 */
 	public static void runMultipleNeuron(TestPatterns testPatterns,
 			int runCount, boolean verbose) {
 		ManyNets mN1 = new ManyNets(null, runCount, 1, testPatterns, verbose);
@@ -48,6 +69,15 @@ public class MultiNNUtilities {
 		threadPool.shutdown();
 	}
 
+	/**
+	 * Run pre train.
+	 *
+	 * @param pretrain the pretrain
+	 * @param posttrain the posttrain
+	 * @param count the count
+	 * @param verbose the verbose
+	 * @return the multi layer net[]
+	 */
 	public static MultiLayerNet[] runPreTrain(TestPatterns pretrain,TestPatterns posttrain,
 			int count, boolean verbose) {
 		PretrainThreadNet[] mn = new PretrainThreadNet[count];
@@ -62,6 +92,15 @@ public class MultiNNUtilities {
 		return Committee.MultiLayerListToArray(aNets);
 	}
 
+	/**
+	 * Run pre train gradual.
+	 *
+	 * @param pretrain the pretrain
+	 * @param posttrain the posttrain
+	 * @param count the count
+	 * @param verbose the verbose
+	 * @return the multi layer net[]
+	 */
 	protected static MultiLayerNet[] runPreTrainGradual(TestPatterns pretrain,TestPatterns posttrain,
 			int count, boolean verbose) {
 		PretrainGradualThreadNet[] mn = new PretrainGradualThreadNet[count];
@@ -76,6 +115,16 @@ public class MultiNNUtilities {
 		return Committee.MultiLayerListToArray(aNets);
 	}
 
+	/**
+	 * Run callable threads.
+	 *
+	 * @param <T> the generic type
+	 * @param <V> the value type
+	 * @param count the count
+	 * @param thingsToRun the things to run
+	 * @param type the type
+	 * @return the array list
+	 */
 	public static <T,V extends Callable<T>> ArrayList<T> runCallableThreads(int count,
 			V[] thingsToRun, Class<T> type) {
 		ExecutorService threadPool = Executors.newFixedThreadPool(count);
@@ -101,8 +150,17 @@ public class MultiNNUtilities {
 		return nets;
 	}
 
-	/** MultiThreaded committee generation. generates a thread for every single run count, 
-	 * so be careful with very large committees **/
+	/**
+	 * MultiThreaded committee generation. generates a thread for every single run count,
+	 * so be careful with very large committees *
+	 *
+	 * @param testPatterns the test patterns
+	 * @param runCount the run count
+	 * @param hiddenLayer the hidden layer
+	 * @param epoch the epoch
+	 * @param verbose the verbose
+	 * @return the committee
+	 */
 	public static Committee createCommittee(TestPatterns testPatterns, 
 			int runCount, int hiddenLayer, int epoch,
 			boolean verbose) {
@@ -114,6 +172,15 @@ public class MultiNNUtilities {
 		return committee;
 	}
 
+	/**
+	 * Generate many nets.
+	 *
+	 * @param testPatterns the test patterns
+	 * @param runCount the run count
+	 * @param verbose the verbose
+	 * @param writePath the write path
+	 * @return the many nets[]
+	 */
 	public static ManyNets[] generateManyNets(TestPatterns testPatterns,
 			int runCount, boolean verbose, File writePath) {
 		ManyNets[] manyNets = new ManyNets[runCount];
@@ -125,6 +192,16 @@ public class MultiNNUtilities {
 		return manyNets;
 	}
 
+	/**
+	 * Generate thread nets.
+	 *
+	 * @param runCount the run count
+	 * @param testPatterns the test patterns
+	 * @param hiddenLayer the hidden layer
+	 * @param epoch the epoch
+	 * @param verbose the verbose
+	 * @return the thread net[]
+	 */
 	public static ThreadNet[] generateThreadNets(int runCount, TestPatterns testPatterns,
 			int hiddenLayer, int epoch, boolean verbose) {
 		ThreadNet[] manyNets = new ThreadNet[runCount];
@@ -135,7 +212,15 @@ public class MultiNNUtilities {
 		return manyNets;
 	}
 
-	/**Create Many Nets **/
+	/**
+	 * Create Many Nets *.
+	 *
+	 * @param testPatterns the test patterns
+	 * @param runCount the run count
+	 * @param verbose the verbose
+	 * @param writePath the write path
+	 * @return the sets the
+	 */
 	public static Set<ManyNets> generateManyNetsSet(TestPatterns testPatterns,
 			int runCount, boolean verbose, File writePath) {
 		Set<ManyNets> manyNets = new HashSet<ManyNets>(runCount);

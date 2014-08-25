@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import com.neuralNet.NNFunctions;
 import com.neuralNet.pattern.Pattern;
 
+/**
+ * Layer of neurons with path to input and output layer *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class NeuralLayer implements Serializable {
 	
 	private static final long serialVersionUID = -8167132484261105715L;
@@ -15,13 +21,20 @@ public class NeuralLayer implements Serializable {
 	public int neuronCount;
 	public int layerNumber;
 
+	/**
+	 * Instantiates a new neural layer.
+	 */
 	public NeuralLayer() {
 		neurons = new ArrayList<Neuron>();
 		neuronCount = 0;
 		layerNumber = 0;
 	}
 	
-	/** Copy Constructor **/
+	/**
+	 * Copy Constructor *.
+	 *
+	 * @param neuralLayer the neural layer
+	 */
 	public NeuralLayer(NeuralLayer neuralLayer) {
 		
 		this.neurons = new ArrayList<Neuron>();
@@ -39,7 +52,11 @@ public class NeuralLayer implements Serializable {
 	}
 
 
-	/** returns true if this layer is last of network **/
+	/**
+	 * returns true if this layer is last of network *.
+	 *
+	 * @return true, if is last
+	 */
 	public boolean isLast() {
 		if (this.outputLayer == null) {
 			return true;
@@ -48,6 +65,11 @@ public class NeuralLayer implements Serializable {
 		}
 	}
 	
+	/**
+	 * Checks if is first.
+	 *
+	 * @return true, if is first
+	 */
 	public boolean isFirst() {
 		if (this.inputLayer == null) {
 			return true;
@@ -56,6 +78,11 @@ public class NeuralLayer implements Serializable {
 		}
 	}
 	
+	/**
+	 * Initialise layer.
+	 *
+	 * @param inputCount the input count
+	 */
 	public void initialiseLayer(int inputCount) {
 		int ic = (this.isFirst()) ? inputCount : this.inputLayer.neuronCount;
 		for (int i = 0; i < neuronCount; ++i) {
@@ -64,6 +91,9 @@ public class NeuralLayer implements Serializable {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder(); 
 		sb.append("Layer number: " + this.layerNumber);
@@ -71,6 +101,11 @@ public class NeuralLayer implements Serializable {
 		return sb.toString();
 	}
 	
+	/**
+	 * To string verbose.
+	 *
+	 * @return the string
+	 */
 	public String toStringVerbose() {
 		StringBuilder sb = new StringBuilder(); 
 		sb.append("Layer number: " + this.layerNumber);
@@ -82,7 +117,11 @@ public class NeuralLayer implements Serializable {
 	}
 		
 	
-	/** calculates delta values for entire layer and sets weights. returns pattern error **/
+	/**
+	 * calculates delta values for entire layer and sets weights. returns pattern error *
+	 *
+	 * @param p the p
+	 */
 	public void calculateDelta(Pattern p) {
 
 		if (this.isLast()) {	
@@ -106,9 +145,11 @@ public class NeuralLayer implements Serializable {
 		}
 	}
 	
-	/** Processes entire layer. Pattern p necessary for first and 
+	/**
+	 * Processes entire layer. Pattern p necessary for first and
 	 * last layers
-	 * @param p
+	 *
+	 * @param p the p
 	 */
 	public void process(Pattern p) {
 		if (this.isFirst()) {
@@ -140,6 +181,11 @@ public class NeuralLayer implements Serializable {
 		}
 	}
 	
+	/**
+	 * Sets the training rate.
+	 *
+	 * @param trainingRate the new training rate
+	 */
 	public void setTrainingRate(double trainingRate) {
 		for (Neuron n : this.neurons) {
 			n.trainingRate = trainingRate;
@@ -147,6 +193,11 @@ public class NeuralLayer implements Serializable {
 	}
 
 
+	/**
+	 * Gets the errors.
+	 *
+	 * @return the errors
+	 */
 	public Double getErrors() {
 		double sum = 0;
 		for (Neuron n : this.neurons) {
@@ -155,6 +206,11 @@ public class NeuralLayer implements Serializable {
 		return sum;
 	}
 	
+	/**
+	 * Sets the weights.
+	 *
+	 * @param p the new weights
+	 */
 	public void setWeights(Pattern p) {
 		for (Neuron n : this.neurons) {
 			if (n.learning) {
@@ -170,7 +226,6 @@ public class NeuralLayer implements Serializable {
 					n.getWeightList().set(i, n.getWeightList().get(i)  + weightChange);// current weight NOT RIGHT
 					}
 			}
-			//System.out.println(n.toString());
 		}	
 	}
 

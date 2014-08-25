@@ -7,25 +7,49 @@ import javax.swing.JFrame;
 
 import com.DSP.waveAnalysis.FFTBox;
 
+/**
+ * Basic controller for creating graphs *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Controller {
 	
 	protected Dimension size;
 	protected double[][] table;
 	
+	/**
+	 * Instantiates a new controller.
+	 */
 	public Controller() {
 	}
 	
+	/**
+	 * Instantiates a new controller.
+	 *
+	 * @param table the table
+	 */
 	public Controller(double[][] table) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.size = new Dimension(screenSize.width, screenSize.height / 3);
 		this.table = table;
 	}
 	
+	/**
+	 * Instantiates a new controller.
+	 *
+	 * @param fftBox the fft box
+	 * @param width the width
+	 * @param height the height
+	 */
 	public Controller(FFTBox fftBox, int width, int height) {
 		this.size = new Dimension(width, height);
 		this.table = fftBox.getTable();
 	}
 	
+	/**
+	 * Make chart.
+	 */
 	public void makeChart() {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -34,6 +58,12 @@ public class Controller {
 		});
 	}
 	
+	/**
+	 * Creates the chart.
+	 *
+	 * @param table the table
+	 * @param winSize the win size
+	 */
 	protected static void createChart(double[][] table, Dimension winSize) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

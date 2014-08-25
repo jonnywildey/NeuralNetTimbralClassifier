@@ -1,6 +1,5 @@
-package com.DSP.waveProcess;
+package com.DSP.waveProcess.filters;
 
-import com.DSP.waveProcess.filters.Filter;
 
 
 public class Notch extends Filter{

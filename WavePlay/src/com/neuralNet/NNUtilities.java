@@ -9,14 +9,22 @@ import com.util.ArrayMethods;
 import com.util.Log;
 
 
-/** Various utilities for helping to use data in Neural Networks **/
+/**
+ * Various utilities for helping to use data in Neural Networks *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public  class NNUtilities {
 	
-
-
-
 	
-	/** Converts an array to a unique bitArray (e.g. 001, 010, 100) the length of the array **/
+	/**
+	 * Converts an array to a unique bitArray (e.g. 001, 010, 100) the length of the array *
+	 *
+	 * @param array the array
+	 * @param verbose the verbose
+	 * @return the double[][]
+	 */
 	public static double[][] convertToUniqueBits(Object[] array, boolean verbose) {
 		int length = array.length;
 		double[][] bArray = new double[length][length]; 
@@ -34,11 +42,23 @@ public  class NNUtilities {
 		return bArray;
 	}
 	
+	/**
+	 * Converts an array to a unique bitArray (e.g. 001, 010, 100) the length of the array *
+	 *
+	 * @param array the array
+	 * @return the double[][]
+	 */
 	public static double[][] convertToUniqueBits(Object[] array) {
 		return convertToUniqueBits(array, false);
 	}
 	
-	/** Creates a unique bitArray (e.g. 001, 010, 100) input long **/
+	/**
+	 * Creates a unique bitArray (e.g. 001, 010, 100) input long *
+	 *
+	 * @param length the length
+	 * @param verbose the verbose
+	 * @return the double[][]
+	 */
 	public static double[][] createUniqueBits(int length, boolean verbose) {
 		double[][] bArray = new double[length][length]; 
 		for (int i = 0; i < length; ++i) { //don't actually need value
@@ -53,12 +73,23 @@ public  class NNUtilities {
 		return bArray;
 	}
 	
-	/** Creates a unique bitArray (e.g. 001, 010, 100) input long **/
+	/**
+	 * Creates a unique bitArray (e.g. 001, 010, 100) input long *
+	 *
+	 * @param length the length
+	 * @return the double[][]
+	 */
 	public static double[][] createUniqueBits(int length) {
 		return createUniqueBits(length, false);
 	}
 	
-	/**creates a table showing target value (arbitrary) and bitArray it should be assigned to **/
+	/**
+	 * creates a table showing target value (arbitrary) and bitArray it should be assigned to *.
+	 *
+	 * @param array the array
+	 * @param verbose the verbose
+	 * @return the double[][][]
+	 */
 	public static double[][][] createConversionTable(double[] array, boolean verbose) {
 		int length = array.length;
 		double[][][] bArray = new double[length][2][length]; 
@@ -77,7 +108,13 @@ public  class NNUtilities {
 		return bArray;
 	}
 	
-	/**creates a table showing target value (arbitrary) and bitArray it should be assigned to **/
+	/**
+	 * creates a table showing target value (arbitrary) and bitArray it should be assigned to *.
+	 *
+	 * @param array the array
+	 * @param verbose the verbose
+	 * @return the string[][][]
+	 */
 	public static String[][][] createConversionTable(String[] array, boolean verbose) {
 		int length = array.length;
 		String[][][] bArray = new String[length][2][length]; 
@@ -96,14 +133,25 @@ public  class NNUtilities {
 		return bArray;
 	}
 	
-	/**creates a table showing target value (arbitrary) and bitArray it should be assigned to **/
+	/**
+	 * creates a table showing target value (arbitrary) and bitArray it should be assigned to *.
+	 *
+	 * @param array the array
+	 * @return the double[][][]
+	 */
 	public static double[][][] createConversionTable(double[] array) {
 		return createConversionTable(array, false);
 	}
 	
 
 	
-	/** remove null rows from a table **/
+	/**
+	 * remove null rows from a table *.
+	 *
+	 * @param table the table
+	 * @param verbose the verbose
+	 * @return the double[][]
+	 */
 	public static double[][] removeNulls(double[][] table, boolean verbose) {
 		if (verbose) {
 			System.out.println("Removing null rows...");
@@ -126,7 +174,13 @@ public  class NNUtilities {
 		return newTable;
 	}
 	
-	/** remove null rows from a table **/
+	/**
+	 * remove null rows from a table *.
+	 *
+	 * @param table the table
+	 * @param verbose the verbose
+	 * @return the string[][]
+	 */
 	public static String[][] removeNulls(String[][] table, boolean verbose) {
 		if (verbose) {
 			System.out.println("Removing null rows...");
@@ -150,12 +204,22 @@ public  class NNUtilities {
 	}
 	
 	
-	/** remove null rows from a table **/
+	/**
+	 * remove null rows from a table *.
+	 *
+	 * @param table the table
+	 * @return the double[][]
+	 */
 	public static double[][] removeNulls(double[][] table) {
 		return removeNulls(table, false);
 	}
 	
-	/** converts Double to double.**/
+	/**
+	 * converts Double to double.*
+	 *
+	 * @param array the array
+	 * @return the double[][]
+	 */
 	public static double[][] Doubletodouble(Double[][] array) {
 		double[][] nArray = new double[array.length][];
 		int i = 0;
@@ -172,7 +236,13 @@ public  class NNUtilities {
 		return nArray;
 	}
 	
-	/** gets target Conversion from .csv style array **/
+	/**
+	 * gets target Conversion from .csv style array *
+	 *
+	 * @param array the array
+	 * @param verbose the verbose
+	 * @return the double[][][]
+	 */
 	public static double[][][] createTargetConversionTable(double[][] array, boolean verbose) {
 		array = ArrayMethods.flip(array); //flip table to make sense
 		Double[][] nc = getCount(array[array.length - 1], verbose); //assumes the target is the last column in array
@@ -180,13 +250,24 @@ public  class NNUtilities {
 	}
 	
 	
-	/** gets target Conversion from .csv style array **/
+	/**
+	 * gets target Conversion from .csv style array *
+	 *
+	 * @param array the array
+	 * @return the double[][][]
+	 */
 	public static double[][][] createTargetConversionTable(double[][] array) {
 		return createTargetConversionTable(array, false);
 	}
 	
 	
-	/**assumes last value is target and turns rest into float array **/
+	/**
+	 * assumes last value is target and turns rest into float array *.
+	 *
+	 * @param array the array
+	 * @param verbose the verbose
+	 * @return the float[][]
+	 */
 	public static float[][] createInputArray(double[][] array, boolean verbose) {
 		float[][] newArray = new float[array.length][];
 		int i = 0;
@@ -204,12 +285,23 @@ public  class NNUtilities {
 		return newArray;
 	}
 	
-	/**assumes last value is target and turns rest into float array **/
+	/**
+	 * assumes last value is target and turns rest into float array *.
+	 *
+	 * @param array the array
+	 * @return the float[][]
+	 */
 	public static float[][] createInputArray(double[][] array) {
 		return createInputArray(array, false);
 	}
 	
-	/**converts a simple data table into the training patterns necessary for NNs **/
+	/**
+	 * converts a simple data table into the training patterns necessary for NNs *.
+	 *
+	 * @param array the array
+	 * @param verbose the verbose
+	 * @return the array list
+	 */
 	public static ArrayList<Pattern> createPatterns(double[][] array, boolean verbose) {
 		double[][][] convTable = createTargetConversionTable(array, verbose);
 		ArrayList<Pattern> patterns = new ArrayList<Pattern>(array.length);
@@ -236,14 +328,25 @@ public  class NNUtilities {
 		return patterns;
 	}
 	
-	/**converts a simple data table into the training patterns necessary for NNs **/
+	/**
+	 * converts a simple data table into the training patterns necessary for NNs *.
+	 *
+	 * @param array the array
+	 * @return the array list
+	 */
 	public static ArrayList<Pattern> createPatterns(double[][] array) {
 		return createPatterns(array, false);
 	}
 	
-	/** return a 2d array with the value and its count.
-	 * Can deal with multiples. Values will be in the same order as array (with 
-	 * subsequent duplicate values removed). **/
+	/**
+	 * return a 2d array with the value and its count.
+	 * Can deal with multiples. Values will be in the same order as array (with
+	 * subsequent duplicate values removed). *
+	 *
+	 * @param array the array
+	 * @param verbose the verbose
+	 * @return the count
+	 */
 	public static String[][] getCount(String[] array, boolean verbose) {
 		ArrayList<String[]> countArray = new ArrayList<String[]>();
 		double count = 0;
@@ -277,9 +380,15 @@ public  class NNUtilities {
 
 	
 	
-	/** return a 2d array with the value and its count.
-	 * Can deal with multiples. Values will be in the same order as array (with 
-	 * subsequent duplicate values removed). **/
+	/**
+	 * return a 2d array with the value and its count.
+	 * Can deal with multiples. Values will be in the same order as array (with
+	 * subsequent duplicate values removed). *
+	 *
+	 * @param array the array
+	 * @param verbose the verbose
+	 * @return the count
+	 */
 	public static Double[][] getCount(double[] array, boolean verbose) {
 		ArrayList<Double[]> countArray = new ArrayList<Double[]>();
 		double count = 0;
@@ -311,25 +420,50 @@ public  class NNUtilities {
 		return doubleArray;
 	}
 	
-	/** return a 2d array with the value and its count.
-	 * Can deal with multiples. Values should be in the same order as array (with 
-	 * subsequent duplicate values removed). **/
+	/**
+	 * return a 2d array with the value and its count.
+	 * Can deal with multiples. Values should be in the same order as array (with
+	 * subsequent duplicate values removed). *
+	 *
+	 * @param array the array
+	 * @return the count
+	 */
 	public static Double[][] getCount(double[] array) {
 		return getCount(array, false);
 	}
 
-	/** must be arraylist because generics suck **/
+	/**
+	 * must be arraylist because generics suck *.
+	 *
+	 * @param <T> the generic type
+	 * @param set the set
+	 * @return the array list
+	 */
 	public static <T> ArrayList<T>  knuthShuffle(ArrayList<T> set) {
 		return NNUtilities.knuthShuffle(set, System.currentTimeMillis());
 	}
 
-	/** must be arraylist because generics suck **/
+	/**
+	 * must be arraylist because generics suck *.
+	 *
+	 * @param <T> the generic type
+	 * @param set the set
+	 * @param seed the seed
+	 * @return the array list
+	 */
 	public static <T> ArrayList<T>  knuthShuffle(ArrayList<T> set, long seed) {
 		Random r = new Random(seed);
 		return knuthShuffle(set, r);
 	}
 	
-	/** must be arraylist because generics suck **/
+	/**
+	 * must be arraylist because generics suck *.
+	 *
+	 * @param <T> the generic type
+	 * @param set the set
+	 * @param r the r
+	 * @return the array list
+	 */
 	public static <T> ArrayList<T>  knuthShuffle(ArrayList<T> set, Random r) {
 		ArrayList<T> holder = new ArrayList<T>(1); //ugh
 		int j = 0;

@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * The Class CSVString.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class CSVString {
 	/*Took some stuff from Graham Roberts */
 
@@ -22,12 +28,23 @@ public class CSVString {
     
 	
     /*explicit separator constructor*/
+    /**
+     * Instantiates a new cSV string.
+     *
+     * @param str the str
+     * @param separate the separate
+     */
     public CSVString(String str, char separate) {
     	this(str);
     	this.separate = separate;
     	typeIndex = 0;
     }
     
+    /**
+     * Instantiates a new cSV string.
+     *
+     * @param fname the fname
+     */
     public CSVString(String fname)
     {
       filename = fname ;
@@ -44,23 +61,41 @@ public class CSVString {
     
 
     
+    /**
+     * Sets the int.
+     */
     public void setInt() {
     	typeIndex = 1;
     }
     
+    /**
+     * Sets the double.
+     */
     public void setDouble() {
     	typeIndex = 2;
     }
     
+    /**
+     * Sets the float.
+     */
     public void setFloat() {
     	typeIndex = 3;
     }
     
+    /**
+     * Sets the string.
+     */
     public void setString() {
     	typeIndex = 0;
     }
     
     
+    /**
+     * String to int.
+     *
+     * @param str the str
+     * @return the int
+     */
     private int stringToInt(String str) {
     	try {
     	str = str.trim();
@@ -75,6 +110,12 @@ public class CSVString {
     }
     
     
+    /**
+     * String to float.
+     *
+     * @param str the str
+     * @return the float
+     */
     private float stringToFloat(String str) {
     	try {
     	str = str.trim();
@@ -89,6 +130,12 @@ public class CSVString {
     	}
     }
     
+    /**
+     * String to double.
+     *
+     * @param str the str
+     * @return the double
+     */
     private double stringToDouble(String str) {
     	try {
     	str = str.trim();
@@ -109,12 +156,20 @@ public class CSVString {
     
 	 
 
+	 	/**
+	 	 * String to csv.
+	 	 *
+	 	 * @param str the str
+	 	 */
 	 	private void stringToCSV(String str) {
 	 		
 	 	}
 	   
 	    
-	    public synchronized void readFile() {
+	    /**
+    	 * Read file.
+    	 */
+    	public synchronized void readFile() {
 	    	/* reads a file, separating by commas etc outputting as an array of stuff */
 	    	ArrayList<String> sArray = new ArrayList<String>();
 	    	StringBuffer sb = new StringBuffer();
@@ -175,7 +230,12 @@ public class CSVString {
 	    }
 	    
 	    
-	   public int[][] makeIntArray() {
+	   /**
+   	 * Make int array.
+   	 *
+   	 * @return the int[][]
+   	 */
+   	public int[][] makeIntArray() {
 		   /*Converts the bufferArray to an int array */
 		   
 		   if (fileRead == false) {error("Have not read file yet, cannot convert to int. Exiting...");}
@@ -193,7 +253,12 @@ public class CSVString {
 			return intList;   
 	   }
 	   
-	   public float[][] makeFloatArray() {
+	   /**
+   	 * Make float array.
+   	 *
+   	 * @return the float[][]
+   	 */
+   	public float[][] makeFloatArray() {
 		   /*Converts the bufferArray to an float array */
 		   
 		   if (fileRead == false) {error("Have not read file yet, cannot convert to float. Exiting...");}
@@ -211,7 +276,12 @@ public class CSVString {
 			return floatList;   
 	   }
 	    
-	   public double[][] makeDoubleArray() {
+	   /**
+   	 * Make double array.
+   	 *
+   	 * @return the double[][]
+   	 */
+   	public double[][] makeDoubleArray() {
 		   /*Converts the bufferArray to an double array */
 		   
 		   if (fileRead == false) {error("Have not read file yet, cannot convert to double. Exiting...");}
@@ -229,7 +299,12 @@ public class CSVString {
 			return doubleList;   
 	   }
 	   
-	   public String[][] makeStringArray() {
+	   /**
+   	 * Make string array.
+   	 *
+   	 * @return the string[][]
+   	 */
+   	public String[][] makeStringArray() {
 		   /*Converts the bufferArray to an double array */
 		   
 		   if (fileRead == false) {error("Have not read file yet, cannot convert to double. Exiting...");}
@@ -244,7 +319,13 @@ public class CSVString {
 	    
 	    
 	    
-	    private CSVValue readQuotes(String ss) {
+	    /**
+    	 * Read quotes.
+    	 *
+    	 * @param ss the ss
+    	 * @return the cSV value
+    	 */
+    	private CSVValue readQuotes(String ss) {
 	    	/*the truly horrible method for dealing with quotes */
 	    	char sc = ' ';
 	    	//quote count. measures how many quotes there are joined together (eg """""" = 5)
@@ -320,11 +401,21 @@ public class CSVString {
 	    
 	    
 	    
-	    public List<List<String>> returnRawList() {
+	    /**
+    	 * Return raw list.
+    	 *
+    	 * @return the list
+    	 */
+    	public List<List<String>> returnRawList() {
 	    	return bufferArray;
 	    }
 	    
-	    public String getNewLine() {
+	    /**
+    	 * Gets the new line.
+    	 *
+    	 * @return the new line
+    	 */
+    	public String getNewLine() {
 	    	String ss = "";
 	    	try
             {
@@ -338,12 +429,20 @@ public class CSVString {
 	    }
 
 
-	    public boolean eof()
+	    /**
+    	 * Eof.
+    	 *
+    	 * @return true, if successful
+    	 */
+    	public boolean eof()
 	    {
 	      return eof ;
 	    }
 	    
-	    public void close()
+	    /**
+    	 * Close.
+    	 */
+    	public void close()
 	    {
 	      try
 	      {
@@ -355,7 +454,12 @@ public class CSVString {
 	      }
 	    }
 	
-	    private void error(String msg)
+	    /**
+    	 * Error.
+    	 *
+    	 * @param msg the msg
+    	 */
+    	private void error(String msg)
 	    {
 	      System.out.println(msg) ;
 	      System.out.println("Unable to continue executing program.") ;

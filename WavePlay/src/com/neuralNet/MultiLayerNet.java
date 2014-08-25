@@ -1,4 +1,4 @@
-package com.DSP.waveProcess.filters;
+package com.neuralNet;
 
 
 import java.io.Serializable;
@@ -6,8 +6,6 @@ import java.util.ArrayList;
 
 import com.DSP.waveAnalysis.Statistics;
 import com.exceptions.*;
-import com.neuralNet.CoefficientLogger;
-import com.neuralNet.Epoch;
 import com.neuralNet.layers.LayerList;
 import com.neuralNet.layers.LayerStructure;
 import com.neuralNet.pattern.Pattern;

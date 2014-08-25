@@ -4,14 +4,29 @@ import com.DSP.waveAnalysis.SampleRateException;
 import com.riff.Signal;
 import com.util.Log;
 
+/**
+ * Time based editing of signals *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Edit {
 
+	/**
+	 * Instantiates a new edits the.
+	 */
 	public Edit() {
-		// TODO Auto-generated constructor stub
 	}
 	
-	/**receive a subset of the signal. Does not deal with
-	 * stereo and mono well  **/
+	/**
+	 * receive a subset of the signal. Does not deal with
+	 * stereo and mono well  *
+	 *
+	 * @param signal the signal
+	 * @param sampleFrom the sample from
+	 * @param sampleTo the sample to
+	 * @return the signal
+	 */
 	public static Signal crop(Signal signal, int sampleFrom, int sampleTo) {
 		//set up arrays
 		double[][] os = signal.getSignal();
@@ -26,7 +41,13 @@ public class Edit {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Stitches one signal to the end of another**/
+	/**
+	 * Stitches one signal to the end of another*.
+	 *
+	 * @param signals the signals
+	 * @return the signal
+	 * @throws SampleRateException the sample rate exception
+	 */
 	public static Signal concat(Signal... signals) throws SampleRateException {
 		//set up arrays
 		double[][][] os = new double[signals.length][][];

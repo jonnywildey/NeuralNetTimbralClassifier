@@ -9,10 +9,15 @@ import com.util.ArrayMethods;
 import com.util.Log;
 import com.util.fileReading.CSVWriter;
 
-/** Object for representing the data from Fourier Transforms. Would have called
+/**
+ * Object for representing the data from Fourier Transforms. Would have called
  * it FFTTable but i found the two Ts confusing. The box contains a row representing
  * frequency (or some variant of) and at least 1 row (potentially more if using windows)
- * of fourier data. Also contains lots of useful static methods for manipulating this data**/
+ * of fourier data. Also contains lots of useful static methods for manipulating this data*
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class FFTBox {
 	
 	double[][] table;
@@ -23,11 +28,22 @@ public class FFTBox {
 	boolean bark;
 	boolean log;
 	
+	/**
+	 * Instantiates a new fFT box.
+	 *
+	 * @param fftData the fft data
+	 * @param s1 the s1
+	 */
 	public FFTBox(double[][] fftData, Signal s1) {
 		this(fftData);
 		this.setFromSignal(s1);
 	}
 	
+	/**
+	 * Sets the from signal.
+	 *
+	 * @param s1 the new from signal
+	 */
 	private void setFromSignal(Signal s1) {
 		if (s1 != null) {
 			this.sampleFreq = s1.getSampleRate();
@@ -35,17 +51,31 @@ public class FFTBox {
 		}
 	}
 
+	/**
+	 * Instantiates a new fFT box.
+	 *
+	 * @param fftData the fft data
+	 */
 	public FFTBox(double[][] fftData) {
 		this.setTable(fftData);
 	}
 	
-	/**Constructor that takes soft information (bits, sampleRate) from fftBox **/
+	/**
+	 * Constructor that takes soft information (bits, sampleRate) from fftBox *.
+	 *
+	 * @param fftData the fft data
+	 * @param fftBox the fft box
+	 */
 	public FFTBox(double[][] fftData, FFTBox fftBox) {
 		this(fftData);
 		this.setSoft(fftBox);
 	}
 
-	/** sets everything apart from table data **/
+	/**
+	 * sets everything apart from table data *.
+	 *
+	 * @param fftBox the new soft
+	 */
 	private void setSoft(FFTBox fftBox) {
 		this.bark = fftBox.bark;
 		this.freq = fftBox.freq;
@@ -56,6 +86,11 @@ public class FFTBox {
 		
 	}
 
+	/**
+	 * Sets the table.
+	 *
+	 * @param fftData the new table
+	 */
 	private void setTable(double[][] fftData) {
 		this.table = fftData;
 		this.frameSize = fftData[0].length;
@@ -64,7 +99,11 @@ public class FFTBox {
 		this.log = false;
 	}
 
-	/** Returns the frequency row in its current form **/
+	/**
+	 * Returns the frequency row in its current form *.
+	 *
+	 * @return the freq row
+	 */
 	public double[] getFreqRow() {
 		if (tableExists()) {
 			return table[0];
@@ -74,7 +113,9 @@ public class FFTBox {
 		}
 	}
 	
-	/**Converts the table to bark scale, if it isn't already **/
+	/**
+	 * Converts the table to bark scale, if it isn't already *.
+	 */
 	public void convertToBark() {
 		if (!this.bark) {
 			//do thing
@@ -85,7 +126,9 @@ public class FFTBox {
 		}
 	}
 	
-	/**Converts the table to freq scale, if it isn't already **/
+	/**
+	 * Converts the table to freq scale, if it isn't already *.
+	 */
 	public void convertToFreq() {
 		if (!this.freq) {
 			//do thing
@@ -96,7 +139,9 @@ public class FFTBox {
 		}
 	}
 	
-	/**Converts the table to log scale, if it isn't already **/
+	/**
+	 * Converts the table to log scale, if it isn't already *.
+	 */
 	public void convertToLog() {
 		if (!this.log) {
 			//do thing
@@ -107,7 +152,11 @@ public class FFTBox {
 		}
 	}
 	
-	/** returns how many windows in table **/
+	/**
+	 * returns how many windows in table *.
+	 *
+	 * @return the windows
+	 */
 	public int getWindows() {
 		if (tableExists()) {
 			return table.length - 1;
@@ -116,12 +165,22 @@ public class FFTBox {
 		}
 	}
 	
-	/**Does the table exist? **/
+	/**
+	 * Does the table exist? *.
+	 *
+	 * @return true, if successful
+	 */
 	private boolean tableExists() {
 		return (this.table != null);
 	}
 
-	/** Converts tables amplitude values to decibels away from maximum amplitude **/
+	/**
+	 * Converts tables amplitude values to decibels away from maximum amplitude *.
+	 *
+	 * @param s the s
+	 * @param fftBox the fft box
+	 * @return the fFT box
+	 */
 	public static FFTBox convertTableToDecibels(Signal s, FFTBox fftBox) {
 		double[][] table = fftBox.getTable();
 		double max = Gain.amplitudeToDecibel(s.getMaxAmplitude());
@@ -139,18 +198,34 @@ public class FFTBox {
 		return new FFTBox(nt);
 	}
 	
-	/**converts table to decibels **/
+	/**
+	 * converts table to decibels *.
+	 *
+	 * @param fftBox the fft box
+	 * @return the fFT box
+	 */
 	public static FFTBox convertTableToDecibels(FFTBox fftBox) {
 		Signal s = new Signal(null, 0, 0); // 0 max amplitude
 		return convertTableToDecibels(s, fftBox);
 	}
 
-	/** returns the table as bark subset **/
+	/**
+	 * returns the table as bark subset *.
+	 *
+	 * @param fftBox the fft box
+	 * @return the barked subset
+	 */
 	public static FFTBox getBarkedSubset(FFTBox fftBox) {
 		return getHiResBarkedSubset(fftBox, 1);
 	}
 
-	/** returns the table as bark subset with extra half measurements in the first x **/
+	/**
+	 * returns the table as bark subset with extra half measurements in the first x *.
+	 *
+	 * @param fftBox the fft box
+	 * @param div the div
+	 * @return the hi res barked subset
+	 */
 	public static FFTBox getHiResBarkedSubset(FFTBox fftBox, double div) {
 		double[][] table = fftBox.getTable();
 		//get tables 
@@ -184,7 +259,13 @@ public class FFTBox {
 		return new FFTBox(nt);
 	}
 
-	/** Finds the maximum value in an FFT table and normalises the table to the ceiling. **/
+	/**
+	 * Finds the maximum value in an FFT table and normalises the table to the ceiling. *
+	 *
+	 * @param fftBox the fft box
+	 * @param ceiling the ceiling
+	 * @return the fFT box
+	 */
 	public static FFTBox normaliseTable(FFTBox fftBox, double ceiling) {
 		double[][] table = fftBox.getTable();
 		double max = Double.NEGATIVE_INFINITY;
@@ -207,7 +288,13 @@ public class FFTBox {
 		return new FFTBox(nt);
 	}
 
-	/** converts frequecies to a power of x. **/
+	/**
+	 * converts frequecies to a power of x. *
+	 *
+	 * @param fftBox the fft box
+	 * @param power the power
+	 * @return the fFT box
+	 */
 	public static FFTBox logarithmicFreq(FFTBox fftBox, double power) {
 		double[][] table = fftBox.getTable();
 		//double min = ArrayStuff.getMin(table[0]);
@@ -219,12 +306,21 @@ public class FFTBox {
 		return new FFTBox(nt);
 	}
 	
-	/** converts frequecies to a power of 2. Useful for graphs **/
+	/**
+	 * converts frequecies to a power of 2. Useful for graphs *
+	 *
+	 * @param fftBox the fft box
+	 * @return the fFT box
+	 */
 	public static FFTBox logarithmicFreq(FFTBox fftBox) {
 		return logarithmicFreq(fftBox, 2);
 	}
 	
-	/**Sets the frequency row. Assumes hz **/
+	/**
+	 * Sets the frequency row. Assumes hz *
+	 *
+	 * @param freqRow the new freq row
+	 */
 	public void setFreqRow(double[] freqRow) {
 		//check if freq row length and f lengths are the same?
 		this.table[0] = freqRow;
@@ -233,12 +329,23 @@ public class FFTBox {
 		this.log = false;
 	}
 
-	/** returns the sum of the bins **/
+	/**
+	 * returns the sum of the bins *.
+	 *
+	 * @param fftBox the fft box
+	 * @return the sum fft box
+	 */
 	public static FFTBox getSumFFTBox(FFTBox fftBox) {
 		return getSumTable(fftBox, fftBox.getTable().length);
 	}
 
-	/** returns the sum of the bins **/
+	/**
+	 * returns the sum of the bins *.
+	 *
+	 * @param fftBox the fft box
+	 * @param count the count
+	 * @return the sum table
+	 */
 	public static FFTBox getSumTable(FFTBox fftBox, int count) {
 		double[][] table = fftBox.getTable();
 		if (count + 1 > table.length) {
@@ -255,7 +362,13 @@ public class FFTBox {
 		return new FFTBox(sums, fftBox);
 	}
 
-	/** Sum table, adding increasingly less value to further rows in time **/
+	/**
+	 * Sum table, adding increasingly less value to further rows in time *.
+	 *
+	 * @param fftBox the fft box
+	 * @param exponent the exponent
+	 * @return the exponent fft box
+	 */
 	public static FFTBox getExponentFFTBox(FFTBox fftBox, double exponent) {
 		double[][] table = fftBox.getTable();
 		double[][] sums = new double[2][table[0].length];
@@ -268,7 +381,11 @@ public class FFTBox {
 		return new FFTBox(sums, fftBox);
 	}
 	
-	/** return the values (without the frequency row) **/
+	/**
+	 * return the values (without the frequency row) *.
+	 *
+	 * @return the values
+	 */
 	public double[][] getValues() {
 		
 		double[][] vals = new double[this.table.length - 1][];
@@ -278,39 +395,73 @@ public class FFTBox {
 		return vals;
 	}
 	
-	/** get frequency row and values as a single 2d table **/
+	/**
+	 * get frequency row and values as a single 2d table *.
+	 *
+	 * @return the table
+	 */
 	public double[][] getTable() {
 		return table;
 	}
 
+	/**
+	 * Gets the sample freq.
+	 *
+	 * @return the sample freq
+	 */
 	public int getSampleFreq() {
 		return sampleFreq;
 	}
 
+	/**
+	 * Gets the bits.
+	 *
+	 * @return the bits
+	 */
 	public int getBits() {
 		return bits;
 	}
 
+	/**
+	 * Gets the frame.
+	 *
+	 * @return the frame
+	 */
 	public int getFrame() {
 		return frameSize;
 	}
 	
-	/** Sets the frame size. Be careful as this can 
-	 * be different than the table lengths and could 
-	 * badly effect normalisation. **/
+	/**
+	 * Sets the frame size. Be careful as this can
+	 * be different than the table lengths and could
+	 * badly effect normalisation. *
+	 *
+	 * @param frameSize the new frame size
+	 */
 	public void setFrameSize(double frameSize) {
 		this.frameSize = (int) frameSize;
 	}
 	
-	/** Sets the frame size. Be careful as this can 
-	 * be different than the table lengths and could 
-	 * badly effect normalisation. **/
+	/**
+	 * Sets the frame size. Be careful as this can
+	 * be different than the table lengths and could
+	 * badly effect normalisation. *
+	 *
+	 * @param frameSize the new frame size
+	 */
 	public void setFrameSize(int frameSize) {
 		this.frameSize = frameSize;
 	}
 
-	/**Filters an FFTBox by frequency. Does not care about frame size
-	 * (as long as to and from frequencies exist). Also works for windowed FFTs **/
+	/**
+	 * Filters an FFTBox by frequency. Does not care about frame size
+	 * (as long as to and from frequencies exist). Also works for windowed FFTs *
+	 *
+	 * @param fftBox the fft box
+	 * @param from the from
+	 * @param to the to
+	 * @return the fFT box
+	 */
 	public static FFTBox filter(FFTBox fftBox, double from, double to) {
 		double[][] table = fftBox.getTable();
 		//get min and max
@@ -339,7 +490,13 @@ public class FFTBox {
 		return new FFTBox(newt, fftBox);
 	}
 	
-	/** Combines the frequency row and values into one table **/
+	/**
+	 * Combines the frequency row and values into one table *.
+	 *
+	 * @param freqRow the freq row
+	 * @param values the values
+	 * @return the double[][]
+	 */
 	protected static double[][] combineFreqRowAndValues(double[] freqRow, double[][] values) {
 		double[][] nt = new double[values.length + 1][];
 		nt[0] = freqRow;
@@ -349,8 +506,13 @@ public class FFTBox {
 		return nt;
 	}
 	
-	/** Combines multiple FFT boxes into one. Assumes freq row is the same for all.
-	 * **/
+	/**
+	 * Combines multiple FFT boxes into one. Assumes freq row is the same for all.
+	 * *
+	 *
+	 * @param fftBoxes the fft boxes
+	 * @return the fFT box
+	 */
 	protected static FFTBox combine(FFTBox... fftBoxes) {
 		// get overall values length
 		int length = 0;
@@ -374,8 +536,12 @@ public class FFTBox {
 		return fb;
 	}
 
-	/** basic noise cancelling. Also removes first one of array 
-	 * @return **/
+	/**
+	 * basic noise cancelling. Also removes first one of array
+	 *
+	 * @param fftBox the fft box
+	 * @return *
+	 */
 	public static FFTBox sumDifference(FFTBox fftBox) {
 		double[][] table = fftBox.getTable();
 		double[][] nt = new double[table.length - 1][table[0].length];
@@ -389,6 +555,11 @@ public class FFTBox {
 		return new FFTBox(nt, fftBox);
 	}
 	
+	/**
+	 * Export to csv.
+	 *
+	 * @param file the file
+	 */
 	public void exportToCSV(File file) {
 		CSVWriter csvWriter = new CSVWriter(file.getAbsolutePath());
 		if (this.getValues() != null) {
@@ -397,6 +568,9 @@ public class FFTBox {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder(this.table.length * 15);
 		double[] fr = this.getFreqRow();

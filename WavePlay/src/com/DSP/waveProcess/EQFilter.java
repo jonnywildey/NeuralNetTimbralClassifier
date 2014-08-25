@@ -3,13 +3,27 @@ package com.DSP.waveProcess;
 import com.DSP.waveProcess.filters.BandPass;
 import com.DSP.waveProcess.filters.HighPass;
 import com.DSP.waveProcess.filters.LowPass;
+import com.DSP.waveProcess.filters.Notch;
 import com.DSP.waveProcess.filters.PeakEQ;
 import com.riff.Signal;
 import com.util.Log;
 
+/**
+ * Filtering and EQing signal processes *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class EQFilter {
 
-	/**High Pass **/
+	/**
+	 * High Pass *.
+	 *
+	 * @param signal the signal
+	 * @param centreFreq the centre freq
+	 * @param resonance the resonance
+	 * @return the signal
+	 */
 	public static Signal highPassFilter(Signal signal, 
 			double centreFreq, double resonance) {
 		//set up arrays
@@ -28,7 +42,14 @@ public class EQFilter {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Low Pass **/
+	/**
+	 * Low Pass *.
+	 *
+	 * @param signal the signal
+	 * @param centreFreq the centre freq
+	 * @param resonance the resonance
+	 * @return the signal
+	 */
 	public static Signal lowPassFilter(Signal signal, 
 			double centreFreq, double resonance) {
 		//set up arrays
@@ -47,7 +68,14 @@ public class EQFilter {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Band Pass **/
+	/**
+	 * Band Pass *.
+	 *
+	 * @param signal the signal
+	 * @param centreFreq the centre freq
+	 * @param octaveBW the octave bw
+	 * @return the signal
+	 */
 	public static Signal bandPassFilter(Signal signal, 
 			double centreFreq, double octaveBW) {
 		//set up arrays
@@ -66,7 +94,14 @@ public class EQFilter {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Band Pass **/
+	/**
+	 * Band Pass *.
+	 *
+	 * @param signal the signal
+	 * @param centreFreq the centre freq
+	 * @param octaveBW the octave bw
+	 * @return the signal
+	 */
 	public static Signal notch(Signal signal, 
 			double centreFreq, double octaveBW) {
 		//set up arrays
@@ -85,7 +120,15 @@ public class EQFilter {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Standard EQ **/
+	/**
+	 * Standard EQ *.
+	 *
+	 * @param signal the signal
+	 * @param centreFreq the centre freq
+	 * @param octaveBW the octave bw
+	 * @param gain the gain
+	 * @return the signal
+	 */
 	public static Signal EQ(Signal signal, 
 			double centreFreq, double octaveBW, double gain) {
 		//set up arrays
@@ -104,7 +147,16 @@ public class EQFilter {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Filter sweep. recommend low BW (~0.3) high gain (> 6) **/
+	/**
+	 * Filter sweep. recommend low BW (~0.3) high gain (> 6) *
+	 *
+	 * @param signal the signal
+	 * @param centreFreq the centre freq
+	 * @param to the to
+	 * @param octaveBW the octave bw
+	 * @param gain the gain
+	 * @return the signal
+	 */
 	public static Signal EQSweep(Signal signal, 
 			double centreFreq, double to, double octaveBW, double gain) {
 		//set up arrays

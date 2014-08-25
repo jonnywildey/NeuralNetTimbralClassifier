@@ -1,7 +1,20 @@
 package com.neuralNet.matrix;
 
+
+/**
+ * Basic matrix *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Matrix {
 
+	/**
+	 * The Class MatrixException.
+	 *
+	 * @author Jonny Wildey
+	 * @version 1.0
+	 */
 	class MatrixException extends Exception {
 		private static final long serialVersionUID = 1L;
 	}
@@ -10,6 +23,11 @@ public class Matrix {
 	protected Object[][] array;
 	protected boolean verbose;
 
+	/**
+	 * Instantiates a new matrix.
+	 *
+	 * @param size the size
+	 */
 	public Matrix(int size) {
 		if (size > 0) {
 			this.size = size;
@@ -20,7 +38,11 @@ public class Matrix {
 
 	}
 
-	/** inits matrix with value */
+	/**
+	 * inits matrix with value.
+	 *
+	 * @param value the value
+	 */
 	public void initValue(Object value) {
 		for (int i = 0; i < this.size; ++i) {
 			for (int j = 0; j < this.size; ++j) {
@@ -29,17 +51,34 @@ public class Matrix {
 		}
 	}
 
-	/** return cell between 0 and size of matrix - 1 */
+	/**
+	 * return cell between 0 and size of matrix - 1.
+	 *
+	 * @param column the column
+	 * @param row the row
+	 * @return the cell
+	 */
 	public Object getCell(int column, int row) {
 		return array[column][row];
 	}
 
-	/** Set value of cell between 0 and size - 1 **/
+	/**
+	 * Set value of cell between 0 and size - 1 *.
+	 *
+	 * @param column the column
+	 * @param row the row
+	 * @param object the object
+	 */
 	public void setCell(int column, int row, Object object) {
 		this.array[column][row] = object;
 	}
 
-	/** return row **/
+	/**
+	 * return row *.
+	 *
+	 * @param row the row
+	 * @return the row
+	 */
 	public Object[] getRow(int row) {
 		Object[] newRow = new Object[size];
 		for (int i = 0; i < size; ++i) {
@@ -48,7 +87,12 @@ public class Matrix {
 		return newRow;
 	}
 
-	/** return column **/
+	/**
+	 * return column *.
+	 *
+	 * @param column the column
+	 * @return the column
+	 */
 	public Object[] getColumn(int column) {
 		Object[] newColumn = new Object[size];
 		for (int i = 0; i < size; ++i) {
@@ -57,29 +101,51 @@ public class Matrix {
 		return newColumn;
 	}
 
-	/** get matrix as 2d array */
+	/**
+	 * get matrix as 2d array.
+	 *
+	 * @return the matrix
+	 */
 	public Object[][] getMatrix() {
 		return array;
 	}
 
-	/** set whole column with value **/
+	/**
+	 * set whole column with value *.
+	 *
+	 * @param column the column
+	 * @param value the value
+	 */
 	public void setColumn(int column, Object value) {
 		for (int i = 0; i < size; ++i) {
 			array[column][i] = value;
 		}
 	}
 
-	/** set whole column with value **/
+	/**
+	 * set whole column with value *.
+	 *
+	 * @param row the row
+	 * @param value the value
+	 */
 	public void setRow(int row, Object value) {
 		for (int i = 0; i < size; ++i) {
 			array[i][row] = value;
 		}
 	}
 
+	/**
+	 * Gets the size.
+	 *
+	 * @return the size
+	 */
 	public int getSize() {
 		return this.size;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		String str = new String();
 		for (int i = 0; i < size; ++i) {

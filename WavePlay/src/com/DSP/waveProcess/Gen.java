@@ -7,20 +7,37 @@ import com.riff.Signal;
 import com.util.ArrayMethods;
 import com.util.Log;
 
+/**
+ * Generation of signals *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Gen {
 	
 
+	/**
+	 * Instantiates a new gen.
+	 */
 	public Gen() {
-		// TODO Auto-generated constructor stub
 	}
 	
-	/**Generates a sine wave 
+	/**
+	 * Generates a sine wave
 	 * frequency: in hz
 	 * length: in samples
-	 * db: 0 would be normalised. 
+	 * db: 0 would be normalised.
 	 * so you'll want -dbs in general
 	 * sampleRate: the sample rate e.g. 44100
-	 * bitRate: normally 16 or 24**/
+	 * bitRate: normally 16 or 24*
+	 *
+	 * @param frequency the frequency
+	 * @param length the length
+	 * @param dbBelowCeiling the db below ceiling
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal sine(double frequency, int length, double dbBelowCeiling, int sampleRate, int bitRate) {
 		//set up arrays
 		double[] ns = new double[length];
@@ -35,13 +52,23 @@ public class Gen {
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);
 	}
 	
-	/**Generates a sine wave sweeping linearly
+	/**
+	 * Generates a sine wave sweeping linearly
 	 * frequency: in hz
 	 * length: in samples
-	 * db: 0 would be normalised. 
+	 * db: 0 would be normalised.
 	 * so you'll want -dbs in general
 	 * sampleRate: the sample rate e.g. 44100
-	 * bitRate: normally 16 or 24**/
+	 * bitRate: normally 16 or 24*
+	 *
+	 * @param frequencyStart the frequency start
+	 * @param frequencyEnd the frequency end
+	 * @param length the length
+	 * @param dbBelowCeiling the db below ceiling
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal sineSweep(double frequencyStart, double frequencyEnd, int length, 
 			double dbBelowCeiling, int sampleRate, int bitRate) {
 		//not too sure why reverse isn't working but...
@@ -72,13 +99,22 @@ public class Gen {
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);
 	}
 	
-	/**Generates a triangle wave 
+	/**
+	 * Generates a triangle wave
 	 * frequency: in hz
 	 * length: in samples
-	 * db: 0 would be normalised. 
+	 * db: 0 would be normalised.
 	 * so you'll want -dbs in general
 	 * sampleRate: the sample rate e.g. 44100
-	 * bitRate: normally 16 or 24**/
+	 * bitRate: normally 16 or 24*
+	 *
+	 * @param frequency the frequency
+	 * @param length the length
+	 * @param dbBelowCeiling the db below ceiling
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal triangle(double frequency, int length, double dbBelowCeiling, int sampleRate, int bitRate) {
 		//set up arrays
 		double[] ns = new double[length];
@@ -93,13 +129,22 @@ public class Gen {
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);
 	}
 	
-	/**Generates a Square wave 
+	/**
+	 * Generates a Square wave
 	 * frequency: in hz
 	 * length: in samples
-	 * db: 0 would be normalised. 
+	 * db: 0 would be normalised.
 	 * so you'll want -dbs in general
 	 * sampleRate: the sample rate e.g. 44100
-	 * bitRate: normally 16 or 24**/
+	 * bitRate: normally 16 or 24*
+	 *
+	 * @param frequency the frequency
+	 * @param length the length
+	 * @param dbBelowCeiling the db below ceiling
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal square(double frequency, int length, double dbBelowCeiling, int sampleRate, int bitRate) {
 		//set up arrays
 		double[] ns = new double[length];
@@ -114,13 +159,22 @@ public class Gen {
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);
 	}
 	
-	/**Generates a saw wave 
+	/**
+	 * Generates a saw wave
 	 * frequency: in hz
 	 * length: in samples
-	 * db: 0 would be normalised. 
+	 * db: 0 would be normalised.
 	 * so you'll want -dbs in general
 	 * sampleRate: the sample rate e.g. 44100
-	 * bitRate: normally 16 or 24**/
+	 * bitRate: normally 16 or 24*
+	 *
+	 * @param frequency the frequency
+	 * @param length the length
+	 * @param dbBelowCeiling the db below ceiling
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal saw(double frequency, int length, double dbBelowCeiling, int sampleRate, int bitRate) {
 		//set up arrays
 		double[] ns = new double[length];
@@ -135,13 +189,22 @@ public class Gen {
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);
 	}
 	
-	/**Generates a weird saw wave 
+	/**
+	 * Generates a weird saw wave
 	 * frequency: in hz
 	 * length: in samples
-	 * db: 0 would be normalised. 
+	 * db: 0 would be normalised.
 	 * so you'll want -dbs in general
 	 * sampleRate: the sample rate e.g. 44100
-	 * bitRate: normally 16 or 24**/
+	 * bitRate: normally 16 or 24*
+	 *
+	 * @param frequency the frequency
+	 * @param length the length
+	 * @param dbBelowCeiling the db below ceiling
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal weirdSaw(double frequency, int length, double dbBelowCeiling, int sampleRate, int bitRate) {
 		//set up arrays
 		double[] ns = new double[length];
@@ -156,12 +219,20 @@ public class Gen {
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);
 	}
 	
-	/**Generates white noise
+	/**
+	 * Generates white noise
 	 * length: in samples
-	 * db: 0 would be normalised. 
+	 * db: 0 would be normalised.
 	 * so you'll want -dbs in general
 	 * sampleRate: the sample rate e.g. 44100
-	 * bitRate: normally 16 or 24**/
+	 * bitRate: normally 16 or 24*
+	 *
+	 * @param length the length
+	 * @param dbBelowCeiling the db below ceiling
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal whiteNoise(int length, double dbBelowCeiling, int sampleRate, int bitRate) {
 		//set up arrays
 		double[] ns = new double[length];
@@ -176,7 +247,15 @@ public class Gen {
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);
 	}
 	
-	/**adds tape hiss to the signal. db should be -ve  **/
+	/**
+	 * adds tape hiss to the signal. db should be -ve  *
+	 *
+	 * @param length the length
+	 * @param dbBelowCeiling the db below ceiling
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal tapeHiss(int length, double dbBelowCeiling, int sampleRate, int bitRate) {
 		//set up arrays
 		double[][] tape = TapeHiss.tape.getSignal();
@@ -193,12 +272,20 @@ public class Gen {
 		return new Signal(ns, bitRate, sampleRate);
 	}
 	
-	/**Generates pink noise
+	/**
+	 * Generates pink noise
 	 * length: in samples
-	 * db: 0 would be normalised. 
+	 * db: 0 would be normalised.
 	 * so you'll want -dbs in general
 	 * sampleRate: the sample rate e.g. 44100
-	 * bitRate: normally 16 or 24**/
+	 * bitRate: normally 16 or 24*
+	 *
+	 * @param length the length
+	 * @param dbBelowCeiling the db below ceiling
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal pinkNoise(int length, double dbBelowCeiling, int sampleRate, int bitRate) {
 		int octaves = 7; //seems reasonable..
 		Signal[] signals = new Signal[octaves];
@@ -214,7 +301,12 @@ public class Gen {
 		return null;
 	}
 	
-	/**computes the square function in radians **/
+	/**
+	 * computes the square function in radians *.
+	 *
+	 * @param position the position
+	 * @return the double
+	 */
 	private static double square(double position) {
 		if ((position % (Math.PI * 2)) < Math.PI) {
 			return 1;
@@ -223,10 +315,17 @@ public class Gen {
 		}
 	}
 	
-	/**Generates silence
+	/**
+	 * Generates silence
 	 * length: in samples
 	 * sampleRate: the sample rate e.g. 44100
-	 * bitRate: normally 16 or 24**/
+	 * bitRate: normally 16 or 24*
+	 *
+	 * @param length the length
+	 * @param sampleRate the sample rate
+	 * @param bitRate the bit rate
+	 * @return the signal
+	 */
 	public static Signal silence(int length, int sampleRate, int bitRate) {
 		//set up arrays
 		double[] ns = new double[length];
@@ -239,7 +338,12 @@ public class Gen {
 		return new Signal(new double[][]{ns}, bitRate, sampleRate);
 	}
 	
-	/**computes the triangle function in radians **/
+	/**
+	 * computes the triangle function in radians *.
+	 *
+	 * @param position the position
+	 * @return the double
+	 */
 	private static double triangle(double position) {
 		position %= (Math.PI * 2);
 		double p = position % Math.PI;
@@ -255,14 +359,24 @@ public class Gen {
 		return val;
 	}
 	
-	/**saw function. Actually PI / 2 ahead in phase than normal function**/
+	/**
+	 * saw function. Actually PI / 2 ahead in phase than normal function*
+	 *
+	 * @param position the position
+	 * @return the double
+	 */
 	private static double saw(double position) {
 		position += Math.PI / 2; //phase
 		position %= (Math.PI);
 		return ((2 * position) / Math.PI) - 1;
 	}
 	
-	/**Messed up the saw function but this sounds good **/
+	/**
+	 * Messed up the saw function but this sounds good *.
+	 *
+	 * @param position the position
+	 * @return the double
+	 */
 	private static double weirdSaw(double position) {
 		position %= (Math.PI * 2);
 		double p = position % Math.PI;
@@ -278,7 +392,12 @@ public class Gen {
 		return val;
 	}
 	
-	/** gets the max amplitude **/
+	/**
+	 * gets the max amplitude *.
+	 *
+	 * @param bit the bit
+	 * @return the max
+	 */
 	private static double getMax(double bit) {
 		return Math.pow(2, bit - 1) - 1;
 	}

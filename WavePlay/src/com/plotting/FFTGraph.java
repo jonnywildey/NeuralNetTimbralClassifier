@@ -7,23 +7,46 @@ import com.util.ArrayMethods;
 /**
  * FFT graph. Specifically, an implementation of the plot graph using doubles
  * rather than long
- **/
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class FFTGraph extends PlotGraph {
 
 	private static final long serialVersionUID = 4660340575824126891L;
 	protected double[][] values;
 
+	/**
+	 * Instantiates a new fFT graph.
+	 *
+	 * @param table the table
+	 * @param winSize the win size
+	 * @param axisLabels the axis labels
+	 */
 	public FFTGraph(double[][] table, Dimension winSize, String[] axisLabels) {
 		super();
 		initialise(table, winSize, axisLabels);
 	}
 
+	/**
+	 * Instantiates a new fFT graph.
+	 *
+	 * @param fftBox the fft box
+	 * @param winSize the win size
+	 * @param axisLabels the axis labels
+	 */
 	public FFTGraph(FFTBox fftBox, Dimension winSize, String[] axisLabels) {
 		super();
 		initialise(fftBox.getTable(), winSize, axisLabels);
 	}
 	
-	/** initialise basic values etc. **/
+	/**
+	 * initialise basic values etc. *
+	 *
+	 * @param table the table
+	 * @param winSize the win size
+	 * @param axisLabels the axis labels
+	 */
 	protected void initialise(double[][] table, Dimension winSize,
 			String[] axisLabels) {
 		this.values = table;
@@ -34,6 +57,9 @@ public class FFTGraph extends PlotGraph {
 				.getMaxAbs(values));
 	}
 
+	/* (non-Javadoc)
+	 * @see com.plotting.PlotGraph#initDimensions(java.awt.Dimension)
+	 */
 	protected void initDimensions(Dimension winSize) {
 		size = winSize;
 		offsetSize = new Dimension((int) (size.getWidth() * marginOffset),
@@ -46,19 +72,31 @@ public class FFTGraph extends PlotGraph {
 		this.half = (int) ((size.height - offsetSize.height) * 0.5);
 	}
 
-	/** converts amp value to graph value **/
+	/**
+	 * converts amp value to graph value *.
+	 *
+	 * @param c the c
+	 * @return the int
+	 */
 	public int ampValue(double c) {
 		// Log.d(c);
 		return (int) (offsetSize.height - (c * maxBar));
 	}
 
-	/** Gets the highest frequency in table **/
+	/**
+	 * Gets the highest frequency in table *.
+	 *
+	 * @return the high freq
+	 */
 	private String getHighFreq() {
 		return String.valueOf(Math.rint(Math.pow(2,
 				ArrayMethods.getMax(this.values[0])))
 				+ "hz");
 	}
 
+	/* (non-Javadoc)
+	 * @see com.plotting.PlotGraph#drawBar(java.awt.Graphics2D)
+	 */
 	@Override
 	/** Main drawing method **/
 	public void drawBar(Graphics2D g2d) {
@@ -72,7 +110,13 @@ public class FFTGraph extends PlotGraph {
 		drawValues(g2d, max, min);
 	}
 
-	/** draw the actual values **/
+	/**
+	 * draw the actual values *.
+	 *
+	 * @param g2d the g2d
+	 * @param max the max
+	 * @param min the min
+	 */
 	protected void drawValues(Graphics2D g2d, double max, double min) {
 		double factor = (double) (values[0].length) / (max - min);
 		int c = 0;
@@ -90,7 +134,14 @@ public class FFTGraph extends PlotGraph {
 		}
 	}
 
-	/** Axis labels, sub bars etc. **/
+	/**
+	 * Axis labels, sub bars etc. *
+	 *
+	 * @param g2d the g2d
+	 * @param max the max
+	 * @param min the min
+	 * @param num the num
+	 */
 	protected void drawLines(Graphics2D g2d, double max, double min, double num) {
 		double wid;
 		// Y X axis

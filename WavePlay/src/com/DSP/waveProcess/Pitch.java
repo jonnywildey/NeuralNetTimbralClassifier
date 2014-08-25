@@ -6,9 +6,21 @@ import com.riff.Signal;
 import com.util.ArrayMethods;
 import com.util.Log;
 
+/**
+ * Pitch based (and maybe time based) signal processes *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Pitch {
 	
-	/** Pitch Shifts the audio 0 < factor < inf **/
+	/**
+	 * Pitch Shifts the audio 0 < factor < inf *.
+	 *
+	 * @param signal the signal
+	 * @param semitones the semitones
+	 * @return the signal
+	 */
 	public static Signal pitchShift(Signal signal, double semitones) {
 		double factor = Math.pow(2, semitones / 12);
 		//set up arrays
@@ -24,7 +36,12 @@ public class Pitch {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/**Reverses |||| sesreveR**/
+	/**
+	 * Reverses |||| sesreveR*.
+	 *
+	 * @param signal the signal
+	 * @return the signal
+	 */
 	public static Signal reverse(Signal signal) {
 		//set up arrays
 		double[][] os = signal.getSignal();
@@ -37,13 +54,23 @@ public class Pitch {
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 	
-	/** converts frequency to Bark **/
+	/**
+	 * converts frequency to Bark *.
+	 *
+	 * @param freq the freq
+	 * @return the double
+	 */
 	public static double freqToBark(double freq) {
 		return 13 * Math.atan(freq * 0.00076) + 
 				3.5 * Math.atan(Math.pow(freq / 7500, 2));
 	}
 	
-	/** converts frequency row to Bark **/
+	/**
+	 * converts frequency row to Bark *.
+	 *
+	 * @param freqRow the freq row
+	 * @return the double[]
+	 */
 	public static double[] freqToBark(double[] freqRow) {
 		double[] nt = new double[freqRow.length];
 		for (int i = 0; i < freqRow.length;++i) {
@@ -51,7 +78,14 @@ public class Pitch {
 		}
 		return nt;
 	}
-	/** converts frequency row to subdivided Bark. so 0.5 in factor will return half barks. **/
+	
+	/**
+	 * converts frequency row to subdivided Bark. so 0.5 in factor will return half barks. *
+	 *
+	 * @param freqRow the freq row
+	 * @param factor the factor
+	 * @return the double[]
+	 */
 	public static double[] freqToBark(double[] freqRow, double factor) {
 		double[] nt = new double[freqRow.length];
 		for (int i = 0; i < freqRow.length;++i) {
@@ -60,6 +94,12 @@ public class Pitch {
 		return nt;
 	}
 
+	/**
+	 * Gets the fundamental.
+	 *
+	 * @param table the table
+	 * @return the fundamental
+	 */
 	public static double getFundamental(double[][] table) {
 		double[][] peaks = Statistics.getPeaks(table);
 		double err = 0.05; //5%
@@ -91,8 +131,12 @@ public class Pitch {
 		return freq;
 	}
 	
-	/** Gets the fundamental of the signal. This will take ages for long wavs,
-	 * don't do it. 
+	/**
+	 * Gets the fundamental of the signal. This will take ages for long wavs,
+	 * don't do it.
+	 *
+	 * @param s the s
+	 * @return the fundamental
 	 */
 	public static double getFundamental(Signal s) {
 		FFT fft = new FFT(s);
@@ -101,8 +145,12 @@ public class Pitch {
 		return getFundamental(t);
 	}
 	
-	/** Is the fundamental of the signal within the thresholds
-	 * of human hearing?
+	/**
+	 * Is the fundamental of the signal within the thresholds
+	 * of human hearing?.
+	 *
+	 * @param s the s
+	 * @return true, if is fundamental hearable
 	 */
 	public static boolean isFundamentalHearable(Signal s) {
 		double lowThreshold = 60; //or 40?
@@ -112,7 +160,13 @@ public class Pitch {
 		return (fund > lowThreshold & fund < highThreshold);
 	}
 
-	/** returns true if b is of similar volume to a **/
+	/**
+	 * returns true if b is of similar volume to a *.
+	 *
+	 * @param a the a
+	 * @param b the b
+	 * @return true, if successful
+	 */
 	public static boolean compareVolume(double a, double b) {
 		//will put margin at 12db
 		return b + 12 >= a;

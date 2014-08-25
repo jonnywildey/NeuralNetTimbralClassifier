@@ -5,7 +5,12 @@ import java.util.Random;
 
 import com.neuralNet.pattern.Pattern;
 
-
+/**
+ * Linked list of neural layers *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class LayerList implements Serializable {
 
 	private static final long serialVersionUID = 907430324885673987L;
@@ -14,23 +19,41 @@ public class LayerList implements Serializable {
 	private int epoch;
 	
 
+	/**
+	 * Instantiates a new layer list.
+	 */
 	public LayerList() {
 		this.layerCount = 0;
 	}
 	
 
+	/**
+	 * Instantiates a new layer list.
+	 *
+	 * @param layerStructure the layer structure
+	 * @param inputCount the input count
+	 */
 	public LayerList(LayerStructure layerStructure, int inputCount) {
 		this();
 		this.initialiseList(layerStructure, inputCount);
 	}
 	
-	/**Copy constructor **/
+	/**
+	 * Copy constructor *.
+	 *
+	 * @param layerList the layer list
+	 */
 	public LayerList(LayerList layerList) {
 		this.layerCount = layerList.layerCount;
 		this.firstLayer = new NeuralLayer(layerList.getFirstLayer());
 	}
 
 
+	/**
+	 * Adds the layer.
+	 *
+	 * @param layer the layer
+	 */
 	public void addLayer(NeuralLayer layer) {
 		if (this.firstLayer == null) {
 			this.firstLayer = layer;
@@ -41,6 +64,12 @@ public class LayerList implements Serializable {
 		layerCount++;
 	}
 	
+	/**
+	 * Gets the layer.
+	 *
+	 * @param layerNo the layer no
+	 * @return the layer
+	 */
 	public NeuralLayer getLayer(int layerNo) {
 		NeuralLayer holdLayer = firstLayer;
 		for (int i = 0; i < layerNo; ++i) {
@@ -49,6 +78,11 @@ public class LayerList implements Serializable {
 		return holdLayer;
 	}
 	
+	/**
+	 * Gets the last layer.
+	 *
+	 * @return the last layer
+	 */
 	public NeuralLayer getLastLayer() {
 		NeuralLayer l = this.firstLayer;
 		if (l == null) {return null;}
@@ -58,10 +92,21 @@ public class LayerList implements Serializable {
 		return l;
 	}
 	
+	/**
+	 * Gets the first layer.
+	 *
+	 * @return the first layer
+	 */
 	public NeuralLayer getFirstLayer() {
 		return this.firstLayer;
 	}
 	
+	/**
+	 * Initialise list.
+	 *
+	 * @param ls the ls
+	 * @param inputCount the input count
+	 */
 	public void initialiseList(LayerStructure ls, int inputCount) {
 		for (int i = 0; i < ls.getTotalLayers(); ++i) {
 			NeuralLayer l = new NeuralLayer();
@@ -74,15 +119,28 @@ public class LayerList implements Serializable {
 	
 	
 	
+	/**
+	 * Gets the layer count.
+	 *
+	 * @return the layer count
+	 */
 	public int getLayerCount() {
 		return layerCount;
 	}
 
 
+	/**
+	 * Gets the output count.
+	 *
+	 * @return the output count
+	 */
 	public int getOutputCount() {
 		return this.getLastLayer().neuronCount;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Layer List \n");
@@ -94,7 +152,11 @@ public class LayerList implements Serializable {
 		return sb.toString();
 	}
 	
-	/** sets learning to on/off for entire List **/
+	/**
+	 * sets learning to on/off for entire List *.
+	 *
+	 * @param learn the new learning
+	 */
 	public void setLearning(boolean learn) {
 		NeuralLayer l = this.firstLayer;
 		if (l != null) {
@@ -108,6 +170,13 @@ public class LayerList implements Serializable {
 		
 	}
 	
+	/**
+	 * Sets the initial weights.
+	 *
+	 * @param p the p
+	 * @param seed the seed
+	 * @return the long
+	 */
 	public long setInitialWeights(Pattern p, long seed) {
 		Random r = new Random(seed);
 		NeuralLayer l = this.firstLayer;
@@ -123,23 +192,37 @@ public class LayerList implements Serializable {
 						n.getWeightList().add((r.nextDouble() * factor) - factor / 2);
 					}
 				}
-
-				//System.out.println(n.toString());
 			}
 			l = l.outputLayer;
 		}
 		return seed;
 	}
 	
+	/**
+	 * Sets the initial weights.
+	 *
+	 * @param p the p
+	 * @return the long
+	 */
 	public long setInitialWeights(Pattern p) {
 		return setInitialWeights(p, System.currentTimeMillis());
 	}
 
 
+	/**
+	 * Sets the epoch.
+	 *
+	 * @param epoch the new epoch
+	 */
 	public void setEpoch(int epoch) {
 		this.epoch = epoch;
 	}
 	
+	/**
+	 * Gets the epoch.
+	 *
+	 * @return the epoch
+	 */
 	public int getEpoch() {
 		return this.epoch;
 	}

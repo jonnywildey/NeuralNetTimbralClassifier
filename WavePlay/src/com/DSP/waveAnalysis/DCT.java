@@ -6,16 +6,31 @@ import com.riff.Signal;
 import com.util.ArrayMethods;
 import com.util.Log;
 
+/**
+ * Direct cosine transform *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class DCT extends TransformComponent{
 	
-	/** Custom frame size constructor **/
+	/**
+	 * Custom frame size constructor *.
+	 *
+	 * @param s the s
+	 * @param frameSize the frame size
+	 */
 	public DCT(Signal s, int frameSize) {
 		this.signal = s;
 		this.frameSize = frameSize;
 		this.amplitudes = s.getSignal()[0]; //assume left
 	}
 	
-	/** Uses smallest frame size that can cover entire signal **/
+	/**
+	 * Uses smallest frame size that can cover entire signal *.
+	 *
+	 * @param s the s
+	 */
 	public DCT(Signal s) {
 		this.signal = s;
 		//find nearest bigger frame size
@@ -24,7 +39,12 @@ public class DCT extends TransformComponent{
 	
 	
 	
-	/**DCT algorithm **/
+	/**
+	 * DCT algorithm *.
+	 *
+	 * @param signal the signal
+	 * @return the double[]
+	 */
 	public static double[] dct(double[] signal) {
 		//generate new signal
 		double[] ns = alterRow(signal);
@@ -36,7 +56,11 @@ public class DCT extends TransformComponent{
 		return dct;
 	}
 	
-	/** perfoms transform and returns it in a FFTBox **/
+	/**
+	 * perfoms transform and returns it in a FFTBox *.
+	 *
+	 * @return the fFT box
+	 */
 	@Override
 	public FFTBox analyse() {
 		double[] amps = FFT.getArrayToPowerOf2(signal.getSignal()[0]);
@@ -47,13 +71,25 @@ public class DCT extends TransformComponent{
 		return this.fftBox;
 	}
 	
-	/** Transforms and filters **/
+	/**
+	 * Transforms and filters *.
+	 *
+	 * @param from the from
+	 * @param to the to
+	 * @return the fFT box
+	 */
 	public FFTBox analyse(int from, int to) {
 		this.analyse();
 		return this.filter(from, to);
 	}
 	
-	/**Filters the FFTBox **/
+	/**
+	 * Filters the FFTBox *.
+	 *
+	 * @param from the from
+	 * @param to the to
+	 * @return the fFT box
+	 */
 	public FFTBox filter(int from, int to) {
 		if (hasAnalysed()) {
 			this.fftBox = FFTBox.filter(this.fftBox, from, to);
@@ -64,7 +100,12 @@ public class DCT extends TransformComponent{
 		}
 	}
 	
-	/** alter the row to allow for DCT **/
+	/**
+	 * alter the row to allow for DCT *.
+	 *
+	 * @param signal the signal
+	 * @return the double[]
+	 */
 	private static double[] alterRow(double[] signal) {
 		double[] ns = new double[signal.length];
 		for  (int i = 0; i < signal.length / 2; ++i) {
@@ -74,7 +115,13 @@ public class DCT extends TransformComponent{
 		return ns;
 	}
 	
-	/** return the frequency row. Slightly different than FFT maybe **/
+	/**
+	 * return the frequency row. Slightly different than FFT maybe *
+	 *
+	 * @param s the s
+	 * @param frameSize the frame size
+	 * @return the freq row
+	 */
 	public static double[] getFreqRow(Signal s, double frameSize) {
 		double sr = s.getSampleRate() / frameSize / 2;
 		double[] fr = new double[(int) frameSize];
@@ -84,7 +131,12 @@ public class DCT extends TransformComponent{
 		return fr;
 	}
 	
-	/** do the * e to the power part **/
+	/**
+	 * do the * e to the power part *.
+	 *
+	 * @param fft the fft
+	 * @return the double[]
+	 */
 	private static double[] newDCT(Complex[] fft) {
 		double[] dct = new double[fft.length];
 		double e = 0;
@@ -96,7 +148,12 @@ public class DCT extends TransformComponent{
 		return dct;
 	}
 	
-	/** do the * e to the power part **/
+	/**
+	 * do the * e to the power part *.
+	 *
+	 * @param s the s
+	 * @return the complex[]
+	 */
 	private static Complex[] newIDCT(double[] s) {
 		Complex[] dct = new Complex[s.length];
 		double e = 0;
@@ -108,7 +165,12 @@ public class DCT extends TransformComponent{
 		return dct;
 	}
 	
-	/** inverse operation of alter row **/
+	/**
+	 * inverse operation of alter row *.
+	 *
+	 * @param vals the vals
+	 * @return the double[]
+	 */
 	private static double[] irearrange(double[] vals) {
 		double[] ns = new double[vals.length];
 		for (int i = 0; i < vals.length / 2; ++i) {
@@ -118,12 +180,22 @@ public class DCT extends TransformComponent{
 		return ns;
 	}
 	
-	/**Quick normalised frequency response graph **/
+	/**
+	 * Quick normalised frequency response graph *.
+	 */
 	@Override
 	public void makeGraph() {
 		makeGraph(40, 20000, 800, 600);
 	}
-	/**Quick normalised frequency response graph with filter options**/
+	
+	/**
+	 * Quick normalised frequency response graph with filter options*.
+	 *
+	 * @param filterFrom the filter from
+	 * @param filterTo the filter to
+	 * @param width the width
+	 * @param height the height
+	 */
 	public void makeGraph(int filterFrom, int filterTo, int width, int height) {
 		FFTBox fb = flipAndRemove(this.fftBox); 
 		DCTController sc = new DCTController(FFTBox.logarithmicFreq(FFTBox.filter(
@@ -132,7 +204,12 @@ public class DCT extends TransformComponent{
 		sc.makeChart();
 	}
 	
-	/**Inverse DCT **/
+	/**
+	 * Inverse DCT *.
+	 *
+	 * @param s the s
+	 * @return the double[]
+	 */
 	public static double[] idct(double[] s) {
 		Complex[] s2 = newIDCT(s);
 		double[] s3 = Complex.getReals(FFT.icfft(s2));
@@ -140,8 +217,12 @@ public class DCT extends TransformComponent{
 		return s3;
 	}
 	
-	/**Simplifies DCT by only using the negative component
-	 * and flipping it into positive
+	/**
+	 * Simplifies DCT by only using the negative component
+	 * and flipping it into positive.
+	 *
+	 * @param dctBox the dct box
+	 * @return the fFT box
 	 */
 	public static FFTBox flipAndRemove(FFTBox dctBox) {
 		double[][] vals = dctBox.getTable();

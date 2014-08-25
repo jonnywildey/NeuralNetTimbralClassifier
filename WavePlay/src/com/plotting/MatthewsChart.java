@@ -3,24 +3,46 @@ import java.awt.*;
 import javax.swing.*;
 import com.DSP.waveAnalysis.Statistics;
 
-/** Create a plot graph of Matthews coefficients **/
+/**
+ * Create a plot graph of Matthews coefficients *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class MatthewsChart extends Controller{
 	
 	private double[][] signals;
 	
+	/**
+	 * Instantiates a new matthews chart.
+	 *
+	 * @param signals the signals
+	 */
 	public MatthewsChart(double[][] signals) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.size = new Dimension(screenSize.width, screenSize.height / 3);
 		this.signals = signals;
 	}
 	
+	/**
+	 * Instantiates a new matthews chart.
+	 *
+	 * @param signals the signals
+	 * @param width the width
+	 * @param height the height
+	 */
 	public MatthewsChart(double[][] signals, int width, int height) {
 		this.size = new Dimension(width, height);
 		this.signals = signals;
 	}
 	
 	
-	/** Make the chart **/
+	/**
+	 * Make the chart *.
+	 *
+	 * @param values the values
+	 * @param winSize the win size
+	 */
 	protected static void createChart(double[][] values, Dimension winSize) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,9 +56,22 @@ public class MatthewsChart extends Controller{
 		frame.setVisible(true);
 	}
 	
+	/**
+	 * The Class MatthewsGraph.
+	 *
+	 * @author Jonny Wildey
+	 * @version 1.0
+	 */
 	static class MatthewsGraph extends PlotGraph{
 		double[][] values;
 			
+		/**
+		 * Instantiates a new matthews graph.
+		 *
+		 * @param values the values
+		 * @param winSize the win size
+		 * @param axisLabels the axis labels
+		 */
 		public MatthewsGraph(double[][] values, Dimension winSize, String[] axisLabels) {
 			this.values = values;
 			this.axisLabels = axisLabels;
@@ -57,6 +92,9 @@ public class MatthewsChart extends Controller{
 			
 		}
 		
+		/* (non-Javadoc)
+		 * @see com.plotting.PlotGraph#drawGuides(java.awt.Graphics2D, int)
+		 */
 		protected void drawGuides(Graphics2D g2d, int number) {
 			for (int i = 0; i <= number; ++i) {
 				g2d.drawLine((int) (offsetSize.width * 0.95), 
@@ -80,6 +118,9 @@ public class MatthewsChart extends Controller{
 				}
 			}
 
+		/* (non-Javadoc)
+		 * @see com.plotting.PlotGraph#drawBar(java.awt.Graphics2D)
+		 */
 		public void drawBar(Graphics2D g2d) {
 			whiteBackground(g2d);
 			drawLines(g2d);

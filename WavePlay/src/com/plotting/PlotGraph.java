@@ -8,36 +8,57 @@ import javax.swing.JPanel;
 import com.DSP.waveAnalysis.Statistics;
 import com.util.ArrayMethods;
 
-/** Basic plotting graph object for 2d values (Different colours) **/
+/**
+ * Basic plotting graph object for 2d values (Different colours) *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class PlotGraph extends JPanel {
 
 	private static final long serialVersionUID = 1110962484308363573L;
-	protected long[][] values;
-	protected Dimension offsetSize;
-	protected Dimension size;
-	protected String[] axisLabels;
-	protected double marginOffset = 0.08;
-	protected double maxBar;
-	protected int widthness;
-	protected double wOffset;
-	protected int heightness;
-	protected int alpha;
-	protected Color[] rColors;
+	protected long[][] values; //values to plot
+	protected Dimension offsetSize; //offset of where graph actually starts
+	protected Dimension size; //size of entire window
+	protected String[] axisLabels; //labels for axis
+	protected double marginOffset = 0.08; //how much of graph is margin
+	protected double maxBar; // amount to change values by to fit to plot
+	protected int widthness; //size of size - offset
+	protected double wOffset; 
+	protected int heightness; //size of size - offset
+	protected int alpha; //set alpha
+	protected Color[] rColors; //color arrays
 	protected double wr;
 	protected double hOffset;
 	protected int half;
-	protected double max;
+	protected double max; //maximum value
 
+	/**
+	 * Instantiates a new plot graph.
+	 */
 	public PlotGraph() {
 
 	}
 
+	/**
+	 * Instantiates a new plot graph.
+	 *
+	 * @param values the values
+	 * @param winSize the win size
+	 * @param axisLabels the axis labels
+	 */
 	public PlotGraph(long[][] values, Dimension winSize, String[] axisLabels) {
 		super();
 		initialise(values, winSize, axisLabels);
 	}
 
-	/** set up margins etc **/
+	/**
+	 * set up margins etc *.
+	 *
+	 * @param values the values
+	 * @param winSize the win size
+	 * @param axisLabels the axis labels
+	 */
 	protected void initialise(long[][] values, Dimension winSize,
 			String[] axisLabels) {
 		this.values = values;
@@ -50,12 +71,21 @@ public class PlotGraph extends JPanel {
 
 	}
 
-	/** for normalising of table values **/
+	/**
+	 * for normalising of table values *.
+	 *
+	 * @param values the values
+	 */
 	protected void initMax(long[][] values) {
 		max = ArrayMethods.getMax(values);
 		maxBar = ((heightness - offsetSize.height) / max);
 	}
 
+	/**
+	 * Inits the dimensions.
+	 *
+	 * @param winSize the win size
+	 */
 	protected void initDimensions(Dimension winSize) {
 		size = winSize;
 		offsetSize = new Dimension((int) (size.getWidth() * marginOffset),
@@ -69,13 +99,22 @@ public class PlotGraph extends JPanel {
 		this.half = (int) ((size.height - offsetSize.height) * 0.5);
 	}
 
-	/** returns a random color with alpha choice */
+	/**
+	 * returns a random color with alpha choice.
+	 *
+	 * @return the color
+	 */
 	public Color getColor() {
 		Color c = new Color((float) (Math.random()), 0.4f, 0.9f, 0.7f);
 		return c;
 	}
 
-	/** Create a color array **/
+	/**
+	 * Create a color array *.
+	 *
+	 * @param a the a
+	 * @return the color[]
+	 */
 	protected Color[] colorArray(int a) {
 		/* returns an array of colors */
 		float am = 1f / a;
@@ -89,7 +128,14 @@ public class PlotGraph extends JPanel {
 		return rcol;
 	}
 
-	/** draw a string from its centre position **/
+	/**
+	 * draw a string from its centre position *.
+	 *
+	 * @param str the str
+	 * @param x the x
+	 * @param y the y
+	 * @param g2d the g2d
+	 */
 	protected void drawCentredString(String str, int x, int y, Graphics2D g2d) {
 		int widthAlign = (int) ((g2d.getFontMetrics().getStringBounds(str, g2d)
 				.getWidth() / 2));
@@ -98,7 +144,11 @@ public class PlotGraph extends JPanel {
 		g2d.drawString(str, x - widthAlign, y - heightAlign);
 	}
 
-	/** The drawing method **/
+	/**
+	 * The drawing method *.
+	 *
+	 * @param g the g
+	 */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -108,7 +158,11 @@ public class PlotGraph extends JPanel {
 		drawBar(g2d);
 	}
 
-	/** Draw axis lines etc. **/
+	/**
+	 * Draw axis lines etc. *
+	 *
+	 * @param g2d the g2d
+	 */
 	protected void drawLines(Graphics2D g2d) {
 		// Y axis
 		g2d.drawLine(offsetSize.width, heightness, offsetSize.width,
@@ -123,7 +177,12 @@ public class PlotGraph extends JPanel {
 				heightness, g2d);
 	}
 
-	/** Draw guides etc. **/
+	/**
+	 * Draw guides etc. *
+	 *
+	 * @param g2d the g2d
+	 * @param number the number
+	 */
 	protected void drawGuides(Graphics2D g2d, int number) {
 		for (int i = 0; i <= number; ++i) {
 			g2d.drawLine(
@@ -155,7 +214,11 @@ public class PlotGraph extends JPanel {
 
 	}
 
-	/** draw values **/
+	/**
+	 * draw values *.
+	 *
+	 * @param g2d the g2d
+	 */
 	public void drawBar(Graphics2D g2d) {
 		whiteBackground(g2d);
 		drawLines(g2d);
@@ -172,6 +235,11 @@ public class PlotGraph extends JPanel {
 		}
 	}
 
+	/**
+	 * White background.
+	 *
+	 * @param g2d the g2d
+	 */
 	protected void whiteBackground(Graphics2D g2d) {
 		g2d.setBackground(Color.white);
 		g2d.clearRect(0, 0, this.size.width, this.size.height);

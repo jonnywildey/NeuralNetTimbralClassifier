@@ -10,13 +10,26 @@ import com.riff.Signal;
 import com.riff.Wave;
 import com.util.Serialize;
 
-/** Principally useful utility classes for batch wav processing **/
+/**
+ * Principally useful utility classes for batch wav processing *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class Batch {
 
+	/**
+	 * Instantiates a new batch.
+	 */
 	public Batch() {
 	}
 
-	/** Get waves from a directory **/
+	/**
+	 * Get waves from a directory *.
+	 *
+	 * @param dir the dir
+	 * @return the wavs
+	 */
 	public static Wave[] getWavs(File dir) {
 		File[] files = Serialize.getActualFiles(dir);
 		Wave[] waves = new Wave[files.length];
@@ -26,35 +39,61 @@ public class Batch {
 		return waves;
 	}
 	
-	/** Performs batch processing of all the audio files in a directory.
-	 * For monotimbral processing **/
+	/**
+	 * Performs batch processing of all the audio files in a directory.
+	 * For monotimbral processing *
+	 *
+	 * @param sampleDir the sample dir
+	 * @param newDir the new dir
+	 */
 	protected static void batchWavProcessMono(File sampleDir, File newDir) {
 		batchWavProcess(sampleDir, newDir, true);
 	}
 	
-	/** Performs batch processing of all the audio files in a directory.
-	 * For polytimbral processing **/
+	/**
+	 * Performs batch processing of all the audio files in a directory.
+	 * For polytimbral processing *
+	 *
+	 * @param sampleDir the sample dir
+	 * @param newDir the new dir
+	 */
 	protected static void batchWavProcessPoly(File sampleDir, File newDir) {
 		batchWavProcess(sampleDir, newDir, false);
 	}
 	
-	/** Performs batch processing of all the audio files in multiple directories.
-	 * For monotimbral processing **/
+	/**
+	 * Performs batch processing of all the audio files in multiple directories.
+	 * For monotimbral processing *
+	 *
+	 * @param batch the batch
+	 * @param dirs the dirs
+	 */
 	public static void batchWavProcessMono(File batch, File...dirs) {
 		for (File f : dirs) {
 			Batch.batchWavProcess(f, batch, true);
 		}
 	}
 	
-	/** Performs batch processing of all the audio files in multiple directories.
-	 * For polytimbral processing **/
+	/**
+	 * Performs batch processing of all the audio files in multiple directories.
+	 * For polytimbral processing *
+	 *
+	 * @param batch the batch
+	 * @param dirs the dirs
+	 */
 	public static void batchWavProcessPoly(File batch, File...dirs) {
 		for (File f : dirs) {
 			Batch.batchWavProcess(f, batch, false);
 		}
 	}
 	
-	/** Performs batch processing of all the audio files in a directory **/
+	/**
+	 * Performs batch processing of all the audio files in a directory *.
+	 *
+	 * @param sampleDir the sample dir
+	 * @param newDir the new dir
+	 * @param mono the mono
+	 */
 	protected static void batchWavProcess(File sampleDir, File newDir, boolean mono) {
 		String instrument = sampleDir.getName();
 		File[] files = Serialize.getActualFiles(sampleDir);

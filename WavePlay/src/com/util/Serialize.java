@@ -40,12 +40,12 @@ public class Serialize {
 	}
 	
 	/**
-	 * Serializes an object to the output path. make sure output is .ser *
+	 * Writes object as JSON to the output file *
 	 *
 	 * @param obj the obj
 	 * @param output the output
 	 */
-	public static void serializeGson(Object obj, File output) {
+	public static void writeJSON(Object obj, File output) {
 		// Serialization code
 		Gson gson = new Gson();
 		String json = gson.toJson(obj);
@@ -61,14 +61,14 @@ public class Serialize {
 	}
 	
 	/**
-	 * Serializes an object to the output path. make sure output is .ser *
+	 * Get a JSON object *
 	 *
 	 * @param <T> the generic type
 	 * @param json the json
 	 * @param type the type
 	 * @return the from gson
 	 */
-	public static <T> T getFromGson(File json, Class<T> type) {
+	public static <T> T getFromJSON(File json, Class<T> type) {
 		Gson gson = new Gson();
 		T obj = null;
 		try {

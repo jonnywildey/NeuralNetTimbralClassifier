@@ -1,40 +1,53 @@
 package com.DSP.waveAnalysis;
 
-import java.util.Arrays;
-
 import com.plotting.FFTController;
-import com.plotting.SignalController;
 import com.riff.Signal;
 import com.util.ArrayMethods;
-import com.util.Log;
 
-/**Basic FFT algorithm implemented with lots of 
- * help from Rosetta Code
- * @author Jonny
+/**
+ * Basic FFT divide and conquer FFT algorithm.
  *
+ * @author Jonny Wildey
+ * @version 1.0
  */
 public class FFT extends TransformComponent {
 	
 	protected Complex[] cValues; //complex values of FFT (unnormalised)
 	
+	/**
+	 * Instantiates a new fFT.
+	 */
 	public FFT() {		
 	}
 	
-	/** Custom frame size constructor **/
+	/**
+	 * Custom frame size constructor *.
+	 *
+	 * @param s the s
+	 * @param frameSize the frame size
+	 */
 	public FFT(Signal s, int frameSize) {
 		this.signal = s;
 		this.frameSize = frameSize;
 		this.amplitudes = s.getSignal()[0]; //assume left
 	}
 	
-	/** Uses smallest frame size that can cover entire signal **/
+	/**
+	 * Uses smallest frame size that can cover entire signal *.
+	 *
+	 * @param s the s
+	 */
 	public FFT(Signal s) {
 		this.signal = s;
 		//find nearest bigger frame size
 		calculateSignalSize(s.getSignal()[0]);
 	}
 	
-	/**Using the inverse FFT create a new signal **/
+	/**
+	 * Using the inverse FFT create a new signal *.
+	 *
+	 * @return the signal
+	 */
 	public Signal invertFFTSignal() {
 		double[][] s = new double[][]{
 				ArrayMethods.getSubset(
@@ -45,8 +58,12 @@ public class FFT extends TransformComponent {
 				(int) this.signal.getSampleRate());
 	}
 	
-	/** Perform FFT analysis. get table of frequencies
-	 * and magnitudes **/
+	/**
+	 * Perform FFT analysis. get table of frequencies
+	 * and magnitudes *
+	 *
+	 * @return the fFT box
+	 */
 	@Override
 	public FFTBox analyse() {
 		this.cValues = cfft(Complex.doubleToComplex(this.amplitudes));
@@ -54,7 +71,12 @@ public class FFT extends TransformComponent {
 		return this.fftBox;
 	}
 	
-	/** For multi-channel implementation **/
+	/**
+	 * For multi-channel implementation *.
+	 *
+	 * @param amplitudes the amplitudes
+	 * @return the fFT box
+	 */
 	private FFTBox analyse(double[] amplitudes) {
 		this.cValues = cfft(Complex.doubleToComplex(ArrayMethods.extend(
 				amplitudes, (int) this.frameSize)));
@@ -62,7 +84,11 @@ public class FFT extends TransformComponent {
 		return this.fftBox;
 	}
 	
-	/** Multi-channel implementation of FFT analysis**/
+	/**
+	 * Multi-channel implementation of FFT analysis*.
+	 *
+	 * @return the fFT box
+	 */
 	public FFTBox analyseMultiChannel() {
 		double[][] vals = this.signal.getSignal();
 		FFTBox[] fb = new FFTBox[vals.length];
@@ -81,7 +107,13 @@ public class FFT extends TransformComponent {
 						this.signal);
 	}
 	
-	/** analyses, then filters. This affects the table in the FFT **/
+	/**
+	 * analyses, then filters. This affects the table in the FFT *
+	 *
+	 * @param fromFreq the from freq
+	 * @param toFreq the to freq
+	 * @return the fFT box
+	 */
 	public FFTBox analyse(int fromFreq, int toFreq) {
 		FFTBox vals = this.analyse();
 		vals = FFTBox.filter(vals, fromFreq, toFreq);
@@ -90,7 +122,13 @@ public class FFT extends TransformComponent {
 		return this.fftBox;
 	}
 	
-	/** return the frequency row based on sample rate and frame size **/
+	/**
+	 * return the frequency row based on sample rate and frame size *.
+	 *
+	 * @param s the s
+	 * @param frameSize the frame size
+	 * @return the freq row
+	 */
 	public static double[] getFreqRow(Signal s, double frameSize) {
 		double sr = s.getSampleRate() / frameSize;
 		double[] fr = new double[(int) frameSize];
@@ -100,12 +138,22 @@ public class FFT extends TransformComponent {
 		return fr;
 	}
 	
-	/**Quick normalised frequency response graph **/
+	/**
+	 * Quick normalised frequency response graph *.
+	 */
 	@Override
 	public void makeGraph() {
 		makeGraph(40, 20000, 800, 600);
 	}
-	/**Quick normalised frequency response graph with filter options**/
+	
+	/**
+	 * Quick normalised frequency response graph with filter options*.
+	 *
+	 * @param filterFrom the filter from
+	 * @param filterTo the filter to
+	 * @param width the width
+	 * @param height the height
+	 */
 	public void makeGraph(int filterFrom, int filterTo, int width, int height) {
 		FFTController sc = new FFTController(FFTBox.logarithmicFreq(FFTBox.filter(
 						FFTBox.convertTableToDecibels(this.signal, this.fftBox), 
@@ -114,7 +162,12 @@ public class FFT extends TransformComponent {
 	}
 	
 	
-	/** the cfft algorithm **/
+	/**
+	 * the cfft algorithm *.
+	 *
+	 * @param amplitudes the amplitudes
+	 * @return the complex[]
+	 */
 	protected static Complex[] cfft(Complex[] amplitudes) {
 		double bigN = amplitudes.length;
 		//Log.d("BN" + bigN);
@@ -148,7 +201,12 @@ public class FFT extends TransformComponent {
 		return amplitudes;
 	}
 	
-	/** Normalise fft amplitudes to  1/N **/
+	/**
+	 * Normalise fft amplitudes to  1/N *.
+	 *
+	 * @param amplitudes the amplitudes
+	 * @return the double[]
+	 */
 	public static double[] normalise(double[] amplitudes) {
 		double l = amplitudes.length;
 		double[] na = new double[amplitudes.length];
@@ -158,7 +216,12 @@ public class FFT extends TransformComponent {
 		return na;
 	}
 	
-	/** Normalise fft amplitudes to  1/N **/
+	/**
+	 * Normalise fft amplitudes to  1/N *.
+	 *
+	 * @param amplitudes the amplitudes
+	 * @return the double[]
+	 */
 	public static double[] normalise(Complex[] amplitudes) {
 		double l = amplitudes.length;
 		double[] na = new double[amplitudes.length];
@@ -169,7 +232,12 @@ public class FFT extends TransformComponent {
 	}
 	
 
-	/** Invert fft algorithm **/
+	/**
+	 * Invert fft algorithm *.
+	 *
+	 * @param amplitudes the amplitudes
+	 * @return the complex[]
+	 */
 	public static Complex[] icfft(Complex[] amplitudes) {
 		double n = amplitudes.length;
 		//conjugate...
@@ -215,12 +283,20 @@ public class FFT extends TransformComponent {
 		return as;
 	}*/
 	
+	/* (non-Javadoc)
+	 * @see com.DSP.waveAnalysis.TransformComponent#hasAnalysed()
+	 */
 	@Override
 	public boolean hasAnalysed() {
 		return this.cValues != null;
 	}
 	
 	
+	/**
+	 * Gets the fFT box.
+	 *
+	 * @return the fFT box
+	 */
 	public FFTBox getFFTBox() {
 		return this.fftBox;
 	}

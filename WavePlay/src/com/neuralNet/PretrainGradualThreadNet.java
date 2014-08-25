@@ -3,12 +3,16 @@ package com.neuralNet;
 import java.io.File;
 import java.util.ArrayList;
 
-import com.DSP.waveProcess.filters.MultiLayerNet;
 import com.neuralNet.pattern.TestPatterns;
 import com.util.Log;
 
-/** PreTrain NN where 
- * gradually introduces a post training set into a pretraining set **/
+/**
+ * PreTrain NN where
+ * gradually introduces a post training set into a pretraining set *.
+ *
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class PretrainGradualThreadNet extends PretrainThreadNet{
 	
 	public int transitionPhases; // how many steps to introduce the post set
@@ -16,12 +20,25 @@ public class PretrainGradualThreadNet extends PretrainThreadNet{
 								 // post training into
 	protected ArrayList<TestPatterns> transitionPatterns; //all the sets of different patterns
 
+	/**
+	 * Instantiates a new pretrain gradual thread net.
+	 */
 	public PretrainGradualThreadNet() {
 		super();
 		this.defaultTransistions();
 	}
 	
 	
+	/**
+	 * Instantiates a new pretrain gradual thread net.
+	 *
+	 * @param name the name
+	 * @param testPatterns the test patterns
+	 * @param hiddenLayer the hidden layer
+	 * @param maxEpoch the max epoch
+	 * @param id the id
+	 * @param verbose the verbose
+	 */
 	public PretrainGradualThreadNet(File name,
 			TestPatterns testPatterns, int hiddenLayer, int maxEpoch, int id,
 			boolean verbose) {
@@ -29,10 +46,20 @@ public class PretrainGradualThreadNet extends PretrainThreadNet{
 		this.defaultTransistions();
 	}
 
-	/** Create Thread Net. filename,  pretrainPatterns, 
+	/**
+	 * Create Thread Net. filename,  pretrainPatterns,
 	 * posttrain patterns, hidden layer
-	 * max epoch, postepoch, id, verbose. transitions are default. 
+	 * max epoch, postepoch, id, verbose. transitions are default.
 	 * Combine must be true (for obvious reasons)
+	 *
+	 * @param name the name
+	 * @param preTrainPatterns the pre train patterns
+	 * @param postTrainPatterns the post train patterns
+	 * @param hiddenLayer the hidden layer
+	 * @param maxEpoch the max epoch
+	 * @param postEpoch the post epoch
+	 * @param id the id
+	 * @param verbose the verbose
 	 */
 	public PretrainGradualThreadNet(File name,
 			TestPatterns preTrainPatterns, TestPatterns postTrainPatterns,
@@ -43,9 +70,21 @@ public class PretrainGradualThreadNet extends PretrainThreadNet{
 		this.defaultTransistions();
 	}
 	
-	/** Create Thread Net. filename, pretrainPatterns, 
+	/**
+	 * Create Thread Net. filename, pretrainPatterns,
 	 * posttrain patterns, hidden layer
 	 * max epoch, postepoch, transition epochs. transition phases, id, verbose.
+	 *
+	 * @param name the name
+	 * @param preTrainPatterns the pre train patterns
+	 * @param postTrainPatterns the post train patterns
+	 * @param hiddenLayer the hidden layer
+	 * @param maxEpoch the max epoch
+	 * @param postEpoch the post epoch
+	 * @param transitionEpochs the transition epochs
+	 * @param transitionPhases the transition phases
+	 * @param id the id
+	 * @param verbose the verbose
 	 */
 	public PretrainGradualThreadNet(File name,
 			TestPatterns preTrainPatterns, TestPatterns postTrainPatterns,
@@ -59,6 +98,9 @@ public class PretrainGradualThreadNet extends PretrainThreadNet{
 	
 	
 	
+	/* (non-Javadoc)
+	 * @see com.neuralNet.PretrainThreadNet#call()
+	 */
 	@Override
 	public MultiLayerNet call() throws Exception {
 		MultiLayerNet nn = new MultiLayerNet();
@@ -95,6 +137,14 @@ public class PretrainGradualThreadNet extends PretrainThreadNet{
 		return nn;
 	}
 	
+	/**
+	 * Generate transition patterns.
+	 *
+	 * @param pretrain the pretrain
+	 * @param posttrain the posttrain
+	 * @param count the count
+	 * @return the array list
+	 */
 	public static ArrayList<TestPatterns> generateTransitionPatterns(
 			TestPatterns pretrain, TestPatterns posttrain, int count) {
 		return TestPatterns.splitAndAddToInital(pretrain, posttrain, count);
@@ -110,26 +160,49 @@ public class PretrainGradualThreadNet extends PretrainThreadNet{
 	}
 
 
+	/**
+	 * Gets the transition phases.
+	 *
+	 * @return the transition phases
+	 */
 	public int getTransitionPhases() {
 		return transitionPhases;
 	}
 
 
+	/**
+	 * Sets the transition phases.
+	 *
+	 * @param transitionPhases the new transition phases
+	 */
 	public void setTransitionPhases(int transitionPhases) {
 		this.transitionPhases = transitionPhases;
 	}
 
 
+	/**
+	 * Gets the transition epochs.
+	 *
+	 * @return the transition epochs
+	 */
 	public int getTransitionEpochs() {
 		return transitionEpochs;
 	}
 
 
+	/**
+	 * Sets the transition epochs.
+	 *
+	 * @param transitionEpochs the new transition epochs
+	 */
 	public void setTransitionEpochs(int transitionEpochs) {
 		this.transitionEpochs = transitionEpochs;
 	}
 
 
+	/**
+	 * Default transistions.
+	 */
 	public void defaultTransistions() {
 		this.transitionPhases = 10;
 		this.transitionEpochs = 200;
