@@ -38,5 +38,5 @@ Audio Generation:
 Generate Sine, Saw, Square, Triangle waves
 Generate white noise, pink noise, tape hiss
 
-Using Java 1.7, but easily modifable to earlier versions (basically just using the input...parameter)
+Developed for Java 1.6
 
