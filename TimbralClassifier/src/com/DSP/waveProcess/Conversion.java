@@ -33,14 +33,14 @@ public class Conversion {
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
 		Long start = System.currentTimeMillis();
 		File comb5 = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/");
-		File comb6 = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/MultiGen2.json");
-		File c1 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb5");
+		File out = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/SplitComb.json");
+		File c1 = new File("/Volumes/Rickay/Timbre/Combine");
 		File c2 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb6");
+		WavePatterns wp = GenerateWavePatterns.regeneratePatternsSplit(c1, out);
+		//WavePatterns wp = Combine.combineFromJSONs(comb5);
+		//Log.d("Combined");
 		
-		WavePatterns wp = Combine.combineFromJSONs(comb5);
-		Log.d("Combined");
-		
-		Serialize.writeJSON(wp, comb6);
+		//Serialize.writeJSON(wp, comb6);
 
 	}
 	

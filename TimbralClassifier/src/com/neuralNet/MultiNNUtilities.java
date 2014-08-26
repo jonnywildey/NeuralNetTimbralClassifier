@@ -114,6 +114,8 @@ public class MultiNNUtilities {
 				count, mn, MultiLayerNet.class);
 		return Committee.MultiLayerListToArray(aNets);
 	}
+	
+	
 
 	/**
 	 * Run callable threads.

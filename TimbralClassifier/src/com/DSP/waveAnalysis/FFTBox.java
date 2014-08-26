@@ -39,6 +39,13 @@ public class FFTBox {
 		this.setFromSignal(s1);
 	}
 	
+	public FFTBox(FFTBox fftBox) {
+		this(ArrayMethods.copy(fftBox.getTable()));
+		this.sampleFreq = fftBox.getSampleFreq();
+		this.bits = fftBox.getBits();
+	}
+	
+	
 	/**
 	 * Sets the from signal.
 	 *
@@ -347,15 +354,31 @@ public class FFTBox {
 	 * @return the sum table
 	 */
 	public static FFTBox getSumTable(FFTBox fftBox, int count) {
+		return getSumTable(fftBox, 0, count);
+	}
+	
+	/**
+	 * returns the sum of the bins *.
+	 *
+	 * @param fftBox the fft box
+	 * @param from the from
+	 * @param count the count
+	 * @return the sum table
+	 */
+	public static FFTBox getSumTable(FFTBox fftBox, int from, int count) {
 		double[][] table = fftBox.getTable();
 		if (count + 1 > table.length) {
 			Log.d("Count larger than table length. Using table length");
 			count = table.length -1;
 		}
+		if (from + 1 > table.length) {
+			Log.d("from larger than table length. Using 0");
+			from = 0;
+		}
 		double[][] sums = new double[2][table[0].length];
 		sums[0] = table[0]; //freq row
 		for (int i = 0; i < table[0].length; ++i) {
-			for (int j = 1; j < count + 1; ++j) {
+			for (int j = from + 1; j < count + 1; ++j) {
 				sums[1][i] += table[j][i];
 			}
 		}

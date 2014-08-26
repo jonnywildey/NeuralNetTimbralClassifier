@@ -255,8 +255,12 @@ public class Committee implements Serializable {
 	 * Removes patterns from Wave Patterns *.
 	 */
 	public void removePatterns() {
+		try {
 		for (MultiLayerNet mn : this.nets) {
-			mn.setTestPatterns(null);
+			mn.removeTestPatterns();
+		}
+		} catch (Exception e) {
+			
 		}
 	}
 	

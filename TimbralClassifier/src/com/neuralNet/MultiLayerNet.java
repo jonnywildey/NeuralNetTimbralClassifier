@@ -333,6 +333,10 @@ public class MultiLayerNet  implements Serializable{
 	public boolean areWeightsInitialised() {
 		return (neuronLayers.getFirstLayer().neurons.get(0).getWeightList().size() > 0);
 	}
+
+	public void removeTestPatterns() {
+		this.testPatterns = null;
+	}
 	
 	
 

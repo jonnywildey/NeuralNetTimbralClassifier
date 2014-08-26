@@ -33,17 +33,18 @@ public class RunNetwork {
 		long seed = 4564564536l;
 		File pretrain = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Combined.json");
 		File posttrain = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Separate");
-		File com = new File("/Users/Jonny/Documents/Timbre/JSON/Committee/PretrainGradual.json");
-		WavePatterns lp = Serialize.getFromJSON(pretrain, WavePatterns.class);
-		WavePatterns wp = Combine.combineFromJSONs(posttrain);
+		File out = new File("/Users/Jonny/Documents/Timbre/Ser/Committee/Poly/SplitBatch.ser");
+		File in = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/SplitComb.json");
+		WavePatterns lp = Serialize.getFromJSON(in, WavePatterns.class);
+		//WavePatterns wp = Combine.combineFromJSONs(posttrain);
 		TestPatterns pre = new TestPatterns(lp.patterns, seed);
-		TestPatterns post = new TestPatterns(wp.patterns, seed);
-		MultiLayerNet[] mns = MultiNNUtilities.runPreTrainGradual(pre, post, 4, verbose);
-		Committee committee = new Committee();
+		//TestPatterns post = new TestPatterns(wp.patterns, seed);
+
+		Committee committee = MultiNNUtilities.createCommittee(pre, 4, 100, 200, verbose);
 		committee.removePatterns();
 		//test pre
 		MultiNNUtilities.testCommittee(pre, committee);
-		Serialize.writeJSON(committee, com);
+		Serialize.serialize(committee, out);
 		
 		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds");
 	}
