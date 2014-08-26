@@ -9,7 +9,7 @@ import java.util.logging.SimpleFormatter;
 import com.util.fileReading.HTML;
 
 /**
- * Basic simple, static logger *.
+ * Basic simple, static logger used throughout project.
  *
  * @author Jonny Wildey
  * @version 1.0
@@ -21,7 +21,6 @@ public class Log {
 	
 	/** The logger. */
 	private static Logger logger;
-	
 	/** The init. */
 	public static boolean init = false;
 	
