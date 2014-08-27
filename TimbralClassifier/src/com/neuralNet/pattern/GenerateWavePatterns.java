@@ -23,6 +23,19 @@ public class GenerateWavePatterns {
 		return wp;
 	}
 	
+	/** generates and serialises and return wave patterns **/
+	public static WavePatterns regenerateAndBatchSplitPatterns(File batchFolder, File fileOut, int genCount) {
+		WavePatterns wp = new WavePatternsSplitBatchRegen(batchFolder);
+		wp = WavePatternsBatchRegen.genWaves(wp, 4, genCount);
+		try {
+		Serialize.writeJSON(wp, fileOut);
+		Log.d("serialised!");
+		} catch (Exception e){
+			Log.d("not serialised");
+		}
+		return wp;
+	}
+	
 
 	/** generates and serialises and return wave patterns **/
 	public static WavePatterns regenerateAndBatchPatternsMono
@@ -101,10 +114,16 @@ public class GenerateWavePatterns {
 	public static WavePatterns regeneratePatternsSplit(File batchFolder, File fileOut) {
 		WavePatterns wp = new WavePatternsSplitRegenerate(batchFolder);
 		wp = WavePatterns.genWaves(wp, 4);
+		try {
 		Serialize.writeJSON(wp, fileOut);
 		Log.d("serialised!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Serialize.serialize(wp, fileOut);
+		}
 		return wp;
 	}
+	
 	
 	/** regenerates the FFT analysis for a folder and rewrites metadata. 
 	 * Multithreaded**/

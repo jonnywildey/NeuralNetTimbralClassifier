@@ -135,7 +135,27 @@ public class Serialize {
 		} else {
 			return null;
 		}
-		
+	}
+	
+	/**
+	 * Receive only the visible directories in a path *.
+	 *
+	 * @param dir the dir
+	 * @return the actual files
+	 */
+	public static File[] getDirectories(File dir) {
+		if (dir.isDirectory()) {
+			File[] allFiles = dir.listFiles(new FilenameFilter(){
+				public boolean accept(File dir,
+			               String name) {
+					File f = new File(dir.getAbsolutePath() + "/" + name);
+					return (!name.startsWith(".") & f.isDirectory());
+				}
+			});
+			return allFiles;
+		} else {
+			return null;
+		}
 	}
 
 }

@@ -19,7 +19,6 @@ import com.riff.*;
 import com.util.ArrayMethods;
 import com.util.Log;
 import com.util.Serialize;
-import com.google.gson.Gson;
 
 /**
  * Class for transforming samples and preparing them for neural net *.
@@ -33,10 +32,17 @@ public class Conversion {
 		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
 		Long start = System.currentTimeMillis();
 		File comb5 = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/");
-		File out = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/SplitComb.json");
-		File c1 = new File("/Volumes/Rickay/Timbre/Combine");
-		File c2 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb6");
-		WavePatterns wp = GenerateWavePatterns.regeneratePatternsSplit(c1, out);
+		File out = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/SplitComb");
+		File c1 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb1");
+		File c2 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb2");
+		File files[] = Serialize.getDirectories(c1);
+		//File c2 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb6");
+
+		//WavePatterns wp = GenerateWavePatterns.regeneratePatternsSplit(c1,
+		//		new File(out.getAbsolutePath() + 4 + ".json"));
+		//WavePatterns wp2 = GenerateWavePatterns.regeneratePatternsSplit(c2,
+		//		new File(out.getAbsolutePath() + 5 + ".json"));
+		
 		//WavePatterns wp = Combine.combineFromJSONs(comb5);
 		//Log.d("Combined");
 		

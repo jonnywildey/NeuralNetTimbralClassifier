@@ -32,15 +32,17 @@ public class RunNetwork {
 		boolean verbose = true;
 		long seed = 4564564536l;
 		File pretrain = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Combined.json");
-		File posttrain = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Separate");
+		File posttrain = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Split");
 		File out = new File("/Users/Jonny/Documents/Timbre/Ser/Committee/Poly/SplitBatch.ser");
 		File in = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/SplitComb.json");
-		WavePatterns lp = Serialize.getFromJSON(in, WavePatterns.class);
-		//WavePatterns wp = Combine.combineFromJSONs(posttrain);
-		TestPatterns pre = new TestPatterns(lp.patterns, seed);
+		//WavePatterns lp = Serialize.getFromJSON(in, WavePatterns.class);
+		WavePatterns wp = Combine.combineFromJSONs(posttrain);
+		
+		TestPatterns pre = new TestPatterns(wp.patterns, seed);
+		Log.d(pre.getPatternCount());
 		//TestPatterns post = new TestPatterns(wp.patterns, seed);
 
-		Committee committee = MultiNNUtilities.createCommittee(pre, 4, 100, 200, verbose);
+		Committee committee = MultiNNUtilities.createCommittee(pre, 4, 100, 100, verbose);
 		committee.removePatterns();
 		//test pre
 		MultiNNUtilities.testCommittee(pre, committee);
