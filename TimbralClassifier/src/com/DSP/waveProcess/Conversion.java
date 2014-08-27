@@ -33,16 +33,15 @@ public class Conversion {
 		Long start = System.currentTimeMillis();
 		File comb5 = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/");
 		File out = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/SplitComb");
-		File c1 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb1");
-		File c2 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb2");
+		File c1 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/");
+		File c2 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb1");
 		File files[] = Serialize.getDirectories(c1);
 		//File c2 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb6");
-
-		//WavePatterns wp = GenerateWavePatterns.regeneratePatternsSplit(c1,
-		//		new File(out.getAbsolutePath() + 4 + ".json"));
-		//WavePatterns wp2 = GenerateWavePatterns.regeneratePatternsSplit(c2,
-		//		new File(out.getAbsolutePath() + 5 + ".json"));
-		
+		for (int i = 0; i < files.length; ++i) {
+			Log.d("files " + files[i].getName());
+		WavePatterns wp = GenerateWavePatterns.regenerateAndBatchSplitPatterns(files[i],
+				new File(out.getAbsolutePath() + i + ".json"), 7);
+		}
 		//WavePatterns wp = Combine.combineFromJSONs(comb5);
 		//Log.d("Combined");
 		
