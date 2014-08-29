@@ -42,7 +42,7 @@ public class FFTDifferenceController extends Controller{
 	 * @param table the table
 	 * @param winSize the win size
 	 */
-	protected static void createChart(double[][] table, Dimension winSize) {
+	protected void createChart(double[][] table, Dimension winSize) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(winSize.width, 0, winSize.width, winSize.height);

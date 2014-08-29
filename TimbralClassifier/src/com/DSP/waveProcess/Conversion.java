@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.DSP.waveAnalysis.FFTBox;
 import com.DSP.waveAnalysis.FrameFFT;
@@ -29,23 +30,34 @@ import com.util.Serialize;
 public class Conversion {
 	
 	public static void main(String[] args) {
-		Log.setFilePath(new File("/Users/Jonny/Documents/Timbre/Logs/WaveCreate.log"));
+		Log.setFilePath(new File("/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/log/WaveCreate.log"));
 		Long start = System.currentTimeMillis();
 		File comb5 = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/");
 		File out = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/SplitComb");
-		File c1 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/");
-		File c2 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb1");
+		File c1 = new File("/Volumes/KINGSTON/Timbre/Samples/Batch");
+		File c4 = new File("/Volumes/KINGSTON/Timbre/Samples/BatchNoise");
+		File c2 = new File("/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/json");
+		File c3 = new File("/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/json/BatchSingle.json");
 		File files[] = Serialize.getDirectories(c1);
 		//File c2 = new File("/Volumes/KINGSTON/Timbre/Samples/Combine/Comb6");
-		for (int i = 0; i < files.length; ++i) {
-			Log.d("files " + files[i].getName());
-		WavePatterns wp = GenerateWavePatterns.regenerateAndBatchSplitPatterns(files[i],
-				new File(out.getAbsolutePath() + i + ".json"), 7);
+//		WavePatterns[] patterns = new WavePatterns[files.length];
+//		for (int i = 0; i < files.length; ++i) {
+//			Log.d("files " + files[i].getName());
+//		patterns[i] = GenerateWavePatterns.regeneratePatternsMono(files[i],
+//				new File(c2.getAbsolutePath() + i + ".json"));
+//		}
+		//WavePatterns wp = GenerateWavePatterns.regeneratePatterns(c1, c3);
+		Random r = new Random();
+		for (File f : Serialize.getActualFiles(c1)) {
+			Wave wav = new Wave(f);
+			Signal s = wav.getSignals();
+			s = SignalChain.addNoise(s, r, -50);
+			Wave nw = new Wave(s);
+			nw.writeFile(new File(c4.getAbsolutePath() + "/" + f.getName()));
 		}
-		//WavePatterns wp = Combine.combineFromJSONs(comb5);
 		//Log.d("Combined");
 		
-		//Serialize.writeJSON(wp, comb6);
+		//Serialize.writeJSON(wp, c3);
 
 	}
 	

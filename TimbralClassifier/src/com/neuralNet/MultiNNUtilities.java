@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 
 import com.neuralNet.matrix.ConfusionMatrix;
 import com.neuralNet.pattern.TestPatterns;
+import com.util.Log;
 
 
 /**
@@ -37,10 +38,19 @@ public class MultiNNUtilities {
 	public static void testCommittee(TestPatterns testPatterns,
 			Committee committee) {
 		ConfusionMatrix cm = committee.testPatterns(testPatterns.getTrainingPatterns());
+		cm.setVerbose(true);
+		cm.setTargets(testPatterns.getTargets());
+		cm.matthewsCoefficient();
 		cm.makeGraph();
 		cm = committee.testPatterns(testPatterns.getValidationPatterns());
+		cm.setVerbose(true);
+		cm.setTargets(testPatterns.getTargets());
+		cm.matthewsCoefficient();
 		cm.makeGraph();
 		cm = committee.testPatterns(testPatterns.getTestingPatterns());
+		cm.setVerbose(true);
+		cm.setTargets(testPatterns.getTargets());
+		cm.matthewsCoefficient();
 		cm.makeGraph();
 	}
 
@@ -232,6 +242,18 @@ public class MultiNNUtilities {
 			manyNets.add( new ManyNets(name, runCount, i, testPatterns, verbose));
 		}
 		return manyNets;
+	}
+
+	public static void testPatternConfusionMatrix(TestPatterns pre,
+			MultiLayerNet[] nets) {
+		for (MultiLayerNet mn : nets) {
+			mn.setTestPatterns(pre);
+			try {
+				ConfusionMatrix cm = mn.runTestPatterns();
+				cm.makeGraph();
+			} catch (Exception e) {
+			}
+		}
 	}
 
 }

@@ -13,6 +13,8 @@ import com.util.Log;
  * @version 1.0
  */
 public class ConfusionMatrix extends Matrix {
+	
+	protected String[] targets; //labels for targets
 
 	/**
 	 * Instantiates a new confusion matrix.
@@ -92,6 +94,11 @@ public class ConfusionMatrix extends Matrix {
 		this.array[column][row] = (Integer)this.array[column][row] + 1;
 	}
 	
+	/** Does the matrix have any targets? **/
+	public boolean hasTargets() {
+		return this.targets != null;
+	}
+	
 	/**
 	 * calculate Matthews coefficient for individual column *.
 	 *
@@ -163,7 +170,11 @@ public class ConfusionMatrix extends Matrix {
 		for (int i = 0; i < array.length; ++i) {
 			ms[i] = matthewsCoefficient(i);
 			if (this.verbose) {
-				Log.d("MC" + i + ": " + Statistics.round(ms[i], 4));
+				if (this.hasTargets()) {
+					Log.d("MC " + this.targets[i] + ": " + Statistics.round(ms[i], 4));
+				} else {
+					Log.d("MC" + i + ": " + Statistics.round(ms[i], 4));
+				}
 			}
 			
 		}
@@ -228,6 +239,14 @@ public class ConfusionMatrix extends Matrix {
 		}
 	}
 	
+	public String[] getTargets() {
+		return targets;
+	}
+
+	public void setTargets(String[] targets) {
+		this.targets = targets;
+	}
+
 	/**
 	 * Useful ASCII representation of matrix *.
 	 *

@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import com.DSP.waveProcess.SignalChain;
 import com.riff.Signal;
 import com.riff.Wave;
+import com.util.Log;
 import com.util.Serialize;
 
 public class WavePatternsBatchRegen extends WavePatterns{
@@ -65,7 +66,12 @@ public class WavePatternsBatchRegen extends WavePatterns{
 				patterns[i * count + j].setInputArray(reFFT(
 						SignalChain.processSignalChain(pitchRand, noiseRand, hpRand, lpRand, signal)));
 				//get instrumental outputs
-				instrs[i * count + j] = WavePattern.getInstrumentalOutputs(wave);
+				try {
+					instrs[i * count + j] = WavePattern.getInstrumentalOutputs(wave);
+				} catch (Exception e) {
+					Log.d("no target in wave, assuming parent directory is target");
+					instrs[i * count + j] = wave.getFilePath().getParentFile().getName();
+				}
 				patterns[i * count + j].instrument = instrs[i * count + j];
 			}
 		}

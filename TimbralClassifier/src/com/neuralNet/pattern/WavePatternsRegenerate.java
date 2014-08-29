@@ -3,6 +3,7 @@ package com.neuralNet.pattern;
 import java.io.File;
 
 import com.riff.Wave;
+import com.util.Log;
 
 
 /** allows multithreaded batch reanalysis of waves **/
@@ -38,7 +39,12 @@ public class WavePatternsRegenerate extends WavePatterns{
 			patterns[i] = new WavePattern(i, wave); //make pattern
 			patterns[i].setInputArray(reFFT(wave.getSignals()));
 			//get instrumental outputs
+			try {
 			instrs[i] = WavePattern.getInstrumentalOutputs(wave);
+			} catch (Exception e) {
+				Log.d("no written target, assuming parent directory is target");
+				instrs[i] =  wave.getFilePath().getParentFile().getName();
+			}
 			patterns[i].instrument = instrs[i];
 		}
 		this.instrs = instrs;

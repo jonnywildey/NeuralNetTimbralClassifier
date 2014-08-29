@@ -60,6 +60,20 @@ public class CoefficientLogger implements Serializable {
 		nc.makeChart();
 	}
 	
+	/**
+	 * Make graph.
+	 *
+	 * @param errors the errors
+	 */
+	public static void makeGraph(MultiLayerNet[] net) {
+		double[][] las = new double[net.length][];
+		for (int i = 0; i < net.length;++i) {
+			las[i] = net[i].getErrorBox().getErrors();
+		}
+		MatthewsChart nc = new MatthewsChart(las, 1200, 600);
+		nc.makeChart();
+	}
+	
 	
 	/**
 	 * Convert errors to a double table *.
@@ -71,6 +85,20 @@ public class CoefficientLogger implements Serializable {
 		double[][] errors = new double[cls.length][];
 		for (int i = 0; i < cls.length; ++i) {
 			errors[i] = cls[i].getErrors();
+		}
+		return errors;
+	}
+	
+	/**
+	 * Convert errors to a double table *.
+	 *
+	 * @param cls the cls
+	 * @return the errors from cl
+	 */
+	public static double[][] getErrorsFromCL(MultiLayerNet[] cls) {
+		double[][] errors = new double[cls.length][];
+		for (int i = 0; i < cls.length; ++i) {
+			errors[i] = cls[i].getErrorBox().getErrors();
 		}
 		return errors;
 	}

@@ -23,6 +23,7 @@ public class TestPatterns implements Serializable {
 	private double trainingPortion; //how much training patterns
 	private double testingPortion; // how much testing patterns
 	private double validationPortion; //how much validation patterns
+	protected String[] targets; //labels for targets
 	
 	
 	/** full parameter constructor. Uses default portions **/
@@ -35,6 +36,18 @@ public class TestPatterns implements Serializable {
 		if (patterns != null) {
 			this.separatePatterns(patterns);
 		}
+	}
+	
+	/**WavePatterns constructor **/
+	public TestPatterns(WavePatterns wp) {
+		this(wp.patterns, System.currentTimeMillis());
+		this.targets = wp.instruments;
+	}
+	
+	/**WavePatterns constructor **/
+	public TestPatterns(WavePatterns wp, long seed) {
+		this(wp.patterns, seed);
+		this.targets = wp.instruments;
 	}
 	
 	/** full parameter constructor. Uses default portions **/
@@ -60,7 +73,7 @@ public class TestPatterns implements Serializable {
 
 	/** Default constructor. Try not to use this **/
 	public TestPatterns() {
-		this(null);
+		super();
 	}
 	
 	/** Convert array of patterns to arraylist of patterns **/
@@ -214,6 +227,14 @@ public class TestPatterns implements Serializable {
 				this.testingPatterns != null);
 	}
 	
+	public String[] getTargets() {
+		return targets;
+	}
+
+	public void setTargets(String[] targets) {
+		this.targets = targets;
+	}
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		if (hasSeparatedPatterns()) {

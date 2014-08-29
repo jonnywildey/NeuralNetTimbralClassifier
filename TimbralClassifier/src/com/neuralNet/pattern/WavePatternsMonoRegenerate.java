@@ -8,6 +8,7 @@ import com.DSP.waveAnalysis.FrameFFT;
 import com.DSP.waveProcess.FFTChain;
 import com.neuralNet.layers.InputShell;
 import com.riff.Signal;
+import com.util.Log;
 
 public class WavePatternsMonoRegenerate extends WavePatternsRegenerate {
 

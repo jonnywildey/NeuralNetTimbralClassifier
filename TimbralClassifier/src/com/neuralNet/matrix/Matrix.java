@@ -134,6 +134,14 @@ public class Matrix {
 		}
 	}
 
+	public boolean isVerbose() {
+		return verbose;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+
 	/**
 	 * Gets the size.
 	 *

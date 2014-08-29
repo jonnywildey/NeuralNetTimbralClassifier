@@ -116,6 +116,31 @@ public class Serialize {
 	}
 	
 	/**
+	 * Returns the serialized object from the filepath *.
+	 *
+	 * @param file the file
+	 * @return the from serial
+	 */
+	public static <T> T getFromSerial(File file, Class<T> type) {
+		Object mln = null;
+		T obj = null;
+        try {
+            FileInputStream fileIn = new FileInputStream(file);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            mln = in.readObject();
+            obj = type.cast(mln);
+            in.close();
+            fileIn.close();
+           // System.out.println(mln.toString());
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } catch (ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+        } 
+        return obj;
+	}
+	
+	/**
 	 * Receive only the visible files and non directories
 	 * in a path *.
 	 *

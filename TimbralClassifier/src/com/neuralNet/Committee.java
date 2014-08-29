@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.DSP.waveAnalysis.Statistics;
 import com.DSP.waveProcess.Conversion;
 import com.neuralNet.matrix.ConfusionMatrix;
 import com.neuralNet.pattern.Pattern;
@@ -105,6 +106,17 @@ public class Committee implements Serializable {
 	}
 	
 	/**
+	 * Runs a wave through the committee *.
+	 *
+	 * @param file the file
+	 * @param wp the wp
+	 * @return the string
+	 */
+	public String runWave(String str, WavePatterns wp) {
+		return runWave(new File(str), wp);
+	}
+	
+	/**
 	 * Runs a wave through the Committee *.
 	 *
 	 * @param wave the wave
@@ -143,7 +155,7 @@ public class Committee implements Serializable {
 		Epoch e = null;
 		//get values
 		for (int i = 0; i < vals.length; ++i) {
-			e = new Epoch(null, null, nets[i].getNeuronLayers(), 0d, nets[i].isVerbose(), nets[i].isDebug());
+			e = new Epoch(null, null, nets[i].getNeuronLayers(), 0d, null, nets[i].isVerbose(), nets[i].isDebug());
 			vals[i] = e.runPatterns(patterns);
 		}
 		double[][][] nv = new double[patterns.length][nets.length][patterns[0].getOutputCount()];
@@ -217,7 +229,8 @@ public class Committee implements Serializable {
 		}
 		Log.d("\n*****COMMITTEE*****\n");
 		Log.d(cm.toString());
-		Log.d("MC for Committee: " + cm.matthewsCoefficient());
+		Log.d("MC for Committee: " + 
+				Statistics.round(cm.matthewsCoefficient(), 4));
 		return cm;
 	}
 	

@@ -5,6 +5,7 @@ import java.io.File;
 import com.DSP.waveAnalysis.FFTBox;
 import com.riff.Signal;
 import com.riff.Wave;
+import com.util.Log;
 
 public class WavePatternsRegenRewrite extends WavePatterns{
 
@@ -40,7 +41,12 @@ public class WavePatternsRegenRewrite extends WavePatterns{
 			patterns[i].setInputArray(Pattern.doubleToInputShell(
 					fftBox.getValues()[0]));
 			//get instrumental outputs
-			instrs[i] = WavePattern.getInstrumentalOutputs(wave);
+			try {
+				instrs[i] = WavePattern.getInstrumentalOutputs(wave);
+			} catch (Exception e) {
+				Log.d("no target in wave, assuming parent directory is target");
+				instrs[i] = wave.getFilePath().getParentFile().getName();
+			}
 			patterns[i].instrument = instrs[i];
 			WavePattern.addMetaData(signal, fftBox, "IAS8", patterns[i].instrument);
 		}

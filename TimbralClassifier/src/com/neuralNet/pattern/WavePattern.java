@@ -146,14 +146,15 @@ public class WavePattern extends Pattern implements Serializable{
 		return str;
 	}
 
-	/** Get the output from a Wave **/
-	public static String getInstrumentalOutputs(Wave wave) {
+	/** Get the output from a Wave 
+	 * @throws Exception **/
+	public static String getInstrumentalOutputs(Wave wave) throws Exception {
 		try {
 		return new String(wave.getSubChunk("LIST").
 				getSubChunk("IAS8").getData(), "UTF-8");
 		} catch (Exception e) {
-			Log.d(e);
-			return null;
+			//Log.d(e);
+			throw new Exception();
 		}
 	}
 

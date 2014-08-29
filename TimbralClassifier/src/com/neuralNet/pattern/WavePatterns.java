@@ -111,7 +111,12 @@ public class WavePatterns implements Serializable, Callable<WavePatterns> {
 			str = WavePattern.getDataChunk(wave);
 			this.patterns[i].setInputArray(WavePattern.getInputs(str));
 			//get instrumental outputs
-			instrs[i] = WavePattern.getInstrumentalOutputs(wave);
+			try {
+				instrs[i] = WavePattern.getInstrumentalOutputs(wave);
+			} catch (Exception e) {
+				Log.d("no target in wave, assuming parent directory is target");
+				instrs[i] = wave.getFilePath().getParentFile().getName();
+			}
 			this.patterns[i].instrument = instrs[i];
 		}
 		this.instrs = instrs;

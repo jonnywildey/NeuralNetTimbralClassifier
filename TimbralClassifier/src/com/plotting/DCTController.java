@@ -40,7 +40,7 @@ public class DCTController extends Controller{
 	 * @param table the table
 	 * @param winSize the win size
 	 */
-	protected static void createChart(double[][] table, Dimension winSize) {
+	protected void createChart(double[][] table, Dimension winSize) {
 		
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,7 +59,7 @@ public class DCTController extends Controller{
 	 * @author Jonny Wildey
 	 * @version 1.0
 	 */
-	static class DCTGraph extends FFTGraph {
+	class DCTGraph extends FFTGraph {
 		protected double[][] values;
 		
 		/**

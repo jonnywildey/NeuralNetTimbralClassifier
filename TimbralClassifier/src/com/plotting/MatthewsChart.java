@@ -11,7 +11,6 @@ import com.DSP.waveAnalysis.Statistics;
  */
 public class MatthewsChart extends Controller{
 	
-	private double[][] signals;
 	
 	/**
 	 * Instantiates a new matthews chart.
@@ -21,7 +20,7 @@ public class MatthewsChart extends Controller{
 	public MatthewsChart(double[][] signals) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.size = new Dimension(screenSize.width, screenSize.height / 3);
-		this.signals = signals;
+		this.table = signals;
 	}
 	
 	/**
@@ -33,8 +32,9 @@ public class MatthewsChart extends Controller{
 	 */
 	public MatthewsChart(double[][] signals, int width, int height) {
 		this.size = new Dimension(width, height);
-		this.signals = signals;
+		this.table = signals;
 	}
+	
 	
 	
 	/**
@@ -43,7 +43,8 @@ public class MatthewsChart extends Controller{
 	 * @param values the values
 	 * @param winSize the win size
 	 */
-	protected static void createChart(double[][] values, Dimension winSize) {
+	@Override
+	protected void createChart(double[][] values, Dimension winSize) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(winSize.width, 0, winSize.width, winSize.height);
@@ -62,7 +63,7 @@ public class MatthewsChart extends Controller{
 	 * @author Jonny Wildey
 	 * @version 1.0
 	 */
-	static class MatthewsGraph extends PlotGraph{
+	class MatthewsGraph extends PlotGraph{
 		double[][] values;
 			
 		/**

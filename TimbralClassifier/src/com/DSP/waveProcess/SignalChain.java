@@ -29,7 +29,31 @@ public class SignalChain {
 		s1 = Gain.getMid(s1);
 		s1 = SignalChain.randomPitch(s1, 12, pitchRand);
 		s1 = Gain.volume(s1, -6);
-		s1 = SignalChain.addNoise(s1, noiseRand);
+		s1 = SignalChain.addNoise(s1, noiseRand, -90);
+		s1 = SignalChain.randomHP(s1, 0.1, hpRand);
+		s1 = SignalChain.randomLP(s1, 0.1, lpRand);
+		s1 = EQFilter.highPassFilter(s1, 40, 0.72);
+		s1 = EQFilter.lowPassFilter(s1, 20000, 0.72);
+		s1 = Gain.normalise(s1);
+		return s1;
+	}
+	
+	/**
+	 * Performs the audio processing of a file with added noise *.
+	 *
+	 * @param pitchRand the pitch rand
+	 * @param noiseRand the noise rand
+	 * @param hpRand the hp rand
+	 * @param lpRand the lp rand
+	 * @param s1 the s1
+	 * @return the signal
+	 */
+	public static Signal processSignalChainNoise(Random pitchRand,
+			Random noiseRand, Random hpRand, Random lpRand, Signal s1) {
+		s1 = Gain.getMid(s1);
+		s1 = SignalChain.randomPitch(s1, 12, pitchRand);
+		s1 = Gain.volume(s1, -6);
+		s1 = SignalChain.addNoise(s1, noiseRand, -60);
 		s1 = SignalChain.randomHP(s1, 0.1, hpRand);
 		s1 = SignalChain.randomLP(s1, 0.1, lpRand);
 		s1 = EQFilter.highPassFilter(s1, 40, 0.72);
@@ -108,9 +132,8 @@ public class SignalChain {
 	 * @param nr the nr
 	 * @return the signal
 	 */
-	public static Signal addNoise(Signal s, Random nr) {
+	public static Signal addNoise(Signal s, Random nr, double maxLoud) {
 		double nc = nr.nextDouble();
-		double maxLoud = -90;
 		double loudness = maxLoud - (nr.nextDouble() * 12);
 		//Log.d(loudness);
 		try {

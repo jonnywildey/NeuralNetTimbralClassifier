@@ -9,6 +9,7 @@ import com.neuralNet.layers.Neuron;
 import com.neuralNet.matrix.ConfusionMatrix;
 import com.neuralNet.pattern.Pattern;
 import com.neuralNet.pattern.WavePattern;
+import com.util.ArrayMethods;
 import com.util.Log;
 
 /**
@@ -30,6 +31,7 @@ public class Epoch {
 	protected boolean debug;
 	protected boolean verbose;
 	protected Random shuffleRandom;
+	protected String[] targets; //labels for outputs
 	private boolean addMaxOutputNeuron;
 	public Double meanError;
 	
@@ -58,7 +60,7 @@ public class Epoch {
 	 */
 	public Epoch(ArrayList<Pattern> trainingPatterns,
 			ArrayList<Pattern> testingPatterns, LayerList neurons,
-			Double trainingRate, boolean verbose, boolean debug) {
+			Double trainingRate, String[] targets, boolean verbose, boolean debug) {
 		this();
 		this.neurons = neurons;
 		this.trainingPatterns = trainingPatterns;
@@ -66,6 +68,7 @@ public class Epoch {
 		this.trainingRate = trainingRate;
 		this.verbose = verbose;
 		this.debug = debug;
+		this.targets = targets;
 		this.addMaxOutputNeuron = true;
 		
 		//set up lists. only useful for error based epochs
@@ -239,6 +242,7 @@ public class Epoch {
 	 */
 	public ConfusionMatrix runValidationEpoch() {
 		testConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount(), verbose);
+		testConfusionMatrix.setTargets(this.targets);
 		neurons.setLearning(false);
 		for (Pattern p: this.testingPatterns) {
 			//input pattern inputs
@@ -356,6 +360,7 @@ public class Epoch {
 	 */
 	public void runEpoch() {
 		trainingConfusionMatrix = new ConfusionMatrix(neurons.getOutputCount(), verbose);
+		trainingConfusionMatrix.setTargets(this.targets);
 		Double patternErrors = 0d;
 		//Load Pattern
 		neurons.setLearning(true);
