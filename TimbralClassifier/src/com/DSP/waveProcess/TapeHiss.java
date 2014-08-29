@@ -11,7 +11,7 @@ import com.riff.Wave;
  */
 public class TapeHiss {
 	
-	public static Signal tape = new Wave("../assets/wav/Tape.wav").getSignals();
+	public static Signal tape = new Wave("assets/wav/Tape.wav").getSignals();
 
 	/**
 	 * Instantiates a new tape hiss.
