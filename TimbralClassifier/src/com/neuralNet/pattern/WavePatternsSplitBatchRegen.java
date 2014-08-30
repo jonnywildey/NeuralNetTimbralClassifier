@@ -10,6 +10,11 @@ import com.riff.Signal;
 
 public class WavePatternsSplitBatchRegen extends WavePatternsBatchRegen {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public WavePatternsSplitBatchRegen() {
 		// TODO Auto-generated constructor stub
 	}
@@ -18,14 +23,14 @@ public class WavePatternsSplitBatchRegen extends WavePatternsBatchRegen {
 		super(filePath);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
 	/**FFT analysis sequence **/
 	protected ArrayList<InputShell> reFFT(Signal signals) {
 		FFTBox dd = FFTChain.polyFFTChainSplit(signals);
 		return Pattern.doubleToInputShell(dd.getValues()[0]);
 	}
-	
+
 	@Override
 	/**FFT analysis sequence, returns FFT box **/
 	protected FFTBox reFFTBox(Signal signals) {

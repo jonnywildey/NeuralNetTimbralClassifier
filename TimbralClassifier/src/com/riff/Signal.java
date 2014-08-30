@@ -1,12 +1,10 @@
 package com.riff;
 
 import com.plotting.SignalController;
-import com.plotting.WavController;
-import com.util.Log;
 
 /**
  * Basic data holder for signals *.
- *
+ * 
  * @author Jonny Wildey
  * @version 1.0
  */
@@ -14,43 +12,26 @@ public class Signal {
 	public double[][] signal;
 	public int bit;
 	private int sampleRate;
-	
+
 	/**
 	 * Construct signal with amplitudes, bitrate and sample rate *.
-	 *
-	 * @param signal the signal
-	 * @param bit the bit
-	 * @param sampleRate the sample rate
+	 * 
+	 * @param signal
+	 *            the signal
+	 * @param bit
+	 *            the bit
+	 * @param sampleRate
+	 *            the sample rate
 	 */
 	public Signal(double[][] signal, int bit, int sampleRate) {
 		this.signal = signal;
 		this.bit = bit;
 		this.sampleRate = sampleRate;
 	}
-	
-	/**
-	 * returns the maximum potential amplitude
-	 * for fixed point calculations.
-	 *
-	 * @return the max amplitude
-	 */
-	public double getMaxAmplitude() {
-		return  Math.pow(2, this.bit - 1) - 1;
-	}
-	
-	/**
-	 * returns the minimum potential amplitude
-	 * for fixed point calculations.
-	 *
-	 * @return the min amplitude
-	 */
-	public double getMinAmplitude() {
-		return  Math.pow(2, this.bit - 1) * -1;
-	}
-	
+
 	/**
 	 * Find smallest value of signal (that isn't 0) *.
-	 *
+	 * 
 	 * @return the double
 	 */
 	public double findSmallestAmplitude() {
@@ -66,7 +47,70 @@ public class Signal {
 		}
 		return min;
 	}
-	
+
+	/**
+	 * Gets the bit.
+	 * 
+	 * @return the bit
+	 */
+	public int getBit() {
+		return bit;
+	}
+
+	/**
+	 * get the amount of channels *.
+	 * 
+	 * @return the channels
+	 */
+	public int getChannels() {
+		return signal.length;
+	}
+
+	/**
+	 * Gets the length.
+	 * 
+	 * @return the length
+	 */
+	public int getLength() {
+		return this.signal[0].length;
+	}
+
+	/**
+	 * returns the maximum potential amplitude for fixed point calculations.
+	 * 
+	 * @return the max amplitude
+	 */
+	public double getMaxAmplitude() {
+		return Math.pow(2, this.bit - 1) - 1;
+	}
+
+	/**
+	 * returns the minimum potential amplitude for fixed point calculations.
+	 * 
+	 * @return the min amplitude
+	 */
+	public double getMinAmplitude() {
+		return Math.pow(2, this.bit - 1) * -1;
+	}
+
+	/**
+	 * Gets the sample rate.
+	 * 
+	 * @return the sample rate
+	 */
+	public int getSampleRate() {
+		return sampleRate;
+	}
+
+	/**
+	 * Gets the signal.
+	 * 
+	 * @return the signal
+	 */
+	public double[][] getSignal() {
+		return signal;
+	}
+
 	/**
 	 * Make graph.
 	 */
@@ -74,21 +118,46 @@ public class Signal {
 		SignalController sc = new SignalController(this, 600, 400);
 		sc.makeChart();
 	}
-	
+
 	/**
 	 * Make graph.
-	 *
-	 * @param width the width
-	 * @param height the height
+	 * 
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
 	 */
 	public void makeGraph(int width, int height) {
 		SignalController sc = new SignalController(this, width, height);
 		sc.makeChart();
 	}
-	
-	/* (non-Javadoc)
+
+	/**
+	 * Sets the bit.
+	 * 
+	 * @param bit
+	 *            the new bit
+	 */
+	public void setBit(int bit) {
+		this.bit = bit;
+	}
+
+	/**
+	 * Sets the sample rate.
+	 * 
+	 * @param sampleRate
+	 *            the new sample rate
+	 */
+	public void setSampleRate(int sampleRate) {
+		this.sampleRate = sampleRate;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(this.signal[0].length * 20);
 		for (int i = 0; i < this.signal.length; ++i) {
@@ -106,74 +175,5 @@ public class Signal {
 		}
 		return sb.toString();
 	}
-	
 
-	
-	/**
-	 * get the amount of channels *.
-	 *
-	 * @return the channels
-	 */
-	public int getChannels() {
-		return signal.length;
-	}
-
-	/**
-	 * Gets the signal.
-	 *
-	 * @return the signal
-	 */
-	public double[][] getSignal() {
-		return signal;
-	}
-
-
-	/**
-	 * Gets the bit.
-	 *
-	 * @return the bit
-	 */
-	public int getBit() {
-		return bit;
-	}
-
-	/**
-	 * Sets the bit.
-	 *
-	 * @param bit the new bit
-	 */
-	public void setBit(int bit) {
-		this.bit = bit;
-	}
-
-	/**
-	 * Gets the sample rate.
-	 *
-	 * @return the sample rate
-	 */
-	public int getSampleRate() {
-		return sampleRate;
-	}
-
-	/**
-	 * Sets the sample rate.
-	 *
-	 * @param sampleRate the new sample rate
-	 */
-	public void setSampleRate(int sampleRate) {
-		this.sampleRate = sampleRate;
-	}
-
-	/**
-	 * Gets the length.
-	 *
-	 * @return the length
-	 */
-	public int getLength() {
-		return this.signal[0].length;
-	}
-
-	
-	
-	
 }

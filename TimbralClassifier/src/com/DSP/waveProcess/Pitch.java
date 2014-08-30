@@ -4,91 +4,69 @@ import com.DSP.waveAnalysis.FFT;
 import com.DSP.waveAnalysis.Statistics;
 import com.riff.Signal;
 import com.util.ArrayMethods;
-import com.util.Log;
 
 /**
  * Pitch based (and maybe time based) signal processes *.
- *
+ * 
  * @author Jonny Wildey
  * @version 1.0
  */
 public class Pitch {
-	
+
 	/**
-	 * Pitch Shifts the audio 0 < factor < inf *.
-	 *
-	 * @param signal the signal
-	 * @param semitones the semitones
-	 * @return the signal
+	 * returns true if b is of similar volume to a *.
+	 * 
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
+	 * @return true, if successful
 	 */
-	public static Signal pitchShift(Signal signal, double semitones) {
-		double factor = Math.pow(2, semitones / 12);
-		//set up arrays
-		double[][] os = signal.getSignal();
-		double[][] ns = new double[os.length][(int)((os[0].length / factor) + 1)]; //round up
-		//Log.bad(os[0].length + " " + ns[0].length);
-		for (int i = 0; i < ns.length;++i) {
-			for (int j = 0; j < ns[i].length;++j) {
-				ns[i][j] = ArrayMethods.linearApproximate(os[i], j * factor);  
-				
-			}
-		}
-		return new Signal(ns, signal.getBit(), signal.getSampleRate());
+	public static boolean compareVolume(double a, double b) {
+		// will put margin at 12db
+		return b + 12 >= a;
 	}
-	
-	/**
-	 * Reverses |||| sesreveR*.
-	 *
-	 * @param signal the signal
-	 * @return the signal
-	 */
-	public static Signal reverse(Signal signal) {
-		//set up arrays
-		double[][] os = signal.getSignal();
-		double[][] ns = new double[os.length][os[0].length];
-		for (int i = 0; i < os.length;++i) {
-			for (int j = 0; j < os[0].length;++j) {
-				ns[i][j] = os[i][os[i].length - 1 - j];
-			}
-		}
-		return new Signal(ns, signal.getBit(), signal.getSampleRate());
-	}
-	
+
 	/**
 	 * converts frequency to Bark *.
-	 *
-	 * @param freq the freq
+	 * 
+	 * @param freq
+	 *            the freq
 	 * @return the double
 	 */
 	public static double freqToBark(double freq) {
-		return 13 * Math.atan(freq * 0.00076) + 
-				3.5 * Math.atan(Math.pow(freq / 7500, 2));
+		return 13 * Math.atan(freq * 0.00076) + 3.5
+		* Math.atan(Math.pow(freq / 7500, 2));
 	}
-	
+
 	/**
 	 * converts frequency row to Bark *.
-	 *
-	 * @param freqRow the freq row
+	 * 
+	 * @param freqRow
+	 *            the freq row
 	 * @return the double[]
 	 */
 	public static double[] freqToBark(double[] freqRow) {
 		double[] nt = new double[freqRow.length];
-		for (int i = 0; i < freqRow.length;++i) {
+		for (int i = 0; i < freqRow.length; ++i) {
 			nt[i] = freqToBark(freqRow[i]);
 		}
 		return nt;
 	}
-	
+
 	/**
-	 * converts frequency row to subdivided Bark. so 0.5 in factor will return half barks. *
-	 *
-	 * @param freqRow the freq row
-	 * @param factor the factor
+	 * converts frequency row to subdivided Bark. so 0.5 in factor will return
+	 * half barks. *
+	 * 
+	 * @param freqRow
+	 *            the freq row
+	 * @param factor
+	 *            the factor
 	 * @return the double[]
 	 */
 	public static double[] freqToBark(double[] freqRow, double factor) {
 		double[] nt = new double[freqRow.length];
-		for (int i = 0; i < freqRow.length;++i) {
+		for (int i = 0; i < freqRow.length; ++i) {
 			nt[i] = freqToBark(freqRow[i]) / factor;
 		}
 		return nt;
@@ -96,80 +74,115 @@ public class Pitch {
 
 	/**
 	 * Gets the fundamental.
-	 *
-	 * @param table the table
+	 * 
+	 * @param table
+	 *            the table
 	 * @return the fundamental
 	 */
 	public static double getFundamental(double[][] table) {
 		double[][] peaks = Statistics.getPeaks(table);
-		double err = 0.05; //5%
-		//get max
+		double err = 0.05; // 5%
+		// get max
 		double max = Double.NEGATIVE_INFINITY;
 		double freq = 0;
-		
+
 		for (int i = 0; i < peaks[1].length; ++i) {
 			if (max < peaks[1][i]) {
 				max = peaks[1][i];
 				freq = peaks[0][i];
 			}
 		}
-		//does 8ve below exist?
-		//Log.d("current peak" + freq);
-		//Log.d(Arrays.toString(peaks[0]));
-		
+		// does 8ve below exist?
+		// Log.d("current peak" + freq);
+		// Log.d(Arrays.toString(peaks[0]));
+
 		for (int i = peaks[1].length - 1; i >= 0; --i) {
-			if (Statistics.isValueCloseTo(freq / 2, peaks[0][i], err) | //8ve below
-					Statistics.isValueCloseTo(freq / 1.5, peaks[0][i], err)) { //5th below
+			if (Statistics.isValueCloseTo(freq / 2, peaks[0][i], err) | // 8ve
+					// below
+					Statistics.isValueCloseTo(freq / 1.5, peaks[0][i], err)) { // 5th
+				// below
 				if (Pitch.compareVolume(max, peaks[1][i])) {
 					freq = peaks[0][i];
-					break; //could not have break...
+					break; // could not have break...
 				}
-				
-				
+
 			}
 		}
 		return freq;
 	}
-	
+
 	/**
 	 * Gets the fundamental of the signal. This will take ages for long wavs,
 	 * don't do it.
-	 *
-	 * @param s the s
+	 * 
+	 * @param s
+	 *            the s
 	 * @return the fundamental
 	 */
 	public static double getFundamental(Signal s) {
 		FFT fft = new FFT(s);
 		double[][] t = (fft.analyse(20, 20000).getTable());
-		//fft.makeGraph();
+		// fft.makeGraph();
 		return getFundamental(t);
 	}
-	
+
 	/**
-	 * Is the fundamental of the signal within the thresholds
-	 * of human hearing?.
-	 *
-	 * @param s the s
+	 * Is the fundamental of the signal within the thresholds of human hearing?.
+	 * 
+	 * @param s
+	 *            the s
 	 * @return true, if is fundamental hearable
 	 */
 	public static boolean isFundamentalHearable(Signal s) {
-		double lowThreshold = 60; //or 40?
+		double lowThreshold = 60; // or 40?
 		double highThreshold = 20000;
 		double fund = getFundamental(s);
-		//Log.d("fund: " + fund);
+		// Log.d("fund: " + fund);
 		return (fund > lowThreshold & fund < highThreshold);
 	}
 
 	/**
-	 * returns true if b is of similar volume to a *.
-	 *
-	 * @param a the a
-	 * @param b the b
-	 * @return true, if successful
+	 * Pitch Shifts the audio 0 < factor < inf *.
+	 * 
+	 * @param signal
+	 *            the signal
+	 * @param semitones
+	 *            the semitones
+	 * @return the signal
 	 */
-	public static boolean compareVolume(double a, double b) {
-		//will put margin at 12db
-		return b + 12 >= a;
+	public static Signal pitchShift(Signal signal, double semitones) {
+		double factor = Math.pow(2, semitones / 12);
+		// set up arrays
+		double[][] os = signal.getSignal();
+		double[][] ns = new double[os.length][(int) ((os[0].length / factor) + 1)]; // round
+		// up
+		// Log.bad(os[0].length + " " + ns[0].length);
+		for (int i = 0; i < ns.length; ++i) {
+			for (int j = 0; j < ns[i].length; ++j) {
+				ns[i][j] = ArrayMethods.linearApproximate(os[i], j * factor);
+
+			}
+		}
+		return new Signal(ns, signal.getBit(), signal.getSampleRate());
+	}
+
+	/**
+	 * Reverses |||| sesreveR*.
+	 * 
+	 * @param signal
+	 *            the signal
+	 * @return the signal
+	 */
+	public static Signal reverse(Signal signal) {
+		// set up arrays
+		double[][] os = signal.getSignal();
+		double[][] ns = new double[os.length][os[0].length];
+		for (int i = 0; i < os.length; ++i) {
+			for (int j = 0; j < os[0].length; ++j) {
+				ns[i][j] = os[i][os[i].length - 1 - j];
+			}
+		}
+		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
 
 }

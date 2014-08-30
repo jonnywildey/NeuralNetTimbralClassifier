@@ -4,12 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.DSP.waveAnalysis.FFTBox;
-import com.DSP.waveAnalysis.FrameFFT;
 import com.DSP.waveProcess.FFTChain;
 import com.neuralNet.layers.InputShell;
 import com.riff.Signal;
 
 public class WavePatternsMonoBatchRegen extends WavePatternsBatchRegen {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public WavePatternsMonoBatchRegen() {
 		super();

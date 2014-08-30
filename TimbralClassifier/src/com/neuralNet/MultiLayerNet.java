@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package com.neuralNet;
 
 import java.io.Serializable;
@@ -15,8 +18,11 @@ import com.util.Log;
 
 /**
  * Multiple layer feedforward neural network Set testPatterns, modify parameters
- * (such as adding layers) and then run epoch
- **/
+ * (such as adding layers) and then run epoch.
+ * 
+ * @author Jonny Wildey
+ * @version 1.0
+ */
 public class MultiLayerNet implements Serializable {
 
 	private static final long serialVersionUID = -5601412683842445747L;
@@ -25,37 +31,233 @@ public class MultiLayerNet implements Serializable {
 	private Integer inputCount; // number of input vectors
 	private LayerStructure layerStructure; // constructor for the LayerList
 	private Integer maxEpoch; // Maximum number of epochs to run before giving
-								// up
+	// up
 	private LayerList neuronLayers; // where all the neurons are
 	private Integer outputCount; // number of outputs
 	private boolean shuffleTrainingPatterns; // do you want to shuffle between
-												// epochs?
+	// epochs?
 	private TestPatterns testPatterns;
 	private Double trainingRate; // how much to push neurons by. Typically
-									// around 0.1
+	// around 0.1
 	private boolean verbose; // prints a lot of stuff when running
 	private double matthewsCo;
 	private long shuffleSeed;
 	private boolean matthews; // whether to use the matthews coefficient for
-								// testing
+	// testing
 	private CoefficientLogger errorBox; // where you put errors;
 
-	/** Default constructor **/
+	/**
+	 * Default constructor *.
+	 */
 	public MultiLayerNet() {
 		setDefaultParameters();
 	}
 
 	/**
 	 * set up a neural network with default parameters and one hidden neuron per
-	 * input vector
-	 **/
+	 * input vector.
+	 * 
+	 * @param testPatterns
+	 *            the test patterns
+	 * @param ls
+	 *            the ls
+	 */
 	public MultiLayerNet(TestPatterns testPatterns, LayerStructure ls) {
 		this.setTestPatterns(testPatterns);
 		this.setLayerStructure(ls);
 		this.setDefaultParameters();
 	}
 
-	/** Set up neuron layers **/
+	/**
+	 * Have neurons been initialised? *.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean areThereNeurons() {
+		return this.neuronLayers.getFirstLayer().neuronCount > 0;
+	}
+
+	/**
+	 * Does the network have any patterns? *.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean areTherePatterns() {
+		return (testPatterns.getTrainingPatterns().size() > 0 & testPatterns
+				.getTestingPatterns().size() > 0);
+	}
+
+	/**
+	 * Have neuron weights been initialised? *.
+	 * 
+	 * @return true, if successful
+	 */
+	public boolean areWeightsInitialised() {
+		return (neuronLayers.getFirstLayer().neurons.get(0).getWeightList()
+				.size() > 0);
+	}
+
+	/**
+	 * Calculate simple error rate *.
+	 * 
+	 * @param patterns
+	 *            the patterns
+	 * @param e
+	 *            the e
+	 * @return the double
+	 */
+	public double calculateErrorRate(ArrayList<Pattern> patterns, Epoch e) {
+		int size = patterns.size();
+		double er = e.getConfusionMatrix().getErrorRate(size);
+		log("Error: " + Statistics.round(er, 4) + " Total: "
+				+ e.getConfusionMatrix().getTotal() + " of " + size);
+		return er;
+	}
+
+	/**
+	 * get Matthews Coefficient *.
+	 * 
+	 * @param patterns
+	 *            the patterns
+	 * @param epoch
+	 *            the epoch
+	 * @return the double
+	 */
+	public double calculateMatthews(ArrayList<Pattern> patterns, Epoch epoch) {
+		double er = epoch.getConfusionMatrix().matthewsCoefficient();
+		log("Average MC: " + Statistics.round(er, 4));
+		return er;
+	}
+
+	/**
+	 * Logs according to debug *.
+	 * 
+	 * @param str
+	 *            the str
+	 */
+	protected void debug(String str) {
+		if (this.debug) {
+			Log.d(str);
+		}
+	}
+
+	/**
+	 * If using error rate thresholds, return the threshold *.
+	 * 
+	 * @return the acceptable error rate
+	 */
+	public double getAcceptableErrorRate() {
+		return acceptableErrorRate;
+	}
+
+	/**
+	 * Gets the error box.
+	 * 
+	 * @return the error box
+	 */
+	public CoefficientLogger getErrorBox() {
+		return errorBox;
+	}
+
+	/**
+	 * Gets the error rate.
+	 * 
+	 * @return the error rate
+	 */
+	public double getErrorRate() {
+		return matthewsCo;
+	}
+
+	/**
+	 * Return input count *.
+	 * 
+	 * @return the input count
+	 */
+	public Integer getInputCount() {
+		return inputCount;
+	}
+
+	/**
+	 * Return layer structure *.
+	 * 
+	 * @return the layer structure
+	 */
+	public LayerStructure getLayerStructure() {
+		return layerStructure;
+	}
+
+	/**
+	 * Return the max epoch *.
+	 * 
+	 * @return the max epoch
+	 */
+	public Integer getMaxEpoch() {
+		return maxEpoch;
+	}
+
+	/**
+	 * Gets the neuron layers.
+	 * 
+	 * @return the neuron layers
+	 */
+	public LayerList getNeuronLayers() {
+		return neuronLayers;
+	}
+
+	/**
+	 * Return the output count *.
+	 * 
+	 * @return the output count
+	 */
+	public Integer getOutputCount() {
+		return outputCount;
+	}
+
+	/**
+	 * Receive all the incorrect patterns for a given set of patterns *.
+	 * 
+	 * @param patterns
+	 *            the patterns
+	 * @return the problem patterns
+	 */
+	public ArrayList<WavePattern> getProblemPatterns(ArrayList<Pattern> patterns) {
+		log("\n****RUNNING TEST PATTERNS****\n"
+				+ "Testing Network with test patterns\n");
+		Epoch e = new Epoch(null, patterns, neuronLayers, trainingRate, null,
+				verbose, debug);
+		return e.getProblemPatterns();
+	}
+
+	/**
+	 * Gets the shuffle seed.
+	 * 
+	 * @return the shuffle seed
+	 */
+	public long getShuffleSeed() {
+		return shuffleSeed;
+	}
+
+	/**
+	 * Gets the test patterns.
+	 * 
+	 * @return the test patterns
+	 */
+	public TestPatterns getTestPatterns() {
+		return testPatterns;
+	}
+
+	/**
+	 * Gets the training rate.
+	 * 
+	 * @return the training rate
+	 */
+	public Double getTrainingRate() {
+		return trainingRate;
+	}
+
+	/**
+	 * Set up neuron layers *.
+	 */
 	public void initialiseNeurons() {
 		this.neuronLayers = new LayerList(this.layerStructure, this.inputCount);
 
@@ -67,7 +269,7 @@ public class MultiLayerNet implements Serializable {
 	 * Set random weights. Requires testPatterns to be set to determine input
 	 * size
 	 * 
-	 * @return
+	 * @return the long
 	 */
 	public long initialiseRandomWeights() {
 		return neuronLayers.setInitialWeights(testPatterns
@@ -78,7 +280,9 @@ public class MultiLayerNet implements Serializable {
 	 * Set random weights with seed. Requires testPatterns to be set to
 	 * determine input size
 	 * 
-	 * @return
+	 * @param seed
+	 *            the seed
+	 * @return the long
 	 */
 	public long initialiseRandomWeights(long seed) {
 		return neuronLayers.setInitialWeights(testPatterns
@@ -86,25 +290,94 @@ public class MultiLayerNet implements Serializable {
 	}
 
 	/**
-	 * Runs a single pattern returning the output. Does not know whether correct
-	 **/
-	public int runSinglePatternUnsupervised(Pattern p) {
-		Epoch e = new Epoch(null, null, neuronLayers, trainingRate, null,
-				verbose, debug);
-		e.runPattern(p);
-		return e.getMaxId();
+	 * Checks if is debug.
+	 * 
+	 * @return true, if is debug
+	 */
+	public boolean isDebug() {
+		return debug;
 	}
 
-	/** Runs patterns returning the output. Does not know whether correct **/
-	public int[] runPatternsUnsupervised(Pattern[] patterns) {
-		Epoch e = new Epoch(null, null, neuronLayers, trainingRate, null,
-				verbose, debug);
-		return e.runPatternsGetMax(patterns);
+	/**
+	 * Checks if is matthews.
+	 * 
+	 * @return true, if is matthews
+	 */
+	public boolean isMatthews() {
+		return matthews;
 	}
 
-	/** Run an epoch using set training patterns and configuration **/
+	/**
+	 * Checks if is shuffle training patterns.
+	 * 
+	 * @return true, if is shuffle training patterns
+	 */
+	public boolean isShuffleTrainingPatterns() {
+		return shuffleTrainingPatterns;
+	}
+
+	/**
+	 * Checks if is verbose.
+	 * 
+	 * @return true, if is verbose
+	 */
+	public boolean isVerbose() {
+		return verbose;
+	}
+
+	/**
+	 * Logs according to verbose *.
+	 * 
+	 * @param str
+	 *            the str
+	 */
+	protected void log(String str) {
+		if (this.verbose) {
+			Log.d(str);
+		}
+	}
+
+	/**
+	 * checks whether NN is ready to begin running *.
+	 * 
+	 * @throws NoNeuronsException
+	 *             the no neurons exception
+	 * @throws NoPatternsException
+	 *             the no patterns exception
+	 * @throws UnitialisedWeightsException
+	 *             the unitialised weights exception
+	 */
+	public void ready() throws NoNeuronsException, NoPatternsException,
+	UnitialisedWeightsException {
+		if (!this.areThereNeurons()) {
+			throw new NoNeuronsException();
+		}
+
+		if (!this.areTherePatterns()) {
+			throw new NoPatternsException();
+		}
+
+		if (!this.areWeightsInitialised()) {
+			throw new UnitialisedWeightsException();
+		}
+	}
+
+	/**
+	 * Removes test patterns *.
+	 */
+	public void removeTestPatterns() {
+		this.testPatterns = null;
+	}
+
+	/**
+	 * Run an epoch using set training patterns and configuration *.
+	 * 
+	 * @throws Exception
+	 *             the exception
+	 */
 	public void runEpoch() throws Exception {
 		ready();
+		increaseErrorBoxCapacity();
 		Epoch e = new Epoch(testPatterns.getTrainingPatterns(),
 				testPatterns.getTestingPatterns(), neuronLayers, trainingRate,
 				this.testPatterns.getTargets(), verbose, debug);
@@ -140,23 +413,46 @@ public class MultiLayerNet implements Serializable {
 		this.neuronLayers = tally;
 	}
 
-	/** Calculate simple error rate **/
-	public double calculateErrorRate(ArrayList<Pattern> patterns, Epoch e) {
-		int size = patterns.size();
-		double er = e.getConfusionMatrix().getErrorRate(size);
-		log("Error: " + Statistics.round(er, 4) + " Total: "
-				+ e.getConfusionMatrix().getTotal() + " of " + size);
-		return er;
+	private void increaseErrorBoxCapacity() {
+		if (this.errorBox.hasLogged()) {
+			this.errorBox.increaseSize(this.maxEpoch);
+		}
 	}
 
-	/** get Matthews Coefficient **/
-	public double calculateMatthews(ArrayList<Pattern> patterns, Epoch e) {
-		double er = e.getConfusionMatrix().matthewsCoefficient();
-		log("Average MC: " + Statistics.round(er, 4));
-		return er;
+	/**
+	 * Runs patterns returning the output. Does not know whether correct *
+	 * 
+	 * @param patterns
+	 *            the patterns
+	 * @return the int[]
+	 */
+	public int[] runPatternsUnsupervised(Pattern[] patterns) {
+		Epoch e = new Epoch(null, null, neuronLayers, trainingRate, null,
+				verbose, debug);
+		return e.runPatternsGetMax(patterns);
 	}
 
-	/** Run network against test patterns **/
+	/**
+	 * Runs a single pattern returning the output. Does not know whether correct
+	 * 
+	 * @param pattern
+	 *            the p
+	 * @return the int
+	 */
+	public int runSinglePatternUnsupervised(Pattern pattern) {
+		Epoch e = new Epoch(null, null, neuronLayers, trainingRate, null,
+				verbose, debug);
+		e.runPattern(pattern);
+		return e.getMaxId();
+	}
+
+	/**
+	 * Run network against test patterns *.
+	 * 
+	 * @return the confusion matrix
+	 * @throws Exception
+	 *             the exception
+	 */
 	public ConfusionMatrix runTestPatterns() throws Exception {
 		ready();
 		log("\n****RUNNING TEST PATTERNS****\n"
@@ -178,67 +474,22 @@ public class MultiLayerNet implements Serializable {
 		return cm;
 	}
 
-	/** Receive all the incorrect patterns for a given set of patterns **/
-	public ArrayList<WavePattern> getProblemPatterns(ArrayList<Pattern> patterns) {
-		log("\n****RUNNING TEST PATTERNS****\n"
-				+ "Testing Network with test patterns\n");
-		Epoch e = new Epoch(null, patterns, neuronLayers, trainingRate, null,
-				verbose, debug);
-		return e.getProblemPatterns();
-	}
-
-	@Override
-	public String toString() {
-		return this.layerStructure.toString() + "\n"
-				+ this.neuronLayers.toString() + "\nMatthews Coefficient: "
-				+ this.matthewsCo;
-	}
-
-	/** If using error rate thresholds, return the threshold **/
-	public double getAcceptableErrorRate() {
-		return acceptableErrorRate;
-	}
-
-	/** Return input count **/
-	public Integer getInputCount() {
-		return inputCount;
-	}
-
-	/** Return layer structure **/
-	public LayerStructure getLayerStructure() {
-		return layerStructure;
-	}
-
-	/** Return the max epoch **/
-	public Integer getMaxEpoch() {
-		return maxEpoch;
-	}
-
-	/** Return the output count **/
-	public Integer getOutputCount() {
-		return outputCount;
-	}
-
-	public Double getTrainingRate() {
-		return trainingRate;
-	}
-
-	public LayerList getNeuronLayers() {
-		return neuronLayers;
-	}
-
-	public TestPatterns getTestPatterns() {
-		return testPatterns;
-	}
-
-	public double getErrorRate() {
-		return matthewsCo;
-	}
-
+	/**
+	 * Sets the acceptable error rate.
+	 * 
+	 * @param acceptableErrorRate
+	 *            the new acceptable error rate
+	 */
 	public void setAcceptableErrorRate(double acceptableErrorRate) {
 		this.acceptableErrorRate = acceptableErrorRate;
 	}
 
+	/**
+	 * Sets the debug.
+	 * 
+	 * @param debug
+	 *            the new debug
+	 */
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 		if (debug) {
@@ -246,7 +497,9 @@ public class MultiLayerNet implements Serializable {
 		}
 	}
 
-	/** Default parameters for a network **/
+	/**
+	 * Default parameters for a network *.
+	 */
 	public void setDefaultParameters() {
 		maxEpoch = 100;
 		trainingRate = 0.1d;
@@ -263,35 +516,72 @@ public class MultiLayerNet implements Serializable {
 	 * layer structure to the network
 	 * 
 	 * @param inputCount
+	 *            the new input count
 	 */
 	public void setInputCount(Integer inputCount) {
 		this.inputCount = inputCount;
 	}
 
-	/** sets the layer structure **/
+	/**
+	 * sets the layer structure *.
+	 * 
+	 * @param layerStructure
+	 *            the new layer structure
+	 */
 	public void setLayerStructure(LayerStructure layerStructure) {
 		this.layerStructure = layerStructure;
 		this.outputCount = layerStructure.outputCount;
 	}
 
-	public void setMaxEpoch(Integer maxEpoch) {
-		this.maxEpoch = maxEpoch;
-		this.errorBox = new CoefficientLogger(maxEpoch);
-	}
-
-	public boolean isMatthews() {
-		return matthews;
-	}
-
+	/**
+	 * Sets the matthews.
+	 * 
+	 * @param matthews
+	 *            the new matthews
+	 */
 	public void setMatthews(boolean matthews) {
 		this.matthews = matthews;
 	}
 
+	/**
+	 * Sets the max epoch.
+	 * 
+	 * @param maxEpoch
+	 *            the new max epoch
+	 */
+	public void setMaxEpoch(Integer maxEpoch) {
+		this.maxEpoch = maxEpoch;
+		this.errorBox = new CoefficientLogger(maxEpoch);
+	}
+	
+
+	/**
+	 * Sets the output count.
+	 * 
+	 * @param outputCount
+	 *            the new output count
+	 */
 	public void setOutputCount(Integer outputCount) {
 		this.outputCount = outputCount;
 	}
 
-	/** Should training patterns be shuffled between epochs? **/
+	/**
+	 * Sets the shuffle seed.
+	 * 
+	 * @param shuffleSeed
+	 *            the new shuffle seed
+	 */
+	public void setShuffleSeed(long shuffleSeed) {
+		this.shuffleSeed = shuffleSeed;
+	}
+
+	/**
+	 * Should training patterns be shuffled between epochs? *.
+	 * 
+	 * @param shuffleTrainingPatterns
+	 *            the shuffle training patterns
+	 * @return the long
+	 */
 	public long setShuffleTrainingPatterns(boolean shuffleTrainingPatterns) {
 		long seed = System.currentTimeMillis();
 		this.shuffleTrainingPatterns = shuffleTrainingPatterns;
@@ -299,102 +589,62 @@ public class MultiLayerNet implements Serializable {
 		return seed;
 	}
 
-	/** Should training patterns be shuffled between epochs? **/
+	/**
+	 * Should training patterns be shuffled between epochs? *.
+	 * 
+	 * @param shuffleTrainingPatterns
+	 *            the shuffle training patterns
+	 * @param seed
+	 *            the seed
+	 */
 	public void setShuffleTrainingPatterns(boolean shuffleTrainingPatterns,
 			long seed) {
 		this.shuffleTrainingPatterns = shuffleTrainingPatterns;
 		this.shuffleSeed = seed;
 	}
 
-	/** sets and initialises training patterns **/
+	/**
+	 * sets and initialises training patterns *.
+	 * 
+	 * @param testPatterns
+	 *            the new test patterns
+	 */
 	public void setTestPatterns(TestPatterns testPatterns) {
 		this.testPatterns = testPatterns;
 		this.inputCount = this.testPatterns.getTrainingPatterns().get(0)
-				.getInputCount();
+		.getInputCount();
 	}
 
+	/**
+	 * Sets the training rate.
+	 * 
+	 * @param trainingRate
+	 *            the new training rate
+	 */
 	public void setTrainingRate(Double trainingRate) {
 		this.trainingRate = trainingRate;
 	}
 
+	/**
+	 * Sets the verbose.
+	 * 
+	 * @param verbose
+	 *            the new verbose
+	 */
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
 
-	public long getShuffleSeed() {
-		return shuffleSeed;
-	}
-
-	public CoefficientLogger getErrorBox() {
-		return errorBox;
-	}
-
-	public void setShuffleSeed(long shuffleSeed) {
-		this.shuffleSeed = shuffleSeed;
-	}
-
-	public boolean isDebug() {
-		return debug;
-	}
-
-	public boolean isShuffleTrainingPatterns() {
-		return shuffleTrainingPatterns;
-	}
-
-	public boolean isVerbose() {
-		return verbose;
-	}
-
-	/** checks whether NN is ready to begin running **/
-	public void ready() throws NoNeuronsException, NoPatternsException,
-			UnitialisedWeightsException {
-		if (!this.areThereNeurons()) {
-			throw new NoNeuronsException();
-		}
-
-		if (!this.areTherePatterns()) {
-			throw new NoPatternsException();
-		}
-
-		if (!this.areWeightsInitialised()) {
-			throw new UnitialisedWeightsException();
-		}
-	}
-
-	/** Have neurons been initialised? **/
-	public boolean areThereNeurons() {
-		return this.neuronLayers.getFirstLayer().neuronCount > 0;
-	}
-
-	/** Does the network have any patterns? **/
-	public boolean areTherePatterns() {
-		return (testPatterns.getTrainingPatterns().size() > 0 & testPatterns
-				.getTestingPatterns().size() > 0);
-	}
-
-	/** Have neuron weights been initialised? **/
-	public boolean areWeightsInitialised() {
-		return (neuronLayers.getFirstLayer().neurons.get(0).getWeightList()
-				.size() > 0);
-	}
-
-	/** Removes test patterns **/
-	public void removeTestPatterns() {
-		this.testPatterns = null;
-	}
-
-	/** Logs according to verbose **/
-	protected void log(String str) {
-		if (this.verbose) {
-			Log.d(str);
-		}
-	}
-
-	/** Logs according to debug **/
-	protected void debug(String str) {
-		if (this.debug) {
-			Log.d(str);
-		}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.layerStructure.toString() + "\n"
+		+ this.neuronLayers.toString() + "\nMatthews Coefficient: "
+		+ this.matthewsCo;
 	}
 
 }

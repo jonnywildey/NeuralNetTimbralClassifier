@@ -4,13 +4,17 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.DSP.waveAnalysis.FFTBox;
-import com.DSP.waveAnalysis.FrameFFT;
 import com.DSP.waveProcess.FFTChain;
 import com.neuralNet.layers.InputShell;
 import com.riff.Signal;
 
-public class WavePatternsMono extends WavePatterns{
-	
+public class WavePatternsMono extends WavePatterns {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public WavePatternsMono() {
 		super();
 		// TODO Auto-generated constructor stub

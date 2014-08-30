@@ -1,114 +1,91 @@
 package com.neuralNet;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.Collection;
-import java.util.List;
-
 import com.neuralNet.layers.LayerStructure;
 import com.neuralNet.pattern.Combine;
-import com.neuralNet.pattern.Pattern;
 import com.neuralNet.pattern.TestPatterns;
 import com.neuralNet.pattern.WavePatterns;
-import com.riff.Wave;
 import com.util.Log;
 import com.util.Serialize;
-import com.util.fileReading.CSVReader;
-import com.util.fileReading.HTML;
+
+
 
 /**
  * Run time part of NN *.
- *
+ * 
  * @author Jonny Wildey
  * @version 1.0
  */
 public class RunNetwork {
-
+	
 	public static void main(String[] args) {
 		double start = System.currentTimeMillis();
-		Log.setFilePath(new File("/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/log/RunNN.Log"));
-		//Make Iris data
+		Log.setFilePath(new File(
+		"/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/log/RunNN.Log"));
+		// Make Iris data
 		boolean verbose = true;
 		long seed = 4564564536l;
-		File pretrain = new File("/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/json/BatchNoise.json" );
-		File posttrain = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Split");
-		File out = new File("/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/ser/BatchNoise.ser");
-		File in = new File("/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/ser/BatchSingle.ser");
-		WavePatterns lp = Serialize.getFromJSON(pretrain, WavePatterns.class);
-		//WavePatterns wp = Combine.combineFromJSONs(posttrain);
+		File pretrain = new File("/Users/jonnywildey/Public/SplitCombFour");
+		File posttrain = new File(
+		"/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Split");
+		File out = new File(
+		"/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/ser/SplitCombFour.ser");
+		File in = new File(
+		"/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/ser/SplitCombFour.ser");
+		
+
+		WavePatterns lp = Combine.combineFromJSONs(pretrain);
+		// WavePatterns wp = Combine.combineFromJSONs(posttrain);
 		TestPatterns pre = new TestPatterns(lp, 12356l);
 		Log.d(pre.getPatternCount());
-		Committee committee = MultiNNUtilities.createCommittee(pre, 5, 100, 100, verbose);
+		Committee committee = MultiNNUtilities.createCommittee(pre, 1, 100,
+				30, verbose);
 		CoefficientLogger.makeGraph(committee.getNets());
 		committee.removePatterns();
-		MultiNNUtilities.testCommittee(pre, committee);
-		//Committee com = Serialize.getFromSerial(in, Committee.class);
-		//MultiNNUtilities.testCommittee(pre, com);
-		//MultiLayerNet[] nets = com.getNets();
-		//MultiNNUtilities.testPatternConfusionMatrix(pre, nets);
-		//Serialize.serialize(com, out);	
+		//MultiNNUtilities.testCommittee(pre, committee);
+			 Committee com = Serialize.getFromSerial(in, Committee.class);
+			 MultiLayerNet mn = com.getNets()[0];
+			 try {
+				 
+				 mn.setTestPatterns(pre);
+				mn.runEpoch();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		// MultiNNUtilities.testCommittee(pre, com);
+		// MultiLayerNet[] nets = com.getNets();
+		// MultiNNUtilities.testPatternConfusionMatrix(pre, nets);
+		Serialize.serialize(committee, out);
 
-		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d) + " seconds");
+		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d)
+				+ " seconds");
 	}
 
-	/**
-	 * Get Wave Patterns from a serialised file *.
-	 *
-	 * @param seed the seed
-	 * @param serialPatterns the serial patterns
-	 * @param verbose the verbose
-	 * @return the wave patterns serial
-	 */
-	public static TestPatterns getWavePatternsSerial(long seed,
-			String serialPatterns, boolean verbose) {
-		WavePatterns wavePatterns = (WavePatterns) Serialize.getFromSerial(
-				serialPatterns);
-		//wavePatterns.reduceScale(2); //added
-		if (verbose) {
-			Log.d("Pattern size: " + wavePatterns.patterns.length);
-		}
-		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
-		return testPatterns;
-	}
-	
-	/**
-	 * Get Wave Patterns from a serialised file *.
-	 *
-	 * @param seed the seed
-	 * @param json the json
-	 * @param verbose the verbose
-	 * @return the wave patterns json
-	 */
-	public static TestPatterns getWavePatternsJSON(long seed,
-			File json, boolean verbose) {
-		WavePatterns wavePatterns = Serialize.getFromJSON(json, WavePatterns.class);
-		//wavePatterns.reduceScale(2); //added
-		if (verbose) {
-			Log.d("Pattern size: " + wavePatterns.patterns.length);
-		}
-		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns, seed);
-		return testPatterns;
-	}
-	
 	/**
 	 * Config settings for MLN *.
-	 *
-	 * @param nn the nn
-	 * @param testPatterns the test patterns
-	 * @param neuronCount the neuron count
-	 * @param verbose the verbose
-	 * @param seed2 the seed2
-	 * @param seed3 the seed3
+	 * 
+	 * @param nn
+	 *            the nn
+	 * @param testPatterns
+	 *            the test patterns
+	 * @param neuronCount
+	 *            the neuron count
+	 * @param verbose
+	 *            the verbose
+	 * @param seed2
+	 *            the seed2
+	 * @param seed3
+	 *            the seed3
 	 * @return the multi layer net
 	 */
-	public static MultiLayerNet config(MultiLayerNet nn, TestPatterns testPatterns, 
-			Integer neuronCount, boolean verbose, long seed2, long seed3) {
+	public static MultiLayerNet config(MultiLayerNet nn,
+			TestPatterns testPatterns, Integer neuronCount, boolean verbose,
+			long seed2, long seed3) {
 		LayerStructure ls = new LayerStructure(testPatterns);
 		if (neuronCount != null) {
 			ls.addHiddenLayer(neuronCount);
-		}		
+		}
 		nn.setTrainingRate(0.1d);
 		nn.setLayerStructure(ls);
 		nn.setTestPatterns(testPatterns);
@@ -121,5 +98,55 @@ public class RunNetwork {
 		nn.setShuffleTrainingPatterns(true, seed3);
 		return nn;
 	}
-	
+
+	/**
+	 * Get Wave Patterns from a serialised file *.
+	 * 
+	 * @param seed
+	 *            the seed
+	 * @param json
+	 *            the json
+	 * @param verbose
+	 *            the verbose
+	 * @return the wave patterns json
+	 */
+	public static TestPatterns getWavePatternsJSON(long seed, File json,
+			boolean verbose) {
+		WavePatterns wavePatterns = Serialize.getFromJSON(json,
+				WavePatterns.class);
+		// wavePatterns.reduceScale(2); //added
+		if (verbose) {
+			Log.d("Pattern size: " + wavePatterns.patterns.length);
+		}
+		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns,
+				seed);
+		return testPatterns;
+	}
+
+	/**
+	 * Get Wave Patterns from a serialised file *.
+	 * 
+	 * @param seed
+	 *            the seed
+	 * @param serialPatterns
+	 *            the serial patterns
+	 * @param verbose
+	 *            the verbose
+	 * @return the wave patterns serial
+	 */
+	public static TestPatterns getWavePatternsSerial(long seed,
+			String serialPatterns, boolean verbose) {
+		WavePatterns wavePatterns = (WavePatterns) Serialize
+		.getFromSerial(serialPatterns);
+		// wavePatterns.reduceScale(2); //added
+		if (verbose) {
+			Log.d("Pattern size: " + wavePatterns.patterns.length);
+		}
+		TestPatterns testPatterns = new TestPatterns(wavePatterns.patterns,
+				seed);
+		return testPatterns;
+	}
+
+
+
 }

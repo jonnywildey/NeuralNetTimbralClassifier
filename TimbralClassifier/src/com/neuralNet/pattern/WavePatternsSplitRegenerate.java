@@ -10,22 +10,27 @@ import com.riff.Signal;
 
 public class WavePatternsSplitRegenerate extends WavePatternsRegenerate {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public WavePatternsSplitRegenerate() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public WavePatternsSplitRegenerate(File filePath) {
 		super(filePath);
 		// TODO Auto-generated constructor stub
 	}
 
-	public WavePatternsSplitRegenerate() {
-		// TODO Auto-generated constructor stub
-	}
-	
 	@Override
 	/**FFT analysis sequence **/
 	protected ArrayList<InputShell> reFFT(Signal signals) {
 		FFTBox dd = FFTChain.polyFFTChainSplit(signals);
 		return Pattern.doubleToInputShell(dd.getValues()[0]);
 	}
-	
+
 	@Override
 	/**FFT analysis sequence, returns FFT box **/
 	protected FFTBox reFFTBox(Signal signals) {
