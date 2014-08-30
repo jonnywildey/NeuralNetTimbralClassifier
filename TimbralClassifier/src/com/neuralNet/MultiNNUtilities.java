@@ -121,6 +121,16 @@ public class MultiNNUtilities {
 		}
 		return manyNets;
 	}
+	
+	public static RetrainNet[] reassignThreadNets(MultiLayerNet[] nets, TestPatterns testPatterns) {
+		RetrainNet[] threads = new RetrainNet[nets.length];
+		for (int i = 0; i < threads.length; ++i) {
+			threads[i] = new RetrainNet();
+			nets[i].setTestPatterns(testPatterns);
+			threads[i].setNet(nets[i]);
+		}
+		return threads;
+	}
 
 	/**
 	 * Run callable threads.

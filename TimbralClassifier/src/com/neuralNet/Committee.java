@@ -143,6 +143,16 @@ public class Committee implements Serializable {
 				+ Statistics.round(cm.matthewsCoefficient(), 4));
 		return cm;
 	}
+	
+	public MultiLayerNet[] trainEpochs(TestPatterns testPatterns) {
+		//reassign thread nets
+		RetrainNet[] nets = 
+			MultiNNUtilities.reassignThreadNets(this.nets, testPatterns);
+		ArrayList<MultiLayerNet> multiLayers = 
+			MultiNNUtilities.runCallableThreads(this.nets.length, nets, MultiLayerNet.class);
+		this.nets = Committee.MultiLayerListToArray(multiLayers);
+		return this.nets;
+	}
 
 	private MultiLayerNet[] nets;
 

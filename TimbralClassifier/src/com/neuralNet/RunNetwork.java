@@ -38,21 +38,14 @@ public class RunNetwork {
 		// WavePatterns wp = Combine.combineFromJSONs(posttrain);
 		TestPatterns pre = new TestPatterns(lp, 12356l);
 		Log.d(pre.getPatternCount());
-		Committee committee = MultiNNUtilities.createCommittee(pre, 1, 100,
-				30, verbose);
+		//Committee committee = MultiNNUtilities.createCommittee(pre, 1, 100,
+		//		30, verbose);
+		Committee committee = Serialize.getFromSerial(in, Committee.class);
+		 committee.trainEpochs(pre);
 		CoefficientLogger.makeGraph(committee.getNets());
 		committee.removePatterns();
 		//MultiNNUtilities.testCommittee(pre, committee);
-			 Committee com = Serialize.getFromSerial(in, Committee.class);
-			 MultiLayerNet mn = com.getNets()[0];
-			 try {
-				 
-				 mn.setTestPatterns(pre);
-				mn.runEpoch();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			 
 		// MultiNNUtilities.testCommittee(pre, com);
 		// MultiLayerNet[] nets = com.getNets();
 		// MultiNNUtilities.testPatternConfusionMatrix(pre, nets);
