@@ -1,5 +1,8 @@
 package com.DSP.waveProcess;
 
+import com.DSP.waveAnalysis.FFT;
+import com.riff.Wave;
+
 /**
  * Class for transforming samples and preparing them for neural net *.
  * 
@@ -9,7 +12,8 @@ package com.DSP.waveProcess;
 public class Conversion {
 
 	public static void main(String[] args) {
-
+		
+	
 	}
 
 }

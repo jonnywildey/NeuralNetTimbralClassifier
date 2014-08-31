@@ -22,4 +22,8 @@ public class RetrainNet extends ThreadNet {
 		return net;
 	}
 
+	public void setMaxEpoch(Integer epoch) {
+		net.setMaxEpoch(epoch);
+	}
+
 }

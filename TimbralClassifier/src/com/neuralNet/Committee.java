@@ -144,16 +144,28 @@ public class Committee implements Serializable {
 		return cm;
 	}
 	
-	public MultiLayerNet[] trainEpochs(TestPatterns testPatterns) {
+	/** Train epochs with new pattern set **/
+	public MultiLayerNet[] trainEpochs(TestPatterns testPatterns, int epoch) {
 		//reassign thread nets
 		RetrainNet[] nets = 
-			MultiNNUtilities.reassignThreadNets(this.nets, testPatterns);
+			MultiNNUtilities.reassignThreadNets(this.nets, testPatterns, epoch);
 		ArrayList<MultiLayerNet> multiLayers = 
 			MultiNNUtilities.runCallableThreads(this.nets.length, nets, MultiLayerNet.class);
 		this.nets = Committee.MultiLayerListToArray(multiLayers);
 		return this.nets;
 	}
+	/** Train epochs with new pattern set. Uses previous epoch count **/
+	public MultiLayerNet[] trainEpochs(TestPatterns testPatterns) {
+		RetrainNet[] nets = 
+				MultiNNUtilities.reassignThreadNets(this.nets, testPatterns, null);
+			ArrayList<MultiLayerNet> multiLayers = 
+				MultiNNUtilities.runCallableThreads(this.nets.length, nets, MultiLayerNet.class);
+			this.nets = Committee.MultiLayerListToArray(multiLayers);
+			return this.nets;
+	}
 
+	
+	
 	private MultiLayerNet[] nets;
 
 	/**

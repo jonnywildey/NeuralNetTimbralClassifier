@@ -21,35 +21,42 @@ public class RunNetwork {
 	public static void main(String[] args) {
 		double start = System.currentTimeMillis();
 		Log.setFilePath(new File(
-		"/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/log/RunNN.Log"));
+		"../assets/log/RunNN.Log"));
 		// Make Iris data
 		boolean verbose = true;
 		long seed = 4564564536l;
-		File pretrain = new File("/Users/jonnywildey/Public/SplitCombFour");
+		File pretrain = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Separate");
+		File sc4 = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/SplitCombFour");
 		File posttrain = new File(
 		"/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Split");
-		File out = new File(
-		"/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/ser/SplitCombFour.ser");
-		File in = new File(
-		"/Users/jonnywildey/git/NeuralNetTimbralClassifier/assets/ser/SplitCombFour.ser");
-		
+		File split150com = new File(
+		"/Users/Jonny/Documents/Timbre/Ser/Committee/Poly/SplitBatch150.ser");
+		File split100com = new File(
+		"/Users/Jonny/Documents/Timbre/Ser/Committee/Poly/SplitBatch.ser");
+		File splitCombFour = new File(
+				"/Users/Jonny/Documents/Timbre/Ser/Committee/Poly/SplitCombFour.ser");
+		File combinedVanilla = new File(
+				"/Users/Jonny/Documents/Timbre/Ser/Committee/Poly/CombinedVanilla.ser");
+		File combinedPat = new File("/Users/Jonny/Documents/Timbre/JSON/WavePatterns/Poly/Combined.json");
+		File combinedLarge = new File("/Users/Jonny/Documents/Timbre/Ser/Committee/Poly/CombinedMega.ser");
 
 		WavePatterns lp = Combine.combineFromJSONs(pretrain);
-		// WavePatterns wp = Combine.combineFromJSONs(posttrain);
+		//WavePatterns lp = Serialize.getFromJSON(splitCombFour, WavePatterns.class);
 		TestPatterns pre = new TestPatterns(lp, 12356l);
 		Log.d(pre.getPatternCount());
-		//Committee committee = MultiNNUtilities.createCommittee(pre, 1, 100,
-		//		30, verbose);
-		Committee committee = Serialize.getFromSerial(in, Committee.class);
-		 committee.trainEpochs(pre);
+		Committee committee = MultiNNUtilities.createCommittee(pre, 4, 100, 30, verbose);
+		//Committee committee = Serialize.getFromSerial(split100com, Committee.class);
+		//committee.trainEpochs(pre, 60);
+		MultiNNUtilities.testCommittee(pre, committee);
 		CoefficientLogger.makeGraph(committee.getNets());
 		committee.removePatterns();
+		
 		//MultiNNUtilities.testCommittee(pre, committee);
 			 
 		// MultiNNUtilities.testCommittee(pre, com);
 		// MultiLayerNet[] nets = com.getNets();
 		// MultiNNUtilities.testPatternConfusionMatrix(pre, nets);
-		Serialize.serialize(committee, out);
+		Serialize.serialize(committee, combinedLarge);
 
 		Log.d("time spent: " + ((System.currentTimeMillis() - start) / 1000d)
 				+ " seconds");

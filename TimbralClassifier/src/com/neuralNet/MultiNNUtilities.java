@@ -122,12 +122,15 @@ public class MultiNNUtilities {
 		return manyNets;
 	}
 	
-	public static RetrainNet[] reassignThreadNets(MultiLayerNet[] nets, TestPatterns testPatterns) {
+	public static RetrainNet[] reassignThreadNets(MultiLayerNet[] nets, TestPatterns testPatterns, Integer epoch) {
 		RetrainNet[] threads = new RetrainNet[nets.length];
 		for (int i = 0; i < threads.length; ++i) {
 			threads[i] = new RetrainNet();
 			nets[i].setTestPatterns(testPatterns);
 			threads[i].setNet(nets[i]);
+			if (epoch != null) {
+				threads[i].setMaxEpoch(epoch);
+			}
 		}
 		return threads;
 	}
