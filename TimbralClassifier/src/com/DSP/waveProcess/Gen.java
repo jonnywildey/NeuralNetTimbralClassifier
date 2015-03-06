@@ -47,7 +47,7 @@ public class Gen {
 		for (int i = 0; i < octaves; ++i) {
 			signals[i] = Pitch.pitchShift(Gen.whiteNoise(
 					(int) ((double) (length) / (Math.pow(2, i))), 0,
-					sampleRate, bitRate), 1 / (Math.pow(2, i)));
+					sampleRate, bitRate), -12 * i);
 		}
 		try {
 			Signal s = Gain.sumMono(signals);
@@ -278,9 +278,8 @@ public class Gen {
 		// set up arrays
 		double[][] tape = TapeHiss.tape.getSignal();
 		double[][] ns = new double[1][length];
-
 		double factor = Gain.decibelToAmplitude(dbBelowCeiling);
-		for (int i = 0; i < length; ++i) {
+		for (int i = 0; i < 1; ++i) {
 			for (int j = 0; j < length; ++j) {
 				// Process
 				ns[i][j] = (tape[i % tape[0].length][j % tape[0].length])
