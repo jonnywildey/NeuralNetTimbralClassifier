@@ -127,6 +127,31 @@ public class Gain {
 		}
 		return new Signal(ns, signal.getBit(), signal.getSampleRate());
 	}
+	
+	
+	/**
+	 * Adjusts volume to a maximum amplitude of 1. Also sets bits to 32
+	 * 
+	 * @param signal
+	 *            the signal
+	 * @param dbBelowFloor
+	 *            the db below floor
+	 * @return the signal
+	 */
+	public static Signal changeToFloatAmplitude(Signal signal) {
+		// set up arrays
+		double[][] os = signal.getSignal();
+		double[][] ns = new double[os.length][os[0].length];
+		double maxAmpDiv = 1 / signal.getMaxAmplitude();
+		for (int i = 0; i < os.length; ++i) {
+			for (int j = 0; j < os[0].length; ++j) {
+				// Process
+				ns[i][j] = os[i][j] * maxAmpDiv;
+			}
+		}
+		return new Signal(ns, 32, signal.getSampleRate());
+	}
+	
 
 	/**
 	 * Decibel to amplitude.

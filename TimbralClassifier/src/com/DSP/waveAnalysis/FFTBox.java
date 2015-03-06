@@ -100,7 +100,7 @@ public class FFTBox {
 			for (int j = 0; j < table[i].length; ++j) {
 				nt[i][j] = Gain.amplitudeToDecibel(table[i][j]) - max;
 				if (nt[i][j] == Double.NEGATIVE_INFINITY) {
-					nt[i][j] = min - max;
+					nt[i][j] = min - max * 2;
 				}
 			}
 		}

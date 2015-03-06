@@ -8,6 +8,7 @@ import javax.naming.InvalidNameException;
 
 import com.DSP.waveAnalysis.FFTBox;
 import com.DSP.waveAnalysis.FrameFFT;
+import com.DSP.waveProcess.FFTChain;
 import com.DSP.waveProcess.SignalChain;
 import com.neuralNet.layers.InputShell;
 import com.riff.Chunk;
@@ -111,22 +112,7 @@ public class WavePattern extends Pattern implements Serializable {
 		}
 	}
 
-	/**
-	 * Signal to pattern mono.
-	 * 
-	 * @param s
-	 *            the s
-	 * @return the pattern
-	 */
-	public static Pattern signalToPatternMono(Signal s) {
-		FrameFFT fft = new FrameFFT(s, 4096);
-		FFTBox dd = SignalChain.basicPatternProcess(fft);
-		double[] arr = { 0, 0, 0, 1 };
-		Pattern p = new Pattern(
-				ArrayMethods.doubleToArrayList(dd.getValues()[0]),
-				ArrayMethods.doubleToArrayList(arr), 1);
-		return p;
-	}
+
 
 	public String instrument; // The instrument the Wave represents
 
@@ -194,6 +180,29 @@ public class WavePattern extends Pattern implements Serializable {
 	/** Set the Wave **/
 	public void setWave(Wave wave) {
 		this.filePath = wave.filepath;
+	}
+	
+	/** Generate a Wave Pattern from the Wave using the original representation **/
+	public static WavePattern getOriginalMonoRepresentation(Signal signal, int id) {
+		WavePattern wavePattern = new WavePattern(id);
+		FFTBox fftBox = FFTChain.monoFFTChain(signal);
+		wavePattern.addInputData(fftBox);
+		return wavePattern;
+	}
+	/** Generate a Wave Pattern from the Wave using the temporal representation **/
+	public static WavePattern getTempRepresentation(Signal signal, int id) {
+		WavePattern wavePattern = new WavePattern(id);
+		FFTBox fftBox = FFTChain.polyFFTChainSplit(signal);
+		wavePattern.addInputData(fftBox);
+		return wavePattern;
+	}
+	
+	/** Generate a Wave Pattern from the Wave using the original representation **/
+	public static WavePattern getOriginalPolyRepresentation(Signal signal, int id) {
+		WavePattern wavePattern = new WavePattern(id);
+		FFTBox fftBox = FFTChain.polyFFTChain(signal);
+		wavePattern.addInputData(fftBox);
+		return wavePattern;
 	}
 
 }

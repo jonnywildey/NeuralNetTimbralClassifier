@@ -35,6 +35,9 @@ public class Pattern implements Serializable {
 	/** Default constructor. Not recommended **/
 	public Pattern() {
 		super();
+		this.targetArray = new ArrayList<Double>();
+		this.inputArray = new ArrayList<InputShell>();
+		this.errorList = new ArrayList<Double>();
 		this.setId(-1);
 	}
 
@@ -52,6 +55,7 @@ public class Pattern implements Serializable {
 
 	/** id constructor **/
 	public Pattern(int id) {
+		this();
 		this.setId(id);
 	}
 

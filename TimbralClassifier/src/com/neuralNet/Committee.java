@@ -69,7 +69,29 @@ public class Committee implements Serializable {
 	 * @return the int
 	 */
 	public static int runPattern(MultiLayerNet[] nets, Pattern p) {
-		return runPatterns(nets, new Pattern[] { p })[0];
+		Pattern[] patterns = {p};
+		double[][][] vals = new double[nets.length][][];
+		Epoch e = null;
+		// get values
+		for (int i = 0; i < vals.length; ++i) {
+			e = new Epoch(null, null, nets[i].getNeuronLayers(), 0d, null,
+					nets[i].isVerbose(), nets[i].isDebug());
+			vals[i] = e.runPatterns(patterns);
+			if (nets[i].isVerbose()){Log.d("Net " + i + " output: " + 
+					ArrayMethods.toString(vals[i]));}
+			
+		}
+		int[] outputs = new int[patterns.length];
+		
+		
+		for (int i = 0; i < patterns.length; ++i) {
+			// get array of every net for pattern
+
+			
+			outputs[i] = getIndexOfMax(ArrayMethods.getAverageOfColumn(vals[i]));
+			
+		}
+		return outputs[0];
 	}
 
 	/**
@@ -89,10 +111,14 @@ public class Committee implements Serializable {
 			e = new Epoch(null, null, nets[i].getNeuronLayers(), 0d, null,
 					nets[i].isVerbose(), nets[i].isDebug());
 			vals[i] = e.runPatterns(patterns);
+			//if (nets[i].isVerbose()){Log.d("Net " + i + " output: " + 
+			//		ArrayMethods.toString(vals[i]));}
+			
 		}
-		double[][][] nv = new double[patterns.length][nets.length][patterns[0]
-		                                                                    .getOutputCount()];
+		double[][][] nv = new double[patterns.length][nets.length][patterns[0].getOutputCount()];
 		int[] outputs = new int[patterns.length];
+		
+		
 		for (int i = 0; i < patterns.length; ++i) {
 			// get array of every net for pattern
 			for (int j = 0; j < nets.length; ++j) {
@@ -100,7 +126,9 @@ public class Committee implements Serializable {
 					nv[i][j][k] = vals[j][i][k];
 				}
 			}
+			
 			outputs[i] = getIndexOfMax(ArrayMethods.getAverageOfColumn(nv[i]));
+			
 		}
 		return outputs;
 	}
@@ -212,21 +240,7 @@ public class Committee implements Serializable {
 		return runPatterns(this.nets, p);
 	}
 
-	/**
-	 * Runs a signal through the Committee *.
-	 * 
-	 * @param s
-	 *            the s
-	 * @return the int
-	 */
-	public int runSignal(Signal s) {
-		// find out input amount
-		// int input =
-		// this.nets[0].getTestPatterns().getTestingPatterns().get(0).getInputArray().size();
-		Pattern p = WavePattern.signalToPatternMono(s);
-		int answer = this.runPattern(p);
-		return answer;
-	}
+
 
 	/**
 	 * Runs a signal through the Committee *.
@@ -239,24 +253,14 @@ public class Committee implements Serializable {
 	 */
 	public String runSignal(Signal s, WavePatterns wp) {
 		// find out input amount
-		Pattern p = WavePattern.signalToPatternMono(s);
+		Pattern p = WavePattern.getTempRepresentation(s, 0);
 		int answer = this.runPattern(p);
-		// Log.d(answer);
+		 Log.d(answer);
 		String ans = wp.getInstrumentFromTargetNumber(answer);
 		return ans;
 	}
 
-	/**
-	 * Runs a wave through the committee *.
-	 * 
-	 * @param file
-	 *            the file
-	 * @return the int
-	 */
-	public int runWave(File file) {
-		Wave wave = new Wave(file);
-		return runSignal(wave.getSignals());
-	}
+
 
 	/**
 	 * Runs a wave through the committee *.
@@ -285,16 +289,7 @@ public class Committee implements Serializable {
 		return runWave(new File(str), wp);
 	}
 
-	/**
-	 * Runs a wave through the Committee *.
-	 * 
-	 * @param wave
-	 *            the wave
-	 * @return the int
-	 */
-	public int runWave(Wave wave) {
-		return runSignal(wave.getSignals());
-	}
+
 
 	/**
 	 * Runs a wave through the Committee *.

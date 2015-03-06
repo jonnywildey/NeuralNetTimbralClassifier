@@ -37,19 +37,19 @@ public class HTML {
 
 	}
 
-	public static String fileChooser() {
+	public static File fileChooser() {
 		/* chooses a file, outputs stringpath */
 		JFileChooser chooser = new JFileChooser();
-		chooser.setCurrentDirectory(null);
+		chooser.setCurrentDirectory(new File("/Users/Jonny/Documents/Timbre"));
 		// chooser.setVisible(true);
 		chooser.showOpenDialog(null);
-		while (chooser.getSelectedFile() == null) {
+		/*while (chooser.getSelectedFile() == null) {
 			// LogWin.messagePrintNoCancel("No file selected");
 			chooser.showOpenDialog(null);
-		}
+		} */
 
-		String a = chooser.getSelectedFile().toString();
-		return a;
+		
+		return chooser.getSelectedFile();
 	}
 
 	public static String fileReader(String path) {
@@ -84,10 +84,10 @@ public class HTML {
 		// frame.setBounds((int)(screenSize.getWidth() / 6),
 		// ((int)screenSize.getHeight() / 6), (int)(screenSize.getWidth() *
 		// 0.6), (int)(screenSize.getHeight() * 0.6));
-		frame.setBounds((int) (screenSize.getWidth() / 40),
-				((int) screenSize.getHeight() / 60),
-				(int) (screenSize.getHeight() * 0.5),
-				(int) (screenSize.getHeight() * 0.5));
+		frame.setBounds((int) (50),
+				((int) 50),
+				(int) (screenSize.getWidth() * 0.2),
+				(int) (screenSize.getHeight() * 0.1));
 		// Display the window.
 
 		frame.setVisible(true);

@@ -28,7 +28,7 @@ public class ByteReader {
 	 * File Prompt Constructor.
 	 */
 	public ByteReader() {
-		this(com.util.fileReading.HTML.fileChooser());
+		this(com.util.fileReading.HTML.fileChooser().toString());
 	}
 
 	/**
