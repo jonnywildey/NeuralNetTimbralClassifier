@@ -1,8 +1,18 @@
 package com.riff;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import com.DSP.waveProcess.Gain;
 import com.plotting.WavController;
 import com.util.ArrayMethods;
 import com.util.HexByte;
@@ -370,6 +380,7 @@ public class Wave extends Chunk {
 	 *            the new signal
 	 */
 	public void setSignal(Signal s) {
+		
 		this.chunks = new ArrayList<Chunk>();
 		FMTChunk fmt = new FMTChunk(s.getBit(), s.getSampleRate(),
 				s.getChannels());
@@ -387,7 +398,7 @@ public class Wave extends Chunk {
 				HexByte.stringToBytes("WAVE", 4), 8);
 		this.bytes = ArrayMethods.addBytes(bytes, fmt.getBytes(), 12);
 		this.bytes = ArrayMethods.addBytes(bytes, dc.getBytes(), 12 + fmtl);
-
+		
 	}
 
 	/**
@@ -401,5 +412,7 @@ public class Wave extends Chunk {
 		super.writeFile(f);
 		this.filepath = f;
 	}
+	
+
 
 }

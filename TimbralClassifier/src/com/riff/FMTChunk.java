@@ -40,12 +40,13 @@ public class FMTChunk extends Chunk {
 		int byteRate = sampleRate * channels * (bit / 8);
 		int blockAlign = channels * (bit / 8);
 		byte[] bytes = new byte[24];
+		int formatCode = (bit == 32)? 3 : 1; //3 is float, 1 fixed
 		bytes = ArrayMethods.addBytes(bytes, HexByte.stringToBytes("fmt ", 4),
 				0); // name
 		bytes = ArrayMethods.addBytes(bytes,
 				HexByte.longToLittleEndianBytes(16, 4), 4); // length
 		bytes = ArrayMethods.addBytes(bytes,
-				HexByte.longToLittleEndianBytes(1, 2), 8); // compression
+				HexByte.longToLittleEndianBytes(formatCode, 2), 8); // compression
 		bytes = ArrayMethods.addBytes(bytes,
 				HexByte.longToLittleEndianBytes(channels, 2), 10); // channels
 		bytes = ArrayMethods.addBytes(bytes,

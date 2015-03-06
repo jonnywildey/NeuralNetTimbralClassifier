@@ -1,5 +1,7 @@
 package com.util;
 
+import java.nio.ByteBuffer;
+
 // TODO: Auto-generated Javadoc
 /**
  * Utility methods for hex and byte conversion *.
@@ -132,7 +134,6 @@ public class HexByte {
 	 */
 	public static byte[] doubleToLittleEndianBytes(double d, int length) {
 		long val = Math.abs(Math.round(d));
-
 		byte[] bytes = new byte[length];
 		byte mod = 0;
 		int q = 256;
@@ -381,6 +382,24 @@ public class HexByte {
 		int n = (int) hexArrayToInt(sep);
 		return Double.longBitsToDouble(n);
 	}
+	
+	public static byte[] doubleToBytes(double d)
+	{
+		long bits = Double.doubleToLongBits(d);
+		    ByteBuffer buffer = ByteBuffer.allocate(Long.SIZE / 8);
+		    buffer.putLong(bits);
+		    return buffer.array();
+	}
+	
+	public static byte[] floatToBytes(float f)
+	{
+		    int bits = Float.floatToIntBits(f);
+		    bits = Integer.reverseBytes(bits);
+		    ByteBuffer buffer = ByteBuffer.allocate(Integer.SIZE / 8);
+		    buffer.putInt(bits);
+		    return buffer.array();
+	}
+	
 
 	/**
 	 * cheap and cheerful number to byte converter. If length is too small

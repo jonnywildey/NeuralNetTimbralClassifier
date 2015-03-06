@@ -157,13 +157,25 @@ public class DataChunk extends Chunk {
 		// int cj = bj / channels;
 		double[][] s = signal.getSignal();
 		byte[] nb = new byte[s[0].length * channels * bj];
+		
+		byte[] workingByte;
 		for (int i = 0; i < s[0].length; ++i) {
 			for (int j = 0; j < channels; ++j) {
-				// Log.d(i + " " + s[j][i]);
-				nb = ArrayMethods.addBytes(nb,
-						HexByte.doubleToLittleEndianBytes( // need to make this
-								// work for floats
-								s[j][i], bj), (i * jump) + (j * bj));
+				if (bj == 1) //8bit
+				{
+					workingByte = HexByte.doubleToLittleEndianBytes( 
+							s[j][i] + 127, bj); //unsigned
+				} else if (bj <= 3 ) //up to 24 bit
+				{
+					workingByte = HexByte.doubleToLittleEndianBytes( 
+							s[j][i], bj); //unsigned			
+				} else { // 32 bit 
+					
+					workingByte = HexByte.floatToBytes((float)s[j][i]);
+				}
+				
+				nb = ArrayMethods.addBytes(nb, workingByte
+						, (i * jump) + (j * bj));
 			}
 
 		}
